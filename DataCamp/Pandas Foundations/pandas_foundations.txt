@@ -1,0 +1,4 @@
+Pandas Data frames are in-memory representation of complex data collections in python
+real-world data sets containing numeric and string data , often structured around time series
+powerful analysis , selection and visualization techniques 
+

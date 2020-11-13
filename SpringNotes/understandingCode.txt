@@ -1,0 +1,1243 @@
+Q1. Implementing serializable interface in java
+---------------------------------------------------------------------------------------------------------------------------------------------------
+It lets you take an object or group of objects, put them on a disk or send them through a wire or wireless transport mechanism, then later, perhaps on another computer, reverse the process: resurrect the original object(s). The basic mechanisms are to flatten object(s) into a one-dimensional stream of bits, and to turn that stream of bits back into the original object(s).So, implement the Serializable interface when you need to store a copy of the object, send them to another process which runs on the same system or over the network.
+
+It's a good practice if you are defining entity beans in distributed Java environments because the entity may be serialized to local storage or across the wire outside of your control.
+
+Java objects need to implement serializable if object needs to be transferred over network in bytes form or share data between different application or application server.Suppose, one application server serializes data and other wants to access that data and so needs to deserialize that data.
+
+Serializable classes are useful when you want to persist instances of them or send them over a wire.Serialization is a mechanism of converting the state of an object into a byte stream. Deserialization is the reverse process where the byte stream is used to recreate the actual Java object in memory. This mechanism is used to persist the object.
+
+Serialization is usually used When the need arises to send your data over network or stored in files. By data I mean objects and not text. ... Serialization is the translation of your Java object's values/states to bytes to send it over network or save it.
+
+The serialVersionUID is a universal version identifier for a Serializable class. Deserialization uses this number to ensure that a loaded class corresponds exactly to a serialized object. If no match is found, then an InvalidClassException is thrown
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2. @GeneratedValue(strategy = identity)
+
+In a Object Relational Mapping context, every object needs to have a unique identifier. You use the @Id annotation to specify the primary key of an entity.The @GeneratedValue annotation is used to specify how the primary key should be generated. In your example you are using an Identity strategy which Indicates that the persistence provider must assign primary keys for the entity using a database identity column.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q3. @Transient (lasting only for a short time; impermanent)
+
+This is used when you don’t want to persist the value in database.
+@Transient
+private int country;
+The value of country won’t be saved into database.
+By declaring so, hibernate will skip the mapping of that particular entity class variable with a column of a database table.
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q4. @Enumerated(EnumType.STRING)
+	private MapType mapType;
+
+ Defines mapping for enumerated types.  The constants of this enumerated type specify how a persistent property or field of an enumerated type should be persisted.
+
+ public enum MapType {
+    DEFAULT, ESP, DONE
+  }
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q5. @JoinColumn(name = "AGGR_ID", referencedColumnName = "AGGR_ID", insertable = false, updatable = false)
+	   private MetricInfo metricInfo;
+
+If a field is annotated insertable=false, updatable=false, doesn't it mean that you cannot insert value nor change the existing value? Why would you want to do that?
+
+@Entity
+public class Person {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @OneToMany(mappedBy="person", cascade=CascadeType.ALL)
+    private List<Address> addresses;
+}
+
+@Entity
+public class Address {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name="ADDRESS_FK")
+    @Column(insertable=false, updatable=false)
+    private Person person;
+}
+
+You would do that when the responsibility of creating/updating the related entity in question isn't in the current entity. E.g. you have a Person and an Address. You'd like to add insertable=false, updatable=false to the @OneToMany relationship with the Person entity in the Address entity, simply because it's not the responsibility of the Address entity to create or update a Person. It's the other way round.
+
+
+CREATE TABLE Zips
+(
+  country_code CHAR(2),
+  code VARCHAR(10),
+  PRIMARY KEY (country_code, code),
+  FOREIGN KEY (country_code) REFERENCES Countries (iso_code)
+)
+
+@Entity
+@Table(name = "Zips")
+public class Zip implements Serializable
+{
+    @EmbeddedId
+    private ZipId id;
+
+    @ManyToOne
+    @JoinColumn(name = "country_code", referencedColumnName = "iso_code")
+    private Country country = null;
+...
+}
+
+Composite PK class
+@Embeddable
+public class ZipId implements Serializable
+{
+    @Column(name = "country_code", insertable = false, updatable = false)
+    private String countryCode;
+
+    @Column(name = "code")
+    private String code;
+...
+}
+
+Zip z = new Zip();
+
+z.setCountry(getCountry("US"));
+z.setCountryCode("IN");
+
+saveZip(z);
+
+To prevent these kind of inconsistency, hibernate is asking you to specify the update point of relation ships. Which means you can refer to the same column in the table n number of times but only one of them can be used to update and all others will be read only.
+
+In your Zip class you are referring to the Embedded id class ZipId that again contains the country code. As in the above scenario now you have a possibility of updating the counry_code column from two places. Hence error given by hibernate is proper.
+
+@ManyToOne
+@JoinColumn(name = "country_code", referencedColumnName = "iso_code",
+insertable =  false, updatable = false)
+private Country country;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q6. Difference between FetchType LAZY and EAGER in java persistence API
+
+Sometimes you have two entities and there's a relationship between them. For example, you might have an entity called University and another entity called Student.
+
+The University entity might have some basic properties such as id, name, address, etc. as well as a property called students:
+
+public class University {
+ private String id;
+ private String name;
+ private String address;
+ private List<Student> students;
+
+ // setters and getters
+}
+Now when you load a University from the database, JPA loads its id, name, and address fields for you. But you have two options for students: to load it together with the rest of the fields (i.e. eagerly) or to load it on-demand (i.e. lazily) when you call the university's getStudents() method.
+
+When a university has many students it is not efficient to load all of its students with it when they are not needed. So in suchlike cases, you can declare that you want students to be loaded when they are actually needed. This is called lazy loading.
+
+@ManytoOne relationship can be EAGER loading
+@OnetoMany relationship can be LAZY loading]
+
+JPA spec
+OneToMany: LAZY
+ManyToOne: EAGER
+ManyToMany: LAZY
+OneToOne: EAGER
+And in hibernate, all is Lazy
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q7. @Lob
+
+@javax.persistence.Lob signifies that the annotated field should be represented as BLOB (binary data) in the DataBase.
+
+You can annotated any serializable data type with this annotation. In JPA, upon persisting (retrieval) the field content will be serialized (deserialized) using standard Java serialization.
+
+Common use of LOB is to annotate a HashMap field inside your Entity to store some of the object properties which are not mapped into DB columns. That way all the unmapped values can be stored in the DB in one column in their binarry representation. Of course the price that is paid is that, as they are stored in binary format, they are not searchable using the JPQL/SQL.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q8. @Formula 
+
+	@Formula(value = “date_part(‘year’, age(dateOfBirth))”)
+	private int age;
+
+	The @Formula annotation provides an easy way to map the result of an SQL snippet to an entity attribute. But it also has some downsides you should be aware of:
+
+Hibernate executes the SQL snippet for every Author entity it fetches from the database. So better make sure, that you only use it for attributes you need in all of your use cases.
+You need to provide a native SQL snippet to the @Formula annotation. This can affect the database portability of your application.
+
+{
+@Column(name = "agency_id")
+private Long agencyId;
+
+private String agencyName; //note: not annotated.
+}
+
+Error : Unknown column 'team1_.agencyName' in 'field list'
+
+JPA will use all properties of the class, unless you specifically mark them with @Transient
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q9. @JsonProperty
+
+	//example of json that is submitted 
+"Car":{
+  "Type":"Ferrari",
+}
+
+//where it gets mapped 
+public static class Car {
+  @JsonProperty("Type")
+  public String type;
+ }
+
+ Here's a good example. I use it to rename the variable because the JSON is coming from a .Net environment where properties start with an upper-case letter.
+
+ @JsonIgnore
+
+  it just ignores the annotated property from being serialized or deserialized. But if there was a two-way linkage between fields, since @JsonIgnore ignores the annotated property, you may avoid the infinite recursion.
+
+  company produces multiple products (id , name, products)
+  product has id and name 
+  
+  To avoid infinte recursion problem
+  public class Product {
+  private int id;
+    private String name;
+    
+    @JsonIgnore
+    private Company company;
+  }
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q10. mappedBy
+
+For the sake of my example, here are my classes with annotations :
+
+Airline OWNS many AirlineFlights
+Many AirlineFlights belong to ONE Airline
+
+By specifying the @JoinColumn on both models you don't have a two way relationship. You have two one way relationships, and a very confusing mapping of it at that. You're telling both models that they "own" the IDAIRLINE column. Really only one of them actually should! The 'normal' thing is to take the @JoinColumn off of the @OneToMany side entirely, and instead add mappedBy to the @OneToMany.
+
+public class Airline {
+
+@OneToMany(cascade = CascadeType.ALL, mappedBy="airline")
+public Set<AirlineFlight> getAirlineFlights() {
+    return airlineFlights;
+}
+
+}
+
+That tells Hibernate "Go look over on the bean property named 'airline' on the thing I have a collection of to find the configuration."
+
+public class AirlineFlight {
+
+	private Airline airline;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="IDAIRLINE", nullable=false)
+    public Airline getAirline() {
+        return airline;
+    }
+}
+
+MappedBy signals hibernate that the key for the relationship is on the other side.
+
+This means that although you link 2 tables together, only 1 of those tables has a foreign key constraint to the other one. MappedBy allows you to still link from the table not containing the constraint to the other table.
+
+mappedby it speak for it self, it tell hibernate don't map this field it's all ready mapped by this field [name="field"].
+field is in the other entity (name of the variable in the class not the table in database)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q11. Java generics
+
+Using a parameterized type such as LinkedList<String> , instead of LinkedList , enables the compiler to perform more type checks and requires fewer dynamic casts. This way errors are detected earlier, in the sense that they are reported at compile-time by means of a compiler error message rather than at runtime by means of an exception.
+
+LinkedList<String> list = new LinkedList<String>(); 
+list.add("abc");       // fine 
+list.add(new Date());  // error
+
+public int Add(int a, int b)
+public double Add(double a, double b)
+public float Add(float a, float b)
+
+public T Add<T>(T a, T b)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q12. @Transactional - for the JPA module we have this annotation on the implementation class backing the proxy (SimpleJpaRepository). This is for two reasons: first, persisting and deleting objects requires a transaction in JPA. Thus we need to make sure a transaction is running, which we do by having the method annotated with @Transactional.
+
+@Modifying
+
+This will trigger the query annotated to the method as updating query instead of a selecting one. As the EntityManager might contain outdated entities after the execution of the modifying query, we automatically clear it (see JavaDoc of EntityManager.clear() for details). This will effectively drop all non-flushed changes still pending in the EntityManager. If you don't wish the EntityManager to be cleared automatically you can set @Modifying annotation's clearAutomatically attribute to false;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+TransactionManager is totally different to EntityManager, one is in charge of the entities (listener, entities, relationships, persistence lifecycle of them and this interface defines the methods that are used to interact with the persistence context) associated with an specific persistence context where the entities are alive, meanwhile TransactionManager is responsible for transactional data access, giving support to all the transaction that need to occurs within your application.
+
+Configuration bind one entitymanager object to an specific transactionmanager.
+
+Which it means the connection to the database and entities are managed by the EntityManager, but the object that open an close transaction in the service layer using the @Transaction annotation is the TransactionManager.
+
+The javax.transaction.TransactionManager interface allows the application server to control transaction boundaries on behalf of the application being managed, this interface contains a lot of method that are using to control them such as : commit, suspend, rollback.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+EntityManager
+The purpose of the EntityManager is to interact with the persistence context. The persistence context will then manage entity instances and their associated lifecycle
+
+Spring Data JPA does an excellent job abstracting you from the EntityManager through its Repository interfaces:
+
+Repository
+CrudRepository
+JPARepository
+But occasionally, you need to access the EntityManager.
+
+@PersistenceContext 
+private EntityManager em;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+SpringApplication.run(BalancingRestApplication.class,args)
+
+1. sets up default configuration
+2. Starts spring application context  /* container for the application */
+3. Performs class path scan
+4. Starts Tomcat server
+
+Convention over configuration
+parent project contains opinionated set of maven configurations
+child  project inherits the same configuration
+
+@SpringBootApplication tells that this is the starting point of your application
+
+create a servlet container and host this application in that servlet container
+
+annotating a class with the @Configuration indicates that the class can be used by the Spring IoC container as a source of bean definitions.
+@Configuration is an analog for xml file. Such classes are sources of bean definitions by defining methods with the @Bean annotation.
+
+ It tells Spring to setup some basic infrastructure judging by what you have in the classpath. It's done by invoking a so called import class that's derived from the value of the @Import annotation that @EnableAutoConfiguration includes. Only one class should be annotated with @EnableAutoConfiguration, duplicating it doesn't do anything.
+
+To schedule job in spring boot application to run periodically, spring boot provides @EnableScheduling and @Scheduled annotations. Lets learn to use them.Let’s say you want to run job at every 10 seconds interval.
+
+Add @EnableScheduling annotation to your spring boot application class. @EnableScheduling is a Spring Context module annotation. It internally imports the SchedulingConfiguration via the @Import(SchedulingConfiguration.class) instruction
+
+Now you can add @Scheduled annotations on methods which you want to scedule. Only condition is that methods should be without arguments.
+
+ScheduledAnnotationBeanPostProcessor that will be created by the imported SchedulingConfiguration scans all declared beans for the presence of the @Scheduled annotations.
+
+For every annotated method without arguments, the appropriate executor thread pool will be created. This thread pool will manage the scheduled invocation of the annotated method.
+
+SpringBootServletIntializer This is an extension of WebApplicationInitializer which runs a SpringApplication from a traditional WAR archive deployed on a web container. This class binds Servlet, Filter and ServletContextInitializer beans from the application context to the server.
+
+Extending the SpringBootServletInitializer class also allows us to configure our application when it’s run by the servlet container, by overriding the configure() method.
+
+That method uses SpringApplicationBuilder to simply register our class as a configuration class of the application:
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+An interface can extend another interface 
+
+public interface Sports {
+   public void setHomeTeam(String name);
+   public void setVisitingTeam(String name);
+}
+
+// Filename: Football.java
+public interface Football extends Sports {
+   public void homeTeamScored(int points);
+   public void visitingTeamScored(int points);
+   public void endOfQuarter(int quarter);
+}
+
+public interface Hockey extends Sports, Event
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+@Slf4j
+
+@RestController
+
+Spring’s annotation-based MVC framework simplifies the process of creating RESTful web services. The key difference between a traditional Spring MVC controller and the RESTful web service controller is the way the HTTP response body is created.
+
+
+Client Request, Response  {Dispatcher servlet} -> handler mapping -> controller -> view -> dispatcher servlet
+
+Spring MVC supports three different types of mapping request URIs to controllers: annotation, name conventions, and explicit mappings.
+
+Requests are processed by the Controller and the response is returned to the DispatcherServlet which then dispatches to the view.
+
+Using @ResponseBody annotation
+When you use the @ResponseBody annotation on a method, Spring converts the return value and writes it to the http response automatically.
+
+Spring has a list of HttpMessageConverters registered in the background. The responsibility of the HTTPMessageConverter is to convert the request body to a specific class and back to the response body again, depending on a predefined mime type. Every time an issued request hits @ResponseBody, Spring loops through all registered HTTPMessageConverters seeking the first that fits the given mime type and class, and then uses it for the actual conversion
+
+@RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = "application/json")
+
+public @ResponseBody Employee getEmployeeInJSON(@PathVariable String name) {
+       employee.setName(name);
+       employee.setEmail("employee1@genuitec.com");
+    return employee; 
+    }
+  
+@RequestMapping(value="/method8/{id:[\\d]+}/{name}")
+@ResponseBody
+public String method8(@PathVariable("id") long id, @PathVariable("name") String name){
+  return "method8 with id= "+id+" and name="+name;
+}
+
+@RequestMapping with @RequestParam for URL parameters: Sometimes we get parameters in the request URL, mostly in GET requests. We can use @RequestMapping with @RequestParam annotation to retrieve the URL parameter and map it to the method argument. For example:
+
+
+@RequestMapping(value="/method9")
+@ResponseBody
+public String method9(@RequestParam("id") int id){
+  return "method9 with id= "+id;
+}
+
+using @RestController annotation
+
+Spring 4.0 introduced @RestController, a specialized version of the controller which is a convenience annotation that does nothing more than add the @Controller and @ResponseBody annotations. By annotating the controller class with @RestController annotation, you no longer need to add @ResponseBody to all the request mapping methods. The @ResponseBody annotation is active by default
+
+As you can see, using @RestController is quite simple and is the preferred method for creating MVC RESTful web services starting from Spring v4.0
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+@RequestMapping
+
+<servlet-mapping>
+    <servlet-name>mvc-dispatcher</servlet-name>
+    <url-pattern>/rest/*</url-pattern>
+</servlet-mapping>
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Autowiring by name and type
+
+package com.concretepage.bean;
+import org.springframework.beans.factory.annotation.Autowired;
+public class Employee {
+  private String empName;
+  @Autowired
+  private Address address;
+  public String getEmpName() {
+    return empName;
+  }
+  public void setEmpName(String empName) {
+    this.empName = empName;
+  }
+  public Address getAddress() {
+    return address;
+  }
+  public void setAddress(Address address) {
+    this.address = address;
+  }
+}  
+
+
+ <bean name="address" class="com.concretepage.bean.Address">
+      <property name="city" value="Varanasi"/>
+      <property name="state" value="Uttar Pradesh"/>
+    </bean>   
+    <bean name="address2" class="com.concretepage.bean.Address">
+      <property name="city" value="Bhopal"/>
+      <property name="state" value="Madhya Pradesh"/>
+    </bean>    
+    <bean name="employee" class="com.concretepage.bean.Employee" autowire="byName">
+      <property name="empName" value="Manohar Parikar"/>
+    </bean> 
+
+Autowire by type:
+1. If in the container, there is only one bean of required class type then autowiring is performed. 
+2. If there is more than one bean of same class type in the container, a fatal error is thrown and autowiring is not performed. 
+3. If there is no bean of required class type in the container, obviously no autowiring performed and also no error is thrown. 
+
+
+
+@Autowired
+  public Employee (Address address, String empName) {
+    this.address = address;
+    this.empName = empName;
+  }
+
+<bean class="com.concretepage.bean.Address">
+      <property name="city" value="Varanasi"/>
+      <property name="state" value="Uttar Pradesh"/>
+    </bean>   
+    <bean name="employee" class="com.concretepage.bean.Employee" autowire="constructor">
+  <constructor-arg name="empName" value="Manohar Parikar"/>
+</bean> 
+
+As the constructor of Employee class has two arguments, Address type will be autowired and second argument has been configured with bean definition.
+https://www.mkyong.com/spring/spring-autowiring-qualifier-example/
+
+
+I have a bean like this
+
+@Bean
+public String myBean(){
+    return "My bean";
+}
+
+I want to autowire it:
+
+@Autowired
+@Qualifier("myBean")
+public void setMyBean(String myBean){
+    this.myBean=myBean;
+}
+
+By default, configuration classes use a @Bean method’s name as the name of the resulting bean. This functionality can be overridden, however, with the name attribute.
+@Configuration
+public class AppConfig {
+
+    @Bean(name = "myFoo")
+    public Foo foo() {
+        return new Foo();
+    }
+
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring 2.5 introduces further stereotype annotations: @Component, @Service, and @Controller. @Component is a generic stereotype for any Spring-managed component. @Repository, @Service, and @Controller are specializations of @Component for more specific use cases, for example, in the persistence, service, and presentation layers, respectively
+
+Therefore, you can annotate your component classes with @Component, but by annotating them with @Repository, @Service, or @Controller instead, your classes are more properly suited for processing by tools or associating with aspects. For example, these stereotype annotations make ideal targets for pointcuts.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+CRUD Repository
+ CrudRepository provides generic CRUD operation on a repository for a specific type.Spring provides CrudRepository implementation class automatically at runtime. It contains methods such as save, findById, delete, count etc. Spring boot automatically detects our repository if the package of that repository interface is the same or sub-package of the class annotated with @SpringBootApplication
+
+  In this case we need to use @EnableJpaRepositories annotation with @SpringBootApplication. Using @EnableJpaRepositories we will configure package name in which our repository classes reside.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Paging and sorting Repository
+
+Rather than return everything from a large result set, Spring Data REST recognizes some URL parameters that will influence the page size and starting page number. To add paging support to your Repositories, you need to extend the PagingAndSortingRepository<T,ID> interface rather than the basic CrudRepository<T,ID> interface. This adds methods that accept a Pageable to control the number and page of results returned.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+How do i use a custom serializer with jackson
+
+public class User {
+  public final int id;
+  public final String name;
+
+  public User(int id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+}
+
+public class Item {
+  public final int id;
+  public final String itemNr;
+  public final User createdBy;
+
+  public Item(int id, String itemNr, User createdBy) {
+        this.id = id;
+        this.itemNr = itemNr;
+        this.createdBy = createdBy;
+    }
+}
+
+I want to serialize an Item to this JSON:
+{"id":7, "itemNr":"TEST", "createdBy":3}
+with User serialized to only include the id. I will also be able to serilize all user objects to JSON like:
+
+{"id":3, "name": "Jonas", "email": "jonas@example.com"}
+
+Jackson annotation examples
+
+@JsonAnyGetter
+
+public class ExtendableBean {
+    public String name;
+    private Map<String, String> properties;
+ 
+    @JsonAnyGetter
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+}
+
+{
+    "name":"My bean",
+    "attr2":"val2",
+    "attr1":"val1"
+}
+
+
+@JsonPropertyOrder({ "name", "id" })
+
+@JsonSerialize
+
+public class Event {
+    public String name;
+ 
+    @JsonSerialize(using = CustomDateSerializer.class)
+    public Date eventDate;
+}
+
+public class CustomDateSerializer extends StdSerializer<Date> {
+ 
+    private static SimpleDateFormat formatter 
+      = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+ 
+    public CustomDateSerializer() { 
+        this(null); 
+    } 
+ 
+    public CustomDateSerializer(Class<Date> t) {
+        super(t); 
+    }
+ 
+    @Override
+    public void serialize(
+      Date value, JsonGenerator gen, SerializerProvider arg2) 
+      throws IOException, JsonProcessingException {
+        gen.writeString(formatter.format(value));
+    }
+}
+
+https://www.baeldung.com/jackson-annotations
+https://www.baeldung.com/jackson-custom-serialization
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+ISO_LOCAL_DATE : 2011-12-03
+
+DateTimeFormatter
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+DESIGN PATTERNS IN JAVA
+https://sourcemaking.com/design_patterns/abstract_factory
+https://www.journaldev.com/1392/factory-design-pattern-in-java
+
+INTENT:
+Provide an interface for creating families of related or dependent objects without specifying their concrete classes.
+A hierarchy that encapsulates: many possible "platforms", and the construction of a suite of "products".
+The new operator considered harmful.
+
+ValueOf
+
+      Integer x =Integer.valueOf(9);
+      Double c = Double.valueOf(5);
+      Float a = Float.valueOf("80");               
+      Integer b = Integer.valueOf("444",16);
+
+This uses Factory pattern
+
+Factory design pattern is used when we have a super class with multiple sub-classes and based on input, we need to return one of the sub-class. This pattern take out the responsibility of instantiation of a class from client program to the factory class.
+
+public abstract class Computer {
+  
+  public abstract String getRAM();
+  public abstract String getHDD();
+  public abstract String getCPU();
+  
+  @Override
+  public String toString(){
+    return "RAM= "+this.getRAM()+", HDD="+this.getHDD()+", CPU="+this.getCPU();
+  }
+}
+
+
+public class PC extends Computer {
+  
+}
+
+public class Server extends Computer {
+  
+}
+
+public class ComputerFactory {
+  public static Computer getComputer(String type, String ram, String hdd, String cpu){
+
+    if("PC".equalsIgnoreCase(type)) return new PC(ram, hdd, cpu);
+    else if("Server".equalsIgnoreCase(type)) return new Server(ram, hdd, cpu);
+    return null;
+    }
+}
+
+public class TestFactory {
+  public static void main (String[] args) {
+    Computer pc = ComputerFactory.getComputer("pc","2 GB","500 GB","2.4 GHz");
+    Computer server = ComputerFactory.getComputer("server","16 GB","1 TB","2.9 GHz");
+    System.out.println("Factory PC Config::"+pc);
+    System.out.println("Factory Server Config::"+server);
+  }
+}
+
+
+In the code 
+
+the super class is DQDataSource 
+Provide an interface for creating familiy of datasources of related or dependent objects without specifying their concrete classes.
+A hierarchy that encapsulates: many possible "datasources", and the construction of a suite of "datasource objects".
+
+public abstract class DQDataSource {
+  DataSourceProperties
+  systemProperties
+
+  abstract buildDataSource()
+  synchronized Object reintialize()
+}
+
+
+public class OracleDataSource extends DQDataSource {
+  constructor calls the super()
+  protected void buildDataSource()
+}
+
+public class HiveDataSource extends DQDataSource {
+  
+}
+
+public abstract class AbstractDataSourceFactory {
+  static DQDatasource createDataSource(DataSourceProperties,systemProperties) ->
+    if datasourceType is orcle :
+      dqDataSource = create OracleDataSource
+    else if type is db2 :
+      create DB2DataSource
+    else if type is hadoop:
+      create HiveDataSource
+    else if type is sql:
+      create GenericDataSource
+    else if type is ssh:
+      create SSHDataSource
+    else 
+      thorow exception
+
+    if datasourceproperties.getissstartup
+      dqDataSource.buildDataSource() (build this datasource)  
+
+    return dqDataSource
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring beans are managed by spring application container, when spring application stars it scan for beans which implements certain interfaces (there many interfaces like this such as BeanFactory Interfaces, ResourceAware, MessageSource aware, etc) 'ApplicationContextAware' is one of them, it has one method
+
+void setApplicationContext(ApplicationContext applicationContext)
+                    throws BeansException
+and allows instance to use application context, this context will contain all the beans that are currently available to application, so for example if you need to look up some beans or access some application file resource or even publishing some application wide events, you can you this in your bean class.
+
+@Component
+public MyClass implements ApplicationContextAware{
+
+@Autowired ApplicationContext context;
+
+public void work(){
+    MyOtherClass otherClass = context.getBean(MyOtherClass.class);
+    Resource image =   context.getResource("logo.img");        
+}
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring Data’s method parsing uses prefix keywords like find, exists, count, and delete and a terminating By keyword. Everything you put in between find and By makes your method name more expressive and does not affect query derivation.
+
+List<SomeEntity> findAnythingYouWantToPutHereBySomeCondition();
+List<SomeEntity> findBySomeCondition();
+List<SomeEntity> findAllBySomeCondition();
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+@cacheble
+
+takes three arguments (value,key,condition)
+
+value is mandatory
+
+Any data stored in a cache requires a key for its speedy retrieval. Spring, by default, creates caching keys using the annotated method’s signature as demonstrated by the code above
+
+@Cacheable(value = "employee", key = "#surname")
+  public Person findEmployeeBySurname(String firstName, String surname, int age) {
+    return new Person(firstName, surname, age);
+  }
+
+  @Cacheable(value = "employee", condition = "#age < 25")
+  public Person findEmployeeByAge(String firstName, String surname, int age) {
+    return new Person(firstName, surname, age);
+  }
+
+@Cacheable(value = "employee")
+public class EmployeeDAO {
+  public Person findEmployee(String firstName, String surname, int age) {
+    return new Person(firstName, surname, age);
+  }
+  public Person findAnotherEmployee(String firstName, String surname, int age) {
+    return new Person(firstName, surname, age);
+  }
+}
+
+@Test
+  public void testCache() {
+    Person employee1 = instance.findEmployee("John", "Smith", 22);
+    Person employee2 = instance.findEmployee("John", "Smith", 22);
+    assertEquals(employee1, employee2);
+  }
+
+  True
+
+  @Test
+  public void testCacheWithAgeAsCondition() {
+    Person employee1 = instance.findEmployeeByAge("John", "Smith", 22);
+    Person employee2 = instance.findEmployeeByAge("John", "Smith", 22);
+    assertEquals(employee1, employee2);
+  }
+
+  False
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+@CacheEvict
+
+supports two additional attributes : allEntries , beforeInvocation
+
+  @CacheEvict(value = "employee", allEntries = true)
+  public void resetAllEntries() {
+    // Intentionally blank
+  }
+
+  allEntries is used to completely clear the contents of a cache defined by @CacheEvict's mandatory value argument.
+
+    @Test
+  public void testCacheResetOfAllEntries() {
+
+    Person employee1 = instance.findEmployee("John", "Smith", 22);
+    instance.resetAllEntries();
+    Person employee2 = instance.findEmployee("John", "Smith", 22);
+
+    assertNotSame(employee1, employee2);
+  }
+
+  @CacheEvict(value = "employee", beforeInvocation = true)
+  @Cacheable(value = "employee")
+  public Person evictAndFindEmployee(String firstName, String surname, int age) {
+
+    return new Person(firstName, surname, age);
+  }
+
+  @CacheEvict(value = "employee", key = "#surname")
+  public void resetOnSurname(String surname) {
+    // Intentionally blank
+
+  }
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Abstract class and interface
+
+Abstract class in Java is similar to interface except that it can contain default method implementation. An abstract class can have an abstract method without body and it can have methods with implementation also.Abstract class in java can’t be instantiated. An abstract class is mostly used to provide a base for subclasses to extend and implement the abstract methods and override or use the implemented methods in abstract class.
+
+public abstract class Person {                                                                                     
+  
+  private String name;
+  private String gender;
+  
+  public Person(String nm, String gen){
+    this.name=nm;
+    this.gender=gen;
+  }
+  
+  //abstract method
+  public abstract void work();
+  
+  @Override
+  public String toString(){
+    return "Name="+this.name+"::Gender="+this.gender;
+  }
+
+  public void changeName(String newName) {
+    this.name = newName;
+  } 
+}
+
+public class Employee extends Person {
+  
+  private int empId;
+  
+  public Employee(String nm, String gen, int id) {
+    super(nm, gen);
+    this.empId=id;
+  }
+
+  @Override
+  public void work() {
+    if(empId == 0){
+      System.out.println("Not working");
+    }else{
+      System.out.println("Working as employee!!");
+    }
+  }
+  
+  public static void main(String args[]){
+    //coding in terms of abstract classes
+    Person student = new Employee("Dove","Female",0);
+    Person employee = new Employee("Pankaj","Male",123);
+    student.work();
+    employee.work();
+    //using method implemented in abstract class - inheritance
+    employee.changeName("Pankaj Kumar");
+    System.out.println(employee.toString());
+  }
+
+}
+
+If a class have abstract methods, then the class should also be abstract using abstract keyword, else it will not compile.
+If abstract class doesn’t have any method implementation, its better to use interface because java doesn’t support multiple class inheritance.
+The subclass of abstract class in java must implement all the abstract methods unless the subclass is also an abstract class.
+All the methods in an interface are implicitly abstract unless the interface methods are static or default. Static methods and default methods in interfaces are added in Java 8,
+Java Abstract class can implement interfaces without even providing the implementation of interface methods
+Java Abstract class is used to provide common method implementation to all the subclasses or to provide default implementation.
+We can run abstract class in java like any other class if it has main() method.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@Setter
+@Getter
+
+@AllArgsConstructor
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Synchronized 
+
+Synchronized keyword in Java is used to provide mutually exclusive access to a shared resource with multiple threads in Java. Synchronization in Java guarantees that no two threads can execute a synchronized method which requires the same lock simultaneously or concurrently.
+
+public class Singleton{ 
+private static volatile Singleton _instance;
+ public static Singleton getInstance(){ 
+  if(_instance == null){ 
+    synchronized(Singleton.class){
+     if(_instance == null) 
+     _instance = new Singleton();
+   }
+  } 
+  return _instance; 
+}
+
+Whenever a thread enters into java synchronized method or blocks it acquires a lock and whenever it leaves java synchronized method or block it releases the lock. The lock is released even if thread leaves synchronized method after completion or due to any Error or Exception
+
+java Thread acquires an object level lock when it enters into an instance synchronized java method and acquires a class level lock when it enters into static synchronized java method.
+
+One Major disadvantage of Java synchronized keyword is that it doesn't allow concurrent read, which can potentially limit scalability.
+Java Synchronization will throw NullPointerException if object used in java synchronized block is null
+
+https://javarevisited.blogspot.com/2011/04/synchronization-in-java-synchronized.html
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Static methods in java
+
+If you are writing utility classes and they are not supposed to be changed.
+If the method is not using any instance variable.
+If any operation is not dependent on instance creation.
+If there is some code that can easily be shared by all the instance methods, extract that code into a static method.
+If you are sure that the definition of the method will never be changed or overridden. As static methods can not be overridden.
+
+does it make sense to call this method, even if no Obj has been constructed yet?" If so, it should definitely be static.
+
+double convertMpgToKpl(double mpg)
+because one might want to know what 35mpg converts to, even if nobody has ever built a Car
+
+But void setMileage(double mpg) (which sets the efficiency of one particular Car) can't be static since it's inconceivable to call the method before any Car has been constructed.
+
+Btw, the converse isn't always true: you might sometimes have a method which involves two Car objects, and still want it to be static. E.g. Car theMoreEfficientOf( Car c1, Car c2 ). Although this could be converted to a non-static version, some would argue that since there isn't a "privileged" choice of which Car is more important, you shouldn't force a caller to choose one Car as the object you'll invoke the method on. This situation accounts for a fairly small fraction of all static methods, though.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+SQL driver
+
+DBMS-based drivers are used with data sources such as Oracle or SQL Server that provide a stand-alone database engine for the driver to use. These drivers access the physical data through the stand-alone engine; that is, they submit SQL statements to and retrieve results from the engine.
+
+The "dual" table/object name is an Oracle construct, which MySQL supports for compatibility - or to provide a target for queries that dont have a target but people want one to feel all warm and fuzzy. 
+
+select curdate() 
+can be
+select curdate() from dual
+
+select 1 from dual
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+An ODBC driver uses the Open Database Connectivity (ODBC) interface by Microsoft that allows applications to access data in database management systems (DBMS) using SQL as a standard for accessing the data. ... ODBC permits maximum interoperability, which means a single application can access different DBMS.
+
+A JDBC driver is a software component enabling a Java application to interact with a database
+
+
+
+Thin and Thick Drivers in java
+
+thin driver is a name given to one of the driver implemetaion, for java to be connected to Oracle. This is a type-4 driver where Java language call will be converted to network calls and will be sent to the Oracle DataBase Server.
+
+thick driver - type 1 and type 2 JDBC drivers are called thick drivers. The reason for it is - it provides JDBC access via ODBC drivers. ODBC binary code, and in many cases, database client code, must be loaded on each client machine that uses such a driver. and as the program is connected to database by an extra layer, in the clint hence thay are called thick drivers.Thin drivers: This style of driver converts JDBC calls into the network protocol, used directly by DBMSs, allowing a direct call from the client machine to the DBMS server and providing a practical solution for intranet access. hence their conenction to DB is more direct and without any intermediate stage making them thin drivers. type 4 driver.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CONTAINING = %LIKE%
+spring data
+
+converting the iterable to collection
+public static <E> Collection<E> makeCollection(Iterable<E> iter) {
+    Collection<E> list = new ArrayList<E>();
+    for (E item : iter) {
+        list.add(item);
+    }
+    return list;
+}
+
+streams , lamdas, in java8
+
+https://logback.qos.ch/reasonsToSwitch.html
+
+In Java, a static member is a member of a class that isn't associated with an instance of a class. Instead, the member belongs to the class itself. As a result, you can access the static member without first creating a class instance. ... The value of a static field is the same across all instances of the class.
+
+
+
+
+Trim() -> It returns the omitted string with no leading and trailing spaces.
+
+a. \d implies digit.
+b. + sign implies one or more occurance of previous character.
+c. \. -> since . is a special character in regex, we have to escape it with \.
+d. Also, \ is a special escape character in java , hence from java perspective we need to add an additional \ to escape the backslash (\).
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+It looks like there is an annotation:
+
+@PropertySource("classpath:com/foo/my-production.properties")
+Annotating a class with this will load the properties from the file in to the Environment. You then have to autowire the Environment into the class to get the properties.
+
+
+@Configuration
+@PropertySource("classpath:com/foo/my-production.properties")
+public class AppConfig {
+
+@Autowired
+private Environment env;
+
+public void someMethod() {
+    String prop = env.getProperty("my.prop.name");
+    ...
+}
+
+@PropertySources(@PropertySource("classpath:mail.properties"))
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+difference between @configuration and @component
+
+/@Configuration or @Component
+public static class Config {
+    @Bean
+    public A a() {
+        return new A();
+    }
+    //**please see a() method called inside b() method**
+    @Bean
+    public B b() {
+        return new B(a());
+    }
+}
+1) Here if Config class annotated with @configuration , than a() method and b() method , both will be called once .
+
+2)Here if Config class annotated with @component , than a() method will be called once but b() method will be called twice .
+
+Problem in (2) :- since we have noticed the problem with @compenent annotation . This second configuration (2) is totally incorrect because spring will create a singleton bean of A, but B will obtain another instance of A which is out of the spring context control.
+
+Solution :- we can use @autowired annotation with @component annotation inside Config class .
+
+@Component
+public static class Config {
+    @Autowired
+    A a;
+
+    @Bean
+    public A a() {
+        return new A();
+    }
+
+    @Bean
+    public B b() {
+        return new B(a);
+    }
+}
+
+--------------------------------------------------------------------------------------------------------
+
+If scope is set to singleton, the Spring IoC container creates exactly one instance of the object defined by that bean definition. ... Singleton scope: The same object is returned each time it is injected. Prototype scope is used for all beans that are stateful, while the singleton scope should be used for stateless beans
+
+
+Adding to the above..dont get confuse with the java singleton. according to JAVA spec singleton means only one instance of that bean will be created per JVM. but in spring singleton means one instance for that particular bean will be created per application context. so if your app has more than one context you can still have more than one instance for that bean.
+
+Interview question on spring singletons
+https://dzone.com/articles/an-interview-question-on-spring-singletons
+
+Spring Singletons are not Java Singletons
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <bean id="scopeTest" class="com.example.scope.Scope" scope="singleton">
+        <property name="name" value="Shamik Mitra"/>    
+    </bean>    
+    <bean id="scopeTestDuplicate" class="com.example.scope.Scope" scope="singleton">
+        <property name="name" value="Samir Mitra"/>    
+    </bean>
+</beans>
+
+package com.example.scope;
+public class Scope {
+    private String name;
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    @Override
+    public String toString() {
+        return "Scope [name=" + name + "]";
+    }
+}
+
+
+package com.example.scope;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+public class Main {
+    public static void main(String[] args) {
+        ApplicationContext ctx = new ClassPathXmlApplicationContext(
+            "configFiles/Scope.xml");
+        Scope scope = (Scope) ctx.getBean("scopeTest");
+        Scope scopeDuplicate = (Scope) ctx.getBean("scopeTestDuplicate");
+        System.out.println(scope == scopeDuplicate);
+        System.out.println(scope + "::" + scopeDuplicate);
+    }
+}
+
+Reference Check ::false
+Scope [name=Shamik Mitra]::Scope [name=Samir Mitra]
+
+
+When a bean is a singleton, only one shared instance of the bean will be managed, and all requests for beans with an id or ids matching that bean definition will result in that one specific bean instance being returned by the Spring container.
+
+---------------------------------------------------------------------------------------------------------------------
+
+final - to create constant variables
+final - prevent method overriding
+final - prevent inheritance
+
+----------------------------------------------------------------------------
+what does class<?> mean in java
+
+Class is a parametrizable class, hence you can use the syntax Class<T> where T is a type. By writing Class<?>, you're declaring a Class object which can be of any type (? is a wildcard).
+
+This <?> is a beast. It often leads to confusion and errors, because, when you see it first, then you start believing, <?> is a wildcard for any java type. Which is .. not true. <?> is the unknown type, a slight and nasty difference.
+
+It's not a problem when you use it with Class. Both lines work and compile:
+
+Class anyType = String.class;
+Class<?> unknownType = String.class;
+
+List<?> list = new ArrayList<Object>();
+list.add("a string");  /*doesnt compile*/
+
+Our List<?> is not a collection, that is suitable for just any type of object. It can only store one type: the mystic "unkown type". Which is not a real type, for sure.
+
+It's a generics literal. It means that you don't know the type of class this Class instance is representing, but you are still using the generic version.
+
+if you knew the class, you'd use Class<Foo>. That way you can create a new instance, for example, without casting: Foo foo = clazz.newInstance();
+-----------------------------------------------------
+
+However, there can only be one public class per .java file, as public classes must have the same name as the source file. 
+One Java file can consist of multiple classes with the restriction that only one of them can be public.
+
+
+Enum classes
+
+
+enum Days{
+  SUNDAY, MONDAY, TUESDAY, WEDNESDAY,THURSDAY,FRIDAY,SATURDAY
+}
+
+public class SimpleEnumExampleTest{
+  @Test
+  public void simpleEnumExampleOutsideClassTest(){
+    Days day = Days.SUNDAY;
+    System.out.println("Days enum is set a value" + day);
+    assertEquals(Days.valueOf("SUNDAY"),day);
+  }
+}
+
+public class EnumInIfStatement {
+   public String enumInIf(Days day) {
+       if(day == Days.SUNDAY) {
+           return "Its Sunday :-)";
+       }else if (day == Days.MONDAY) {
+           return "Its Monday :*--(";
+       }else if (day == Days.TUESDAY) {
+           return "Its Tuesday :*-(";
+       }else if (day == Days.WEDNESDAY) {
+           return "Its Wednesday :*(";
+       }else if (day == Days.THURSDAY) {
+           return "Its Thursday :)";
+       }else if (day == Days.FRIDAY) {
+           return "Its Friday ;-D";
+       }else {
+           return "Its Saturday :=D";
+       }
+   }
+}
+
+public ArrayList<String> enumIteration() {
+       Days[] days = Days.values();
+       ArrayList<String> stringDay = new ArrayList<String>();
+       for (Days day : days) {
+           stringDay.add(day.toString());
+       }
+       return stringDay;
+}
+
+-----------------------------------------------------------------------------------
+
+Annotating a class with the @Configuration indicates that the class can be used by the Spring IoC container as a source of bean definitions. The @Bean annotation tells Spring that a method annotated with @Bean will return an object that should be registered as a bean in the Spring application context.
+
+https://thoughts-on-java.org/hibernate-tips-map-java-util-date-database-column/
+
+Mapping java util date to database column
+
+--------------------------------------------------------------------------------
+
+My problem is that I want my tests to NOT influence other tests. So I'd like to create something like rollback for each test. I've searched a lot for this, but I've found nothing so far. I'm using Hibernate and MySql for this
+
+Just add @Transactional annotation on top of your test:
+
+@RunWith(SpringJUnit4ClassRunner.class)  
+@ContextConfiguration(locations = {"testContext.xml"})
+@Transactional
+public class StudentSystemTest {
+
+By default Spring will start a new transaction surrounding your test method and @Before/@After callbacks, rolling back at the end. It works by default, it's enough to have some transaction manager in the context.
+
+In the TestContext framework, transactions are managed by the TransactionalTestExecutionListener. Note that TransactionalTestExecutionListener is configured by default, even if you do not explicitly declare @TestExecutionListeners on your test class. To enable support for transactions, however, you must provide a PlatformTransactionManager bean in the application context loaded by @ContextConfiguration semantics. In addition, you must declare @Transactional either at the class or method level for your tests.
+
+-------------------------------------------------------------------------------------------------
+
+https://stackoverflow.com/questions/40724100/enabletransactionmanagement-in-spring-boot
+
+https://www.concretepage.com/spring/example_enabletransactionmanagement_spring
+
+In spring , when we are using @Configuration i.e XML free configuration and need to connect to database with hibernate. We need to use @EnableTransactionManagement. This is applied on class level.
+
+
+

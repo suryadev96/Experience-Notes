@@ -1,0 +1,208 @@
+Quartz : Scheduling jobs in spring with Quartz
+
+Oracle : The Spring Framework is the most popular Java framework used for building enterprise class applications. Oracle is the most popular database used in the enterprise. So chances are, if you developing Spring Applications, sooner or later, you're going to be persisting to an Oracle database
+
+DB2 : DB2 is a family of relational database management system (RDBMS) products from IBM that serve a number of different operating system platforms. According to IBM, DB2 leads in terms of database market share and performance. Although DB2 products are offered for UNIX-based systems and personal computer operating systems, DB2 trails Oracle's database products in UNIX-based systems and Microsoft's Access in Windows systems
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring boot : Spring Boot is a brand new framework from the team at Pivotal, designed to simplify the bootstrapping and development of a new Spring application. The framework takes an opinionated approach to configuration, freeing developers from the need to define boilerplate configuration. Basically, Spring Boot is an opinionated instance of a Spring application. Spring Boot is a rapid application development platform. It uses various components of Spring, but has additional niceties like the ability to package your application as a runnable jar, which includes an embedded tomcat (or jetty) server
+
+Spring boot starter : Starters. Spring Boot Starters are a set of convenient dependency descriptors that you can include in your application. You get a one-stop-shop for all the Spring and related technology that you need without having to hunt through sample code and copy paste loads of dependency descriptors.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Jackson : Jackson is a very popular and efficient java based library to serialize or map java objects to JSON and vice versa.
+
+JSON Serialization : JSON is a format that encodes objects in a string. Serialization means to convert an object into that string, and deserialization is its inverse operation. When transmitting data or storing them in a file, the data are required to be byte strings, but complex objects are seldom in this format.
+
+Marshalling : In few words, "marshalling" refers to the process of converting the data or the objects inbto a byte-stream, and "unmarshalling" is the reverse process of converting the byte-stream beack to their original data or object. The conversion is achieved through "serialization".
+
+JSON : The JSON format is often used for serializing and transmitting structured data over a network connection. It is used primarily to transmit data between a server and web application, serving as an alternative to XML. JSON is JavaScript Object Notation. JSON (JavaScript Object Notation) is a lightweight data-interchange format. It is easy for humans to read and write. It is easy for machines to parse and generate.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Hadoop : Hadoop is an open-source software framework for storing data and running applications on clusters of commodity hardware. It provides massive storage for any kind of data, enormous processing power and the ability to handle virtually limitless concurrent tasks or jobs. It enables processing of unstructured, semistructured and structured data sets across the clusters of commodity servers.
+
+
+Hive : Apache Hive is a data warehouse software project built on top of Apache Hadoop for providing data query and analysis. Hive gives an SQL-like interface to query data stored in various databases and file systems that integrate with Hadoop.
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+HikariCP : This is a very lightweight (at roughly 130Kb) and lightning fast JDBC connection pooling framework. In japanese, Hikari means "light"
+
+DBconnectionPool : In software engineering, a connection pool is a cache of database connections maintained so that the connections can be reused when future requests to the database are required. Connection pools are used to enhance the performance of executing commands on a database.
+
+Database connection : In computer science, a database connection is the means by which a database server and its client software communicate with each other. The term is used whether or not the client and the server are on different machines. The client uses a database connection to send commands to and receive replies from the server.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+JUnit : JUnit is a unit testing framework for the Java programming language. JUnit has been important in the development of test-driven development, and is one of a family of unit testing frameworks which is collectively known as xUnit that originated with SUnit.
+
+Mockito : Mockito is a mocking framework, JAVA-based library that is used for effective unit testing of JAVA applications. Mockito is used to mock interfaces so that a dummy functionality can be added to a mock interface that can be used in unit testing.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Commons.lang3 : Provides highly reusable static utility methods, chiefly concerned with adding value to the java.lang classes. ... They are the equivalent of global functions in another language, a collection of stand-alone, thread-safe, static methods.
+
+ Thread safe : A piece of code is thread-safe if it only manipulates shared data structures in a manner that guarantees safe execution by multiple threads at the same time."
+
+Static methods : Static methods in java belong to the class (not an instance of it). They use no instance variables and will usually take input from the parameters, perform actions on it, then return some result. Instances methods are associated with objects and, as the name implies, can use instance variables.
+
+why java main method is static : This is neccesary because main() is called by the JVM before any objects are made. Since it is static it can be directly invoked via the class. Similarly, we use static sometime for user defined methods so that we need not to make objects. void indicates that the main() method being declared does not return a value.
+
+
+Static variable : Static variable in Java is variable which belongs to the class and initialized only once at the start of the execution.
+
+It is a variable which belongs to the class and not to object(instance)
+Static variables are initialized only once, at the start of the execution. These variables will be initialized first, before the initialization of any instance variables
+A single copy to be shared by all instances of the class
+A static variable can be accessed directly by the class name and doesn’t need any object
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+FlexJson : Flexjson is a lightweight library for serializing and deserializing Java objects into and from JSON. What's different about Flexjson is it's control over what gets serialized allowing both deep and shallow copies of objects. Most JSON serializers mimic object serialization libraries and try to serialize the entire object graph from the object being turned into JSON.
+
+Jsch : JSch is a pure Java implementation of SSH2.
+JSch allows you to connect to an sshd server and use port forwarding, X11 forwarding, file transfer, etc., and you can integrate its functionality into your own Java programs.
+
+ssh : Needless to say, SSH provides support for secure remote login, secure file transfer, and secure TCP/IP and X11 forwarding. It can automatically encrypt, authenticate, and compress transmitted data.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Hibernate : Hibernate is an open source Java persistence framework project. Hibernate ORM (Hibernate in short) is an object-relational mapping tool for the Java programming language. It provides a framework for mapping an object-oriented domain model to a relational database. ... It generates SQL calls and relieves the developer from the manual handling and object conversion of the result set
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+jacoco : JaCoCo is an open-source toolkit for measuring and reporting Java code coverage.
+
+Code coverage : Code coverage is a measurement of how many lines/blocks/arcs of your code are executed while the automated tests are running. Code coverage is collected by using a specialized tool to instrument the binaries to add tracing calls and run a full set of automated tests against the instrumented product.
+
+Sonar coco : In one sentence Sonar is an open source platform that allows you to track and improve the quality of your source code. One of the key aspects when talking about software quality is the test coverage or code coverage which is how much of your source code is tested by Unit tests.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Plugin : In computing, a plug-in (or plugin, add-in, addin, add-on, addon, or extension) is a software component that adds a specific feature to an existing computer program. When a program supports plug-ins, it enables customization.
+
+Maven surefire plugin : The Surefire Plugin is used during the test phase of the build lifecycle to execute the unit tests of an application. It generates reports in two different file formats: Plain text files (*.txt)
+
+Compilation : Compilation of program means converting the higher level language into machine understandable low level language (machine code).
+
+Jacoco: We use the JaCoCo Maven plugin for two purposes: It provides us an access to the JaCoCo runtime agent which records execution coverage data. It creates code coverage reports from the execution data recorded by the JaCoCo runtime agent.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Dependencies:
+
+Spring-boot-starter-web : adds number of additional dependencies, including tomcat web server and spring boot itself [mvn dependency:tree]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+spring-boot-starter-data-rest : Adding a spring data rest to a spring boot project.Spring Data REST is itself a Spring MVC application and is designed in such a way that it should integrate with your existing Spring MVC applications with very little effort.
+
+Spring Data REST : is part of the umbrella Spring Data project and makes it easy to build hypermedia-driven REST web services on top of Spring Data repositories.REST web services have become the number one means for application integration on the web. In its core, REST defines that a system consists of resources that clients interact with. These resources are implemented in a hypermedia driven way. Spring MVC offers a solid foundation to build theses kinds of services. But implementing even the simplest tenet of REST web services for a multi-domain object system can be quite tedious and result in a lot of boilerplate code.
+
+Spring Data REST builds on top of Spring Data repositories and automatically exports those as REST resources. It leverages hypermedia to allow clients to find functionality exposed by the repositories and integrates these resources into related hypermedia based functionality automatically.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+spring-boot-starter-data-jpa : Implementing a data access layer of an application has been cumbersome for quite a while. Too much boilerplate code has to be written to execute simple queries as well as perform pagination, and auditing. Spring Data JPA aims to significantly improve the implementation of data access layers by reducing the effort to the amount that’s actually needed. As a developer you write your repository interfaces, including custom finder methods, and Spring will provide the implementation automatically.
+
+Exclusion:  Maven allows you to specify the specific versions of your application's dependencies in the POM (project descriptor).
+Your dependencies may themselves have dependencies, in which case your project will include those dependencies (critical when building a WAR, because otherwise it won't run).
+As you work your way through the graph of dependencies, you may find multiple dependencies for the same artifact with differing versions.
+Maven has a somewhat bogus approach to resolving those conflicts, in that the version closest to the root of the tree wins. If there are multiple versions at the same depth of the tree, the resolution is arbitrary: "the first definition wins" but there are no rules for which is first.
+This mechanism can sometimes give you dependencies that you don't want, so you use the exclusion rule to prevent Maven from including specific transitive dependencies
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+hibernate : Hibernate is an ORM framework where programmer describes the way objects are represented in database. Hibernate handles the conversion automatically. Hibernate provides implementation of JPA interfaces EntityManagerFactory and EntityManager
+
+EntityManager : The EntityManager interface is an API that manages the lifecycle of an entity instance. ... In JPA, the EntityManager interface is used to allow applications to manage and search for entities in the relational database. The EntityManager is an API that manages the lifecycle of entity instances
+
+JPA : JPA is a specification for accessing, persisting and managing the data between Java objects and the relational database. As the definition says its API, it is only the specification. There is no implementation for the API.
+
+log4j-over-slf4j : SLF4J ship with a module called log4j-over-slf4j. It allows log4j users to migrate existing applications to SLF4J without changing a single line of code but simply by replacing the log4j.jar file with log4j-over-slf4j.jar.
+
+logback : Logback is intended as a successor to the popular log4j project, picking up where log4j leaves off. ... Moreover, logback-classic natively implements the SLF4J API so that you can readily switch back and forth between logback and other logging frameworks such as log4j or java.util.logging
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+spring-boot-starter-mail : TO send emails from the spring boot application
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+thymeleaf : Thymeleaf is a Java library. It is an XML/XHTML/HTML5 template engine that is able to apply a set of transformations to template files in order to display data and/or text produced by your applications.
+
+
+Hibernate-search-orm : This project provides synchronization between entities managed by Hibernate ORM and full-text indexing services like Apache Lucene and Elasticsearch.
+
+Elastic search : Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. ... Elasticsearch can be used to search all kinds of documents. Completely open source and built with Java, Elasticsearch is categorized as a NoSQL database. That means it stores data in an unstructured way and that you cannot use SQL to query it.
+
+Apache Lucene : Apache LuceneTM is a high-performance, full-featured text search engine library written entirely in Java. It is a technology suitable for nearly any application that requires full-text search, especially cross-platform.
+
+ELK stack : Logstash is an open source tool for collecting, parsing, and storing logs for future use. Kibana 3 is a web interface that can be used to search and view the logs that Logstash has indexed. Both of these tools are based on Elasticsearch. Elasticsearch, Logstash, and Kibana, when used together is known as an ELK stack
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Guava : Guava is an open source, Java-based library developed by Google. It facilitates best coding practices and helps reduce coding errors. It provides utility methods for collections, caching, primitives support, concurrency, common annotations, string processing, I/O, and validations.
+
+spring-test : 
+
+Junit : 
+
+spring-boot-starter-aop : Dependencies for aspect oriented programming; One of the key components of Spring Framework is the Aspect oriented programming (AOP) framework. ... Spring AOP module provides interceptors to intercept an application. For example, when a method is executed, you can add extra functionality before or after the method execution.
+
+Jersey : Spring Boot provides the spring-boot-starter-jersey module that allows you to use the JAX-RS programming model for the REST endpoints instead of Spring MVC.
+
+JAX-RS : JAX-RS is a specification for implementing REST web services in Java, currently defined by the JSR-370
+SpringMVC : The REST capabilities are provided by the Spring MVC module (same module that provides model-view-controller capabilities). It is not a JAX-RS implementation and can be seen as a Spring alternative to the JAX-RS stardard.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring-boot-starter-cache : Caching is a major component of most applications, and as long as we try to avoid disk access it will remain important.
+Spring has great support for caching with a wide range of configurations. You can start as simple as you want and progress to something much more customizable.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring-retry : Spring Retry provides an ability to automatically re-invoke a failed operation. This is helpful where the errors may be transient in nature (like a momentary network glitch). Spring Retry provides declarative control of the process and policy-based behavior that is easy to extend and customize.
+
+jackson-datatype-jsr310 : JSR-310: support for "Java 8 Dates". Naming is bit opaque, but it refers to the standardization process
+
+Lombok : Lombok is a Java library meant to simplify the development of Java code writing. This article deals with writing classes that need getters/setters, override equals, hashCode, toString and/or offer a copy constructor.
+
+OpenCSV : OpenCSV provides most of the basic features for CSV parsing. OpenCSV is more popular because we don't have any builtin CSV parser in java. Some of the important classes in OpenCSV CSV parser are; CSVReader : This is the most important class in OpenCSV
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+.Project FIle
+
+When a project is created in the workspace, a project description file is automatically generated that describes the project. The purpose of this file is to make the project self-describing, so that a project that is zipped up or released to a server can be correctly recreated in another workspace.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Setting up Lombok with STS IDE
+
+Copy the lombok jar into the STS installation path
+java -jar lombok.jar (to update the STS path)
+Update the STS.ini file with -javaagent:lombok.jar
+Close and restart the sts
+Open the ouline view (windows->showview) to see getter and setters generated automatically
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,193 @@
+from sqlalchemy import (Table,Column,String, Integer, Decimal,Boolean)
+employees = Table('employees',metadata, 
+	Column('id',Integer()),
+	Column('name',String(255),unique=True,nullable=False),
+	Column('salary',Decimal(), default = 100.00),
+	Column('Active',Boolean()), default = True)
+
+metadata.create_all(engine)
+engine.table_names()
+
+replaces the autoload arguments with column objects 
+
+employees.constraints()
+
+
+
+from sqlalchemy import Table, Column, String, Integer, Float, Boolean
+
+# Define a new table with a name, count, amount, and valid column: data
+data = Table('data', metadata,
+             Column('name', String(255), unique=True),
+             Column('count', Integer(), default=1),
+             Column('amount', Float()),
+             Column('valid', Boolean(), default=False)
+)
+
+# Use the metadata to create the table
+metadata.create_all(engine)
+
+# Print the table details
+print(repr(metadata.tables['data']))
+
+
+
+Inserting data into table 
+
+from sqlalchemy import insert 
+stmt = insert(employees).values(id=1,name='krishna',salary=1.00,active=True)
+result_proxy = connection.execute(stmt)
+print(result_proxy.rowcount)
+
+
+stmt = insert(employees)
+values_list = [
+{'id':1,'name':'krishna','salary':2.0,'active':True},
+{'id'2,'name':'Balarama','salary':3.0,'active':False}
+]
+
+result_proxy = connection.execute(stmt,values_list)
+print(result_proxy.rowcount)
+
+
+
+
+from sqlalchemy import insert, select
+stmt = insert(data).values(name='Anna', count=1, amount=1000.00, valid=True)
+results = connection.execute(stmt)
+print(results.rowcount)
+stmt = select([data]).where(data.columns.name == 'Anna')
+print(connection.execute(stmt).first())
+
+
+---------------------
+stmt = insert(census)
+values_list = []
+total_rowcount = 0
+
+# Enumerate the rows of csv_reader
+for idx, row in enumerate(csv_reader):
+    data = {'state': row[0], 'sex': row[1], 'age': row[2], 'pop2000': row[3],
+            'pop2008': row[4]}
+    values_list.append(data)
+    if idx % 51 == 0:
+        results = connection.execute(stmt, values_list)
+        total_rowcount += results.rowcount
+        values_list = []
+
+print(total_rowcount)
+
+
+Updating data in database
+
+
+from sqlalchemy import update 
+stmt = update(employees)
+stmt = stmt.where(employees.columns.id == 3)
+stmt = stmt.values(active = True)
+
+
+stmt = stmt.where(employees.columns.active=True)
+stmt = stmt.values(active=True,salary=1.00)
+
+
+
+correlated updates 
+
+new_salary = select([employees.columns.salary])
+new_salary= new_salary.order_by(desc(employees.columns.salary))
+new_salary = new_salary.limit(5)
+stmt = update(employees)
+stmt = stmt.values(salary = new_salary)
+
+--------------------------
+
+select_stmt = select([state_fact]).where(state_fact.columns.name == 'New York')
+print(connection.execute(select_stmt).fetchall())
+stmt = update(state_fact).values(fips_state = 36)
+stmt = stmt.where(state_fact.columns.name == 'New York')
+results = connection.execute(stmt)
+print(results.rowcount)
+print(connection.execute(select_stmt).fetchall())
+
+
+You can also update records with data from a select statement. This is called a correlated update. 
+It works by defining a select statement that returns the value you want to update the record with and assigning that as the value in an update statement.
+
+
+correlated update 
+
+fips_stmt = select([state_fact.columns.name])
+fips_stmt = fips_stmt.where(
+    state_fact.columns.fips_state == flat_census.columns.fips_code)
+update_stmt = update(flat_census).values(state_name=fips_stmt)
+results = connection.execute(update_stmt)
+print(results.rowcount)
+
+
+
+-------------------------
+
+removing data from database 
+
+from sqlalchemy import delete 
+stmt = select([func.count(extra_employees.columns.id)])
+connection.execute(stmt).scalar()
+delete_stmt = delete(extra_employees)
+result_proxy = connection.execute(delete_stmt)
+
+extra_employees.drop(engine)
+print(extra_employees.exists(engine))
+
+metadata.drop_all(engine)
+
+--------------
+from sqlalchemy import delete, select
+stmt = delete(census)
+results = connection.execute(stmt)
+print(results.rowcount)
+stmt = select([census])
+print(connection.execute(stmt).fetchall())
+
+
+---------------
+
+# Build a statement to count records using the sex column for Men ('M') age 36: stmt
+stmt = select([func.count(census.columns.sex)]).where(
+    and_(census.columns.sex == 'M',
+         census.columns.age == 36)
+)
+
+# Execute the select statement and use the scalar() fetch method to save the record count
+to_delete = connection.execute(stmt).scalar()
+
+# Build a statement to delete records from the census table: stmt_del
+stmt_del = delete(census)
+
+# Append a where clause to target Men ('M') age 36
+stmt_del = stmt_del.where(
+    and_(census.columns.sex == 'M',
+         census.columns.age == 36)
+)
+
+# Execute the statement: results
+results = connection.execute(stmt_del)
+
+# Print affected rowcount and to_delete record count, make sure they match
+print(results.rowcount, to_delete)
+
+-------------------------
+
+
+# Drop the state_fact table
+state_fact.drop(engine)
+
+# Check to see if state_fact exists
+print(state_fact.exists(engine))
+
+# Drop all tables
+metadata.drop_all(engine)
+
+# Check to see if census exists
+print(census.exists(engine))
+

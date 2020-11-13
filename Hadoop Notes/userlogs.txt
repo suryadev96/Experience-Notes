@@ -1,0 +1,197 @@
+
+           RDD:
+
+val usersRDD = sc.textFile("hdfs://localhost:54310/users.txt")
+
+val logsRDD = sc.textFile("hdfs://localhost:54310/logs.txt")
+---------------------------------------------------------------------------------------
+
+/* urls most frequently accessed */
+
+val logsbyurl = logsRDD.map(log => {
+  val r = log.split("\t")
+  (r(3), r(2).toInt)}
+).countByKey().toSeq.sortBy(-_._2)
+logsbyurl.foreach(println)
+
+OUTPUT
+
+scala> logsbyurl.foreach(println)
+
+(gmail.com,2)
+(google.com,2)
+(linux.com,1)
+(rediff.com,1)
+(ubuntu.com,1)
+(yahoo.com,1)
+-------------------------------------------------------------------------------------
+
+/* users who are more active */
+
+val logsbyid = logsRDD.map(log => {
+  val r = log.split("\t")
+  (r(2).toInt, r(3))}).countByKey().toSeq.sortBy(-_._2)
+logsbyid.foreach(println)
+
+OUTPUT
+
+scala> logsbyid.foreach(println)
+
+(500,2)
+(200,2)
+(700,1)
+(600,1)
+(300,1)
+(100,1)
+
+----------------------------------------------------------------------------------------------
+
+/* age of users who are active*/
+
+val usersactive = sc.parallelize(logsbyid)
+
+val usersbyage = usersRDD.map(user => {
+  val r = user.split("\t")
+  (r(0).toInt, r(2).toInt )
+})
+
+val joinid = usersactive.join(usersbyage)
+joinid.first
+val ageactive = joinid.map(r => (r._2._2,(r._1,r._2._1))).sortBy(-_._2._2)
+ageactive.take(5).foreach(println)
+
+
+OUTPUT
+scala> ageactive.take(5).foreach(println)
+
+(52,(200,2))
+(22,(500,2))
+(23,(100,1))
+(22,(600,1))
+(65,(300,1))
+
+
+----------------------------------------------------------------------------------------------
+
+           DATAFRAMES:
+
+val usersDF = usersRDD.map(user => {
+  val r = user.split("\t")
+  (r(0).toInt, r(1), r(2).toInt, r(3))
+}).toDF("uid", "name", "age", "ipaddr")
+usersDF.show
+
+scala> usersDF.show
+
++---+-------+---+------------+
+|uid|   name|age|      ipaddr|
++---+-------+---+------------+
+|100| govind| 23| 20.10.225.1|
+|200| saketh| 52| 20.10.225.2|
+|300|program| 65| 20.10.225.3|
+|400|  varun| 24| 20.10.225.4|
+|500|  rajiv| 22| 20.10.225.5|
+|600|sharkar| 22| 20.10.225.6|
+|700|  kumar| 22| 20.10.225.7|
+|800| ganesh| 24| 20.10.225.8|
+|900|   raja| 23| 20.10.225.9|
+|101|sukumar| 51|20.10.225.10|
++---+-------+---+------------+
+
+val logsDF = logsRDD.map(log => {
+  val r = log.split("\t")
+  (r(0), r(1), r(2).toInt, r(3), r(4), r(5))
+}).toDF("date", "ipaddr", "uid", "url", "transactioncode", "description")
+logsDF.show
+
+scala> logsDF.show
+
++--------+-----------+---+----------+---------------+--------------+
+|    date|     ipaddr|uid|       url|transactioncode|   description|
++--------+-----------+---+----------+---------------+--------------+
+|10152013|20.10.225.1|100|google.com|        tran101|describegoogle|
+|10102013|20.10.225.2|200| yahoo.com|        tran102| describeyahoo|
+|10102013|20.10.225.2|200| gmail.com|        tran103| describegmail|
+|10102013|20.10.225.3|300|rediff.com|        tran104|descriverediff|
+|10102013|20.10.225.5|500|ubuntu.com|        tran104|descriverediff|
+|10102013|20.10.225.5|500|google.com|        tran104|descriverediff|
+|10102013|20.10.225.6|600| gmail.com|        tran104|descriverediff|
+|10102013|20.10.225.7|700| linux.com|        tran104|descriverediff|
++--------+-----------+---+----------+---------------+--------------+
+
+
+
+--------------------------------------------------------------------------------------------------
+
+val urlfreqaccessed = logsDF.groupBy("url").count().orderBy($"count".desc)
+urlfreqaccessed.show()
+
+scala> urlfreqaccessed.show()
+
++----------+-----+
+|       url|count|
++----------+-----+
+| gmail.com|    2|
+|google.com|    2|
+| yahoo.com|    1|
+| linux.com|    1|
+|rediff.com|    1|
+|ubuntu.com|    1|
++----------+-----+
+
+--------------------------------------------------------------------------------------------------
+val usersactive = logsDF.groupBy("uid").count().orderBy($"count".desc)
+usersactive.show()
+
+scala> usersactive.show()
+
++---+-----+
+|uid|count|
++---+-----+
+|500|    2|
+|200|    2|
+|300|    1|
+|600|    1|
+|100|    1|
+|700|    1|
++---+-----+
+
+--------------------------------------------------------------------------------------------------
+val ageactive = usersDF.join(logsDF,"uid").groupBy("uid","age").count().orderBy($"count".desc)
+ageactive.show()
+
+scala> ageactive.show()
+
++---+---+-----+
+|uid|age|count|
++---+---+-----+
+|200| 52|    2|
+|500| 22|    2|
+|300| 65|    1|
+|600| 22|    1|
+|100| 23|    1|
+|700| 22|    1|
++---+---+-----+
+
+--------------------------------------------------------------------------------------------------
+
+            SPARKSQL
+
+
+usersDF.printSchema
+usersDF.registerTempTable("users")
+
+logsDF.printSchema
+logsDF.registerTempTable("logs")
+
+------------------------------------------------------------------------------------------------------------------------
+val usersactive = sqlContext.sql("select uid,count(uid) from logs group by uid order by count(uid) desc")
+usersactive.show()
+
+val urlfreqaccessed = sqlContext.sql("select url,count(url) from logs group by url order by count(url) desc")
+urlfreqaccessed.show()
+
+val ageactive = sqlContext.sql("select logs.uid,count(logs.uid),age from logs join users on logs.uid = users.uid group by logs.uid,age order by count(logs.uid) desc")
+ageactve.show()
+
+----------------------------------------------------------------------------------------------------------------------------

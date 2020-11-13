@@ -1,0 +1,120 @@
+val carRDD = sc.textFile("hdfs://localhost:54310/carnew.csv")
+val carDF = carRDD.map(car => {
+  val r = car.split(",")
+  (r(0), r(1).toFloat, r(2).toInt, r(3).toFloat, r(4).toInt , r(5).toInt , r(6).toFloat, r(7).toInt , r(8)) 
+}).toDF("model", "mpg", "cylinders", "enginedisp", "horsepower", "weight" , "accelerate", "year", "origin")
+
+carDF.show
+
+val carsgroupbyOriginYear =  carsDF.groupBy("origin", "year").count()
+
+
+Driver stacktrace:
+
+  at org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1517)
+
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1505)
+
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1504)
+
+  at scala.collection.mutable.ResizableArray$class.foreach(ResizableArray.scala:59)
+
+  at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:48)
+
+  at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:1504)
+
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:814)
+
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:814)
+
+  at scala.Option.foreach(Option.scala:257)
+
+  at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:814)
+
+  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:1732)
+
+  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1687)
+
+  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1676)
+
+  at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:48)
+
+  at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:630)
+
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2029)
+
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2050)
+
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2069)
+
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2094)
+
+  at org.apache.spark.rdd.RDD$$anonfun$collect$1.apply(RDD.scala:936)
+
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+
+  at org.apache.spark.rdd.RDD.withScope(RDD.scala:362)
+
+  at org.apache.spark.rdd.RDD.collect(RDD.scala:935)
+
+  at org.apache.spark.sql.execution.SparkPlan.executeCollect(SparkPlan.scala:278)
+
+  at org.apache.spark.sql.Dataset.org$apache$spark$sql$Dataset$$collectFromPlan(Dataset.scala:2861)
+
+  at org.apache.spark.sql.Dataset$$anonfun$collect$1.apply(Dataset.scala:2387)
+
+  at org.apache.spark.sql.Dataset$$anonfun$collect$1.apply(Dataset.scala:2387)
+
+  at org.apache.spark.sql.Dataset$$anonfun$55.apply(Dataset.scala:2842)
+
+  at org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:65)
+
+  at org.apache.spark.sql.Dataset.withAction(Dataset.scala:2841)
+
+  at org.apache.spark.sql.Dataset.collect(Dataset.scala:2387)
+
+  ... 48 elided
+
+Caused by: java.lang.ArrayIndexOutOfBoundsException: 1
+
+  at $anonfun$1.apply(<console>:28)
+
+  at $anonfun$1.apply(<console>:26)
+
+  at scala.collection.Iterator$$anon$11.next(Iterator.scala:409)
+
+  at scala.collection.Iterator$$anon$11.next(Iterator.scala:409)
+
+  at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIterator.processNext(Unknown Source)
+
+  at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+
+  at org.apache.spark.sql.execution.WholeStageCodegenExec$$anonfun$8$$anon$1.hasNext(WholeStageCodegenExec.scala:395)
+
+  at org.apache.spark.sql.execution.SparkPlan$$anonfun$2.apply(SparkPlan.scala:234)
+
+  at org.apache.spark.sql.execution.SparkPlan$$anonfun$2.apply(SparkPlan.scala:228)
+
+  at org.apache.spark.rdd.RDD$$anonfun$mapPartitionsInternal$1$$anonfun$apply$25.apply(RDD.scala:827)
+
+  at org.apache.spark.rdd.RDD$$anonfun$mapPartitionsInternal$1$$anonfun$apply$25.apply(RDD.scala:827)
+
+  at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:38)
+
+  at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:323)
+
+  at org.apache.spark.rdd.RDD.iterator(RDD.scala:287)
+
+  at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:87)
+
+  at org.apache.spark.scheduler.Task.run(Task.scala:108)
+
+  at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:338)
+
+  at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+
+  at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+
+  at java.lang.Thread.run(Thread.java:748)

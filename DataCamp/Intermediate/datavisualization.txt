@@ -1,0 +1,327 @@
+import matplotlib.pyplot as plt 
+year = [1950,1970,1990,2010]
+pop = [2.519,3.692,5.263,6.972]
+plt.plot(year,pop)
+plt.scatter(year,pop)
+plt.show()
+
+titles and label customizations -> extra ingredients 
+
+Histogram
+
+explore dataset
+get idea about distribution
+marks distribution
+
+help(plt.hist)
+plt.xscale('log') -> gdp per capita
+
+takes x (list of marks) , bins -> how many bins it must be divided ; default=10
+
+values = [0,0.6,1.4,1.6,2.2,2.5,2.6]
+plt.hist(values,bins=3)
+
+population pyramid for males and females according to age wise
+
+plt.clf() -> clears the plot
+
+if u want to choose the plot for longer time for answering questions and the corresponding grades
+we use scatter plot
+
+if u want mark distribution -> histogram plot
+
+for each plot,u can do infinite number of customizations; u can changes colors, shapes, labels, axes 
+
+plt.xlabel('Year')
+plt.ylabel('Population')
+plt.title('World population projections')
+plt.yticks([0,2,4,6,8,10],['0','2B','4B','6B','8B','10B'])
+
+#Add more data
+year = [1800,1850,1900] + year
+pop = [1.0,1.262,1.850] + pop
+
+scatter plot = GDP per capita vs life expectancy
+
+gdp , life_expectancy and size of bubble -> population
+
+
+import numpy as np 
+np_pop = numpy.array(np)
+np_pop = np_pop*2
+plt.scatter(gdp_cap,life_exp,s=np_pop)
+
+
+dict = {
+    'Asia':'red',
+    'Europe':'green',
+    'Africa':'blue',
+    'Americas':'yellow',
+    'Oceania':'black'
+}
+
+plt.scatter(x = gdp_cap, y = life_exp, s = np.array(pop) * 2,c=col,alpha=0.8)
+
+0 - totally transparent
+1 - not at all transparent
+
+plt.text(1550,71,'India')
+plt.text(5700,80,'China')
+plt.grid('True')
+
+countries = ["vrindavan","mathura"]
+ind_vrin = countries.index("vrindavan")
+pop[ind_vrin]
+
+dict_keys([])
+
+dictionary.keys have to be immutable objects
+
+{0:"hello", True: "dear", "two":"World"}
+
+{["just","to","test"]:"values"}
+TypeError : unhashable type list
+
+world["mayapur"] = 0.000027
+"mayapur" in world
+True
+del(world["mayapur"])
+
+
+lists = collections of values, order 
+dictionary = Lookup
+
+Form of the data can vary greatly, but u can boil down to tabular structure
+
+2D Numpy array can house the elements with the same data type
+
+country , capital , population
+
+country:  {capital:'',population:''}
+
+Pandas -> High level data manipulation tool
+built on Numpy package
+
+Data Frame
+
+	country		capital		area 	population
+BR  Brazil		Brasilia	8.516	200.40
+RU  Russia 		Moscow		15.6  	300
+
+
+dict = {
+	"country" : ["Brazil","Russia","India"],
+	"capital" : ["Brasilia", "Moscow","dellhi"],
+	"area":[]
+}
+
+keys -> column labels
+values -> data column by column
+
+import pandas as pd
+brics = pd.DataFrame(dict)
+brics.index=["BR","RU","IN"]
+
+brics = pd.read_csv("path/to/brics.csv", index_col = 0)
+
+
+# Pre-defined lists
+names = ['United States', 'Australia', 'Japan', 'India', 'Russia', 'Morocco', 'Egypt']
+dr =  [True, False, False, False, True, True, True]
+cpc = [809, 731, 588, 18, 200, 70, 45]
+
+# Import pandas as pd
+import pandas as pd
+
+# Create dictionary my_dict with three key:value pairs: my_dict
+my_dict = {'country':names,'drives_right':dr,'cars_per_cap':cpc}
+cars = pd.DataFrame(my_dict)
+print(cars)
+
+Index and select the data
+loc, iloc
+
+
+brics["country"]
+
+BR Brazil
+RU Russia
+IN India
+
+Name: country ,dtype:object
+
+type(brics["country"])
+pandas.core.series.series
+
+brics[["country"]]
+pandas.core.frame.DataFrame
+
+brics[["country","capital"]]
+subdataframe
+
+loc (label-based)
+iloc (position-based)
+
+brics.loc["RU"] -> series
+brics.loc[["RU"]] -> data frame
+
+brics.loc[["RU","IN","CH"],["country","capital"]]
+brics.loc[:,["country","capital"]] -> select all rows
+
+
+----------------------------
+
+cars = pd.read_csv('cars.csv', index_col = 0)
+print(cars['country'])
+print(cars[['country']])
+print(cars[['country','drives_right']])
+print(cars[0:3])
+print(cars[3:6])
+print(cars.loc[['AUS','EG']])
+print(cars.loc['JAP'])
+------------------------
+
+   cars_per_cap        country  drives_right
+US            809  United States          True
+AUS           731      Australia         False
+JAP           588          Japan         False
+IN             18          India         False
+RU            200         Russia          True
+MOR            70        Morocco          True
+EG             45          Egypt          True
+
+print(cars.loc['MOR','drives_right'])
+print(cars.loc[['RU','MOR'],['country','drives_right']])
+print(cars.loc[:,['cars_per_cap','drives_right']])
+---------------------
+my_house = np.array([18.0, 20.0, 10.75, 9.50])
+your_house = np.array([14.0, 24.0, 14.25, 9.0])
+print(my_house>=18)
+print(my_house<your_house)
+-------------------------
+
+Numpy
+
+bmi>21
+bmi<22
+
+bmi>21 and bmi < 22
+np.logical_and(bmi>21,bmi<22)
+
+-----------------------
+
+Filtering Pandas DataFrame
+
+brics["area"]
+is_huge = brics["area"]>8
+brics[is_huge]
+
+brics[np.logical_and(brics["area"]>8, brics["area"]<10)]
+
+
+
+dr = cars.loc[:,'drives_right']
+print(cars[dr == True])
+
+dr = cars['drives_right']
+print(cars[dr])
+
+cpc = cars['cars_per_cap']
+print(cars[cpc > 500])
+
+ np.logical_and(), np.logical_or() and np.logical_not(), the Numpy variants of the and, or and not operators? 
+ You can also use them on Pandas Series to do more advanced filtering operations.
+
+cpc = cars['cars_per_cap']
+between = np.logical_and(cpc>100, cpc<500)
+medium = cars[between]
+print(medium)
+
+
+----------------------------
+
+fam = [1.73,1.68,1.71,1.89]
+
+for index,height in enumerate(fam)
+	
+for c in "family":
+	print(c.capitalize())
+
+----------------------
+
+world = {
+	"vrindavan":30.55,
+	"vaikunta":45,
+	"Mathura":23
+}
+
+for key,value in world:
+
+too many values to unpack
+--------------------
+meas = np.array([np_height,np_weight])
+
+for val in np.nditer(meas):
+	print(val)
+
+----------------------
+
+looping over pandas DataFrame
+
+for val in brics:
+
+country
+capital
+area
+population
+
+
+for lab,row in brics.iterRows():
+	print(lab)
+	print(row)
+	print(lab + ": " + row["capital"])
+	brics.loc[lab,"name_length"] = len(row["country"])
+
+the row variable in each iteration is a series
+
+not efficient because , u are creating series for every iteration
+
+brics['name_length'] = brics["country"].apply(len)
+
+------------------------
+for lab,row in cars.iterrows():
+	print(lab)
+	print(row)
+
+US
+cars_per_cap              809
+country         United States
+drives_right             True
+Name: US, dtype: object
+AUS
+cars_per_cap          731
+country         Australia
+drives_right        False
+Name: AUS, dtype: object
+JAP
+cars_per_cap      588
+country         Japan
+drives_right    False
+Name: JAP, dtype: object
+IN
+cars_per_cap       18
+country         India
+drives_right    False
+Name: IN, dtype: object
+
+----------------------
+for lab,row in cars.iterrows():
+    cars.loc[lab,'COUNTRY'] = row['country'].upper()
+
+cars['COUNTRY'] = cars['country'].apply(str.upper)
+print(cars)
+
+-----------------------------
+
+
+

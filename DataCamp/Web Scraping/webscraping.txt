@@ -1,0 +1,336 @@
+The ability to build tools capable of retrieving and parsing the information stored across the internet 
+
+learn to navigate and parse html code and build tools to crawl websites automatically
+
+scraping will be conducted using versatile python library scrapy, other python libraries like beautifulsoup, selenium
+
+Strong mental model of html strcuture , build tools to parse html code and access desired information , create simple scrapy spiders to crawl the 
+web at scale
+
+fundamental techniques in computational web scraping
+software to automate the data extraction from online sources
+people with experience web scraping
+
+1. Comparing prices (gather prices for similar products and compare , adjust their own prices)
+2. satisfaction of customers (scrape their online products and services feedback, gather public opinion about the company in general)
+3. scrape social media sites or other public forums 
+generating potential leads or cusomter
+
+
+Personal:
+search for ur favourite memes on your favourite sites
+automatically look through classified ads for ur favourite gadgets
+scrape social site content looking for hot topics
+scrape cooking blogs looking for particular recipes , or recipe reviews
+
+American violence.org
+
+its not been easy to collect crime data across city and agencies
+collect , process and format these data into a single repository starting with murder data for some of the largest cities in US 
+
+Pipe Dream:
+
+Setup:
+define objective	(understand what u do )
+identify sources 	(find sources to help us do it)
+
+Acquisition:
+Access Raw data (Read in the raw data from online)
+parse and extract (format these data to be usable)
+
+Processing:
+Analyze
+explore
+learn
+wrangle
+
+
+web crawling framework scrapy
+we can easily scale large scraping projects
+
+
+html
+
+read by web browsers to render and display website content
+To scrape the content from a particular website , we are often given the html code 
+learn to navigate html to arrive at the content which we may be interested in
+picturise the tree like structure of html to easily interpret the task of html navigation
+
+<div> tag defining a section of a body
+
+html = '''
+<html>
+  <head>
+    <title>Intro HTML</title>
+  </head>
+  <body>
+  	<div>
+    	<p>Hello World!</p>
+    	<p>Enjoy DataCamp!</p>
+    </div>
+    <p>Thanks for watching</p>
+  </body>
+</html>
+'''
+
+
+HTML Tags and attributes
+
+sometimes we want to acess the information present in the html tags themselves
+information within the HTML tags can be valuable
+find the url pointed to by a specific link on the site 
+extract link URLS
+
+to select specific html elements with a more free syntax than traversing the entire html tree
+
+<tag-name attrib-name = "attrb info">
+contents
+</tag-name>
+
+these tags can contain attributes for the special instructions for the content contained within that tag
+
+<div id = "unique-id" class = "some class">
+</div>
+
+id attribute is unique giving us a quick way to identify this
+
+a tag can belong to multiple classes seperated by space(some,class)
+
+<a href="https://www.DataCamp.com">
+This text links to data cmap
+</a>
+
+building methods that can easily applied to other attributes as you encounter them 
+
+elements class is not passed down to its decendents
+
+--------------
+
+# HTML code string
+html = '''
+<html>
+  <body>
+    <div class="class1" id="div1">
+      <p class="class2">Visit DataCamp!</p>
+    </div>
+    <div class = "you-are-classy">
+      <p class="class2">Keep up the good work!</p>
+    </div>
+  </body>
+</html>
+'''
+# Print out the class of the second div element
+whats_my_class( html )
+-----------------
+
+crash course in xpath
+
+However if we want to describe where these elements are within our program , made to navigate and scrape 
+then we need to build up a standard program friendly language with syntax to do so 
+turn wording navigation into a variable for the computer to ingest
+
+Xpath notation
+
+xpath = '/html/body/div[2]'
+
+think of tagnames like directories
+
+brackets[] after the tag name tell us which of the selected siblings to choose
+
+xpath = '//table'
+direct to all table elements within the entire HTML code
+
+xpath = '/html/body/div[2]//table'
+
+direct to all table elements which are descendants of the 2 div child of the body element
+
+xpath = '/html/body/div[2]/p'
+
+xpath = '//p'
+navigating to all paragraph p elements within any HTML code
+
+xpath = '//span[@class="span-class"]'
+xpath = '//div[@id="uid"]'
+
+selects all span elements whose class attribute equals "span-class"
+
+----------------
+
+Xpath navigation
+xpath = '//p[1]'
+'/html/body/*'
+
+off the beaten xpath
+@class
+@id
+@href
+'//p[@class = "class1"]'
+'//*[@id = "uid"]'
+
+'//div[@id="uid"]/p[2]'
+
+contains(@attri-name, "string-expr")
+xpath = '//*[contains(@class,"class-1")]'
+it also selects
+<p class = "class12"></p>
+
+xpath = '/html/body/div/p[2]/@class' = 'class-2'
+
+one of the most important attributes to extract for web-crawling is the hyper-link url within a tag 
+
+xpath = '//p[@id="p2"]/a/@href'
+xpath = '//a[contains(@class,"course-block")]/@href'
+
+select all a elements where class attribute contains "course-block" and point to all href elements
+
+------------------------
+
+Introduction to the scrapy selector
+
+used to select the portions of html using xpath or a so called css locator 
+
+from scrapy import Selector
+
+html = '''
+<html>
+</html>
+'''
+
+sel = Selector( text = html)
+The selector sel has selected entire html document
+
+we can use the xpath call within a selector to create new selectors of specific pieces of the html code
+
+return is selectorlist of selector objects
+
+sel.xpath("//p")
+[<Selector xpath="//p" data = '<p>Hello world!</p>',
+<Selector xpath ='//p' data ='<p>Enjoy Krishna consciousness!</p>']
+
+Extracting data from selector list
+
+sel.xpath("//p").extract()
+sel.xpath("//p").extract_first()
+
+ps= sel.xpath('//p')
+second_p = ps[1]
+second_p.extract()
+
+
+sel.xpath('/html/body/div[2]')
+sel.xpath('/html').xpath('./body/div[2]')
+sel.xpath('/html').xpath('./body').xpath('./div[2]')
+
+-------------------------
+
+Inspecting the html
+Inspecting elements
+
+extremely useful when trying to figure out characteristics of an element which u may use in scraper
+
+
+from scarpy import Selector
+import requests
+
+url = 'https://www.datacamp.com/courses/all'
+html = requests.get(url).content
+sel = Selector(text = html)
+print( "There are 1020 elements in the HTML document.")
+print( "You have found: ", len( sel.xpath('//*') ) )
+
+-------------------
+
+From xpath to CSS
+
+CSS Locators
+xpath to navigate html content
+CSS tells how the elements are displayed on the screen
+
+Rosetta CSStone
+/ replace by > ('except first character')
+xpath : /html/body/div
+CSS Locator : html > body > div
+
+// replace by blank space
+//div/span//p
+div > span p
+
+[N] replaced by :nth-of-type(N)
+//div/p[2]
+div > p:nth-of-type(2)
+
+/html/body//div/p[2]
+html > body div > p:nth-of-type(2)
+
+
+Attributes in CSS
+selecting elements by class or id attributes uses a very simple notation in CSSSelectors
+
+p.class1 selects all paragraph elements belonging to class1
+div#uid selects the div element with id equal to uid
+
+div#uid > p.class1
+
+select all elements whose class attribute belongs to class1
+css_locator = '.class1'
+selects class = "class1 class2"
+it do not select class12
+
+xpath = '//*[@class = "class1"]' ('seaches for exact match')
+it do not selects class = "class1 class2"
+'//*[contains(@class,"class1")]'
+
+sel.css('div > p').extract()
+
+----------------------------
+
+Most people prefer css locators to xpath locators because it makes attribute selection easy
+css_locator = 'div#uid > span h4'
+xpath = '//div[@id="uid"]/span//h4'
+
+'div.course-block > a'
+
+css locator * selects all elements in html document
+'*.class-1' = '.class-1'
+'*#uid' = '#uid'
+
+------------------------
+
+Attributes and text selection
+
+<x-path-to-element>/@attr-name
+<css-to-elemnt>::attr(attr-name)
+
+xpath = '//div[@id="uid"]/a/@href'
+css_locator = 'div#uid > a::attr(href)'
+
+
+Text extraction
+
+<p id ="p-example">
+	hello world!
+	Try <a href = "www.datacamp.com"> Data camp </a> today!
+</p>
+
+sel.xpath('//p[@id="p-example"]/text()').extract()
+
+sel.xpath('//p[@id="p-example"]//text()').extract()
+selects datacamp also
+
+sel.css('p#p-example::text').extract()
+sel.css('p#p-example ::text').extract()
+
+------------------------------
+
+
+from scrapy import Selector
+sel = Selector( text = html )
+course_as = sel.css( 'div.course-block > a' )
+hrefs_from_css = course_as.css( '::attr(href)' )
+hrefs_from_xpath = course_as.xpath( './@href' )
+
+-------------------------------
+
+
+
+

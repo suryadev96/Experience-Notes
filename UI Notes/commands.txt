@@ -1,0 +1,15 @@
+ng new angular-tour-of-heroes
+
+angular components
+
+application shell. The shell is controlled by angular component named AppComponent
+
+src/app/app/
+app.component.ts
+app.component.html
+
+export class AppComponent
+
+issues faced 
+<mat-icon>account_citcle</mat-icon>
+"material-icons": "^0.3.0"

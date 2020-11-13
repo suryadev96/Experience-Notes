@@ -1,0 +1,208 @@
+convert the types of variables str() bool() int() float()
+
+True + False 
+1
+
+"I said" + ("Hey"*2) + "Hey"
+I said Hey Hey Hey
+
+list is a compound data type
+hall = "11.25"
+kit = 18.0
+liv = 20.0
+bed = 10.75
+bath = 9.50
+
+# Create list areas
+areas = [hall,kit,liv,bed,bath]
+print(areas)
+areas = ["hallway",hall,"kitchen", kit, "living room", liv,"bedroom", bed, "bathroom", bath]
+
+print([1+2,"a"*5,3])
+[3,'aaaaa',3]
+
+house = [["hallway", hall],
+         ["kitchen", kit],
+         ["living room", liv],
+         ["bedroom", bed],
+         ["bathroom",bath]]
+
+areas = ["hallway", 11.25, "kitchen", 18.0, "living room", 20.0, "bedroom", 10.75, "bathroom", 9.50]
+downstairs = areas[:6]
+upstairs = areas[6:]
+
+command1;command2
+
+command1
+command2
+
+areas = ["hallway", 11.25, "kitchen", 18.0,
+        "chill zone", 20.0, "bedroom", 10.75,
+         "bathroom", 10.50, "poolhouse", 24.5,
+         "garage", 15.45]
+
+del(areas[-4:-2])
+
+----------------------------
+areas = [11.25, 18.0, 20.0, 10.75, 9.50]
+areas_copy = areas
+areas_copy[0] = 5.0
+print(areas)
+areas_copy=list(areas)
+areas_copy=areas[:]
+
+-----------------------------
+var1 = [1, 2, 3, 4]
+print(len(var1))
+
+--------------------
+
+first = [11.25, 18.0, 20.0]
+second = [10.75, 9.50]
+full = first+second
+full_sorted = sorted(full,reverse=True)
+print(full_sorted)
+
+----------------------
+
+place = "poolhouse"
+place_up=place.upper()
+print(place.count('o'))
+
+---------------------
+areas = [11.25, 18.0, 20.0, 10.75, 9.50]
+print(areas.index(20.0))
+print(areas.count(9.50))
+areas.append(24.5)
+areas.append(15.45)
+areas.reverse()
+-------------------
+import math
+C= math.pi*2*r
+A=math.pi*r**2
+------------------
+
+from math import radians
+dist = r*radians(12)
+
+from scipy.linalg import inv as my_inv
+
+--------------------
+
+NUMPY (Numeric Python)
+
+need for Datascience
+Mathematical operations over collections
+Speed
+
+height = [1.73,1.68,1.71,1.89,1.71]
+weight = [65.4,59.2,63.6,88.4,68.7]
+weight/height**2
+unsupported operand type for list and int
+
+provides an alternative to regular python list : the NUMPY array
+calculations over entire arrays
+
+pip3 install numpy 
+
+
+import numpy as np 
+np_height = np.array(height)
+np_weight = np.array(weight)
+bmi = np_weight/np_height**2
+
+Numpy assumes that array can contain values of a single type
+
+np.array([1.0],"is",True)
+everything as String
+
+
+python_list = [1,2,3]
+numpy_array = [1,2,3]
+python_list+python_list
+[1,2,3,1,2,3]
+numpy_array+numpy_array
+[2,4,6]
+
+Numpy subsetting
+bmi
+array([21,482,20.975])
+
+bmi > 23 -> gives a numpy array of boolean values
+bmi[bmi>23]
+
+
+--------------
+
+list = [1,2,3]
+list1 = list*2
+print(list1)
+[1,2,3,1,2,3]
+
+---------------
+
+np_height_m = np.array(height_in) * 0.0254
+np_weight_kg = np.array(weight_lb)*0.453592
+bmi = np_weight_kg/np_height_m**2
+
+------------------
+light = bmi<21
+print(bmi[light])
+
+-----------------
+2D Numpy arrays
+
+np_2d = numpy.array(np_height_m,np_weight_kg)
+array([[1.73,1.68,1.71,1.89,1.79],
+	[65.4,59.2,63.6,88.4,68,7]])
+np_2d.shape()
+(2,5)
+
+np_2d[0]
+np_2d[0][2]
+np_2d[0,2]
+
+np_2d[:,1:3]
+
+np_2d[1,:]
+-----------------
+np_baseball=np.array(baseball)
+print(np_baseball.shape)
+(1015,2)
+------------------
+
+np_baseball = np.array(baseball)
+print(np_baseball+updated)
+conversion = np.array([0.0254,0.453592,1])
+print(np_baseball*conversion)
+
+---------------------
+
+Numpy: Basic statistics
+
+city with 5000 people , heights and weights
+np.mean(np_city[:,0])
+1.7472
+
+np.median()
+np.corrcoef(np_city[:,0],np_city[:,1])
+np.std(np_city[:,0])
+
+
+generate data
+
+height = np.round(np.random.normal(1.75,0.20,5000),2)
+weight = np.round(np.random.normal(60.32,15,5000),2)
+np_city = np.column_stack(height,weight)
+
+------------------------
+
+np_heights = np.array(heights)
+np_positions = np.array(positions)
+gk_heights = np_heights[np_positions=='GK']
+other_heights = np_heights[np_positions!='GK']
+
+188,
+181
+
+

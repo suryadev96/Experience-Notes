@@ -1,0 +1,198 @@
+Filtering and targeting the data 
+
+where clauses 
+
+stmt = select([census])
+stmt = stmt.where(census.columns.state == 'california')
+results = connection.execute(stmt).fetchall()
+for result in results:
+	print(result.state,result.age)
+
+stmt = select([census])
+stmt = stmt.where(census.columns.state.startswith('New'))
+for result in connection.execute(stmt):
+	print(result.state,result.pop2000)
+
+Note we didnt call fetchall method 
+This is the feature of sqlalchemy to allow the result proxy to be used as the target of loop
+and_(), or_(), not_()
+
+
+from sqlalchemy import or_
+stmt = select([census])
+stmt = stmt.where(or_(census.columns.state == 'california', census.columns.state=='New York'))
+
+Excercises:
+
+connecting to PostgreSQL database 
+
+# Import create_engine function
+from sqlalchemy import create_engine
+
+# Create an engine to the census database
+engine = create_engine('postgresql+psycopg2://student:datacamp@postgresql.csrrinzqubik.us-east-1.rds.amazonaws.com:5432/census')
+
+# Use the .table_names() method on the engine to print the table names
+print(engine.table_names())
+
+driver+dialect://username:password@host:port/filename 
+
+
+stmt = select([census])
+stmt = stmt.where(census.columns.state == 'New York')
+results = connection.execute(stmt).fetchall()
+for result in results:
+    print(result.age, result.sex, result.pop2008)
+
+
+
+
+stmt = select([census])
+stmt = stmt.where(census.columns.state.in_(states))
+for result in connection.execute(stmt):
+    print(result.state, result.pop2000)
+
+-------------------------
+
+Overview of ordering 
+
+Ordering query results 
+
+
+stmt = select([census.columns.state])
+stmt = stmt.order_by(census.columns.state)
+results = connection.execute(stmt).fetchall()
+print(results[:10])
+
+
+order by multiple 
+
+order by district , age 
+
+stmt = select([census.columns.state, census.columns.sex])
+stmt = stmt.order_by(census.columns.state,census.columns.sex)
+
+stmt = stmt.order_by(census.columns.state)
+results = connection.execute(stmt).fetchall()
+print(results[:10])
+
+---------------------
+from sqlalchemy import desc
+stmt = select([census.columns.state])
+rev_stmt = stmt.order_by(desc(census.columns.state))
+rev_results = connection.execute(rev_stmt).fetchall()
+print(rev_results[:10])
+
+--------------------
+stmt = stmt.order_by(census.columns.state, desc(census.columns.age))
+
+counting,summing and grouping the data 
+
+SQL functions
+
+count,sum 
+
+from sqlalchemy import func 
+Aggregation funcitons,because they collapse multiple records into one 
+
+create engine, metaData, reflect the table 
+
+stmt = select([func.sum(census.columns.pop2008)])
+results = connection.execute(stmt).scalar()
+
+its important not to import the sum function directly because it will conflict with python builtin sum function 
+
+Group by
+
+stmt = select([census.columns.sex,func.sum(census.columns.pop2008)])
+stmt = stmt.group_by(census.columns.sex)
+results = connection.execute(stmt).fetchall()
+print(results)
+[('F',23456567),('M',123456)]
+
+
+Every column in the select statement must be in the group by clause or wrapped in a function such as sum or count 
+
+group by multiple
+
+stmt = select([census.columns.sex,census.columns.age,func.sum(census.columns.pop2008)])
+stmt = stmt.group_by(census.columns.sex,census.columns.age)
+
+-----------------------
+
+Handling resultsets from functions 
+
+sqlalchemy auto generates column names for functions in the resultset 
+
+column_names are often func_# such as count_1
+
+
+print(results[0].keys())
+['sex',u'sum_1']
+
+
+stmt = select([census.columns.sex,func.sum(census.columns.pop2008).label('pop2008_sum')])
+
+
+
+stmt = select([func.count(census.columns.state.distinct())])
+distinct_state_count = connection.execute(stmt).scalar()
+print(distinct_state_count)
+
+
+---------------------
+
+from sqlalchemy import func
+stmt = select([census.columns.state, func.count(census.columns.age)])
+stmt = stmt.group_by(census.columns.state)
+results = connection.execute(stmt).fetchall()
+print(results[0].keys())
+
+------------------
+
+
+from sqlalchemy import func
+pop2008_sum = func.sum(census.columns.pop2008).label('population')
+stmt = select([census.columns.state, pop2008_sum])
+stmt = stmt.group_by(census.columns.state)
+results = connection.execute(stmt).fetchall()
+print(results)
+print(results[0].keys())
+
+
+
+pandas, matplotlib to visualize the data 
+
+A SQLAlchemy resultset can be supplied directly to a dataframe ; however we need to supply column names seperately
+
+import pandas as pd 
+df = pd.DataFrame(results)
+df.columns = results[0].keys()
+print(df)
+
+sex 	pop2008_sum
+F 		1234445
+
+
+import matplotlib.pyplot as plt
+df[10:20].plot.barh() #horizontal bar graph
+plt.show()
+
+
+x axis -> pop2008_sum values 
+y axis -> record number 
+
+We can feed a ResultProxy directly into a pandas DataFrame, which is the workhorse of many Data Scientists in PythonLand
+
+df.plot.bar()
+  state  population
+    0  California    36609002
+    1       Texas    24214127
+    2    New York    19465159
+    3     Florida    18257662
+    4    Illinois    12867077
+
+x axis -> record number 
+y axis - > population sum 
+
+------------------------

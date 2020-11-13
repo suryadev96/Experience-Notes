@@ -1,0 +1,364 @@
+What does this piece of c code do
+
+a -= 2*a*(a<0);
+
+Describe the use and do not explain the syntax
+
+Effectively it does a = { a ; a>0 3a ; a<0}
+
+find the largest of three numbers
+find the nearest higher palindrome
+find the unique values in a given array
+
+shorter code is usually better
+
+Hal Abelson, SICP
+Kent Beck - JUnit
+Brian Kernighan
+
+Moving average
+Clever, clear
+Homocidal maniac
+Predictable boring code
+Skim code
+1 place to change the code
+Unspoken contract
+
+Caching, Network latency
+Performance tuning teams
+
+Disk I/0, cpu execution time
+Typing speed
+3GHZ
+
+Connotations get*()
+read_file
+no_items
+glossary
+
+Dont declare more number of variables
+(0,1) , every other number has a story
+
+Dont write comments - kent beck
+
+Assembly language
+MOV 1704, 4x; RIP LVB
+
+declare variables close to use
+donkey variables
+reduce scope
+Immutable data is easier to understand
+
+Exceptional cases before main stream
+
+Dandy, modularity
+
+COrrect, readable, changeable, testable
+
+--------------------------------------------------
+
+1. Collatz sequence
+2. Armstrong numbers
+
+ArrayList<Integer> d = num2Digits(n);
+int p = d.size();
+sum(power(d,p))
+
+2. 
+  *
+ ***
+*****
+
+  *
+ * *
+* * *
+
+    #
+  # - #
+# - - - #
+
+
+line(i)
+leadingSpaces
+start
+repeatpattern
+end
+trailingSpaces
+
+3. Aliquot - sum of the factors of a number
+   Amicable pairs = Aliquot(p) = q ; Aliquot(q) = p;
+
+4. 1
+   2 3
+   4 5 6
+   *
+
+%3d \n * \n
+
+Format specifiers -> field width
+Output driven design
+
+5. Convert number to words
+
+A -> [(Denom,a1), (Denom,a2), .....]
+(1000000,7) (100000,41) (1000,0) (100,2) (1,23)
+
+6. Concurrenct issues are solved
+	Code is Data & Data is code
+
+7. multiple of 3 -> FIZZ
+   multiple of 5 -> BUZZ
+   multiple of 3,5 -> FIZZBUZZ
+
+   (n%5==0)*2 + (n%3==0)
+
+   [n, fizz, buzz, fizzbuzz]
+
+   what if i add multiple of 7?
+
+8. One student is absent in between the roll numbers 1 to n
+	
+	what if Roll number A01, A02?
+
+	Sort the numbers
+
+	4 3 2 6 1
+	1 2 3 4 6 
+
+	Add sentenal values to handle corner cases
+
+9. Number the grid
+
+B W B W B W B W ......
+......................
+......................
+
+readtheGrid
+prepareGrid
+numberGrid
+printGrid
+
+When all else fails, try bruteforce
+
+x - Black space
+0 - numbering position
+- - White space
+
+x 0 - 
+
+Add sentenal values, it becomes easy in prepareGrid
+
+10. Program to convert Roman Numerals into Arabic
+
+XIV - 14
+
+I V X L C
+
+IV, IX, XL, XC, CD -> IIII, VIIII, XXXX, LLLLL, 
+
+Preprocessing the data
+
+10. find the Julian Date
+
+Output:	yyyyddd
+Input: 7 b Jan, 1979 (may contain multiple spaces, commas)
+
+replace all commas with spaces, replace all multiple spaces with single space
+
+cooling the steal to 0 degree centigrade and do the same problem
+
+Code is Data : JAN : 0, FEB: 31, MAR: 31+28
+
+store the cumulative sum directly
+
+11. ROT13 Cipher
+
+A,B,C,D.......Z,A,B,C,.........Z
+
+Code is Data; rather than %26
+
+12. 2x^3 + 4x^2 + 3
+
+reverse and print: 3 + 4x^2 + 2x^3
+
+replace all '-' with +-
+
+split('+') & reverse & Join('+') & replace all ('+-') with ('-');
+
+DecorateSortUnDecorate (DSU)
+
+12. Find all the anagrams among the given words
+
+There is only one prime factorization for every number
+
+There are exactly 26 primes before 100
+
+a - 2, b - 3, c - 5
+
+Key:word (without hash map)
+
+key is sorted word
+
+Sort the entire list and print the clusters
+
+Hash map sorts the values by key internally and stores it
+
+13. Find the top 10 frequent words in a given file
+
+tr "[A-Z]" "[a-z]" < $WP | tr -c "[a-z]" "\n" | grep -v "^ *$" | sort | uniq -c | sort -nr | less 
+
+
+Sentenal values
+Preprocessing
+Code is Data
+DSU/DPU
+
+HTML / csv file  for payslips
+
+14. less number of irreducible relations
+
+removables
+start
+end
+
+generate all possible combinations
+and elminate the things which are useless
+say why u eliminated them
+
+def relation(A,B):
+metric = sum([int(a>=b) for a,b in zip(A,B)])
+if metric = len(A)
+	return ">"
+elif metric == 0
+	return "<"
+else
+	return "#"
+
+Set(x[0] for x in rels)
+
+15. Knights Tour Problem
+
+16. Tennis Score problem
+
+17. Create a polynomial class
+
+18. Special Odometer
+
+Class Odometer {
+	numbers = "123456789"
+	start = 
+	limit
+	reading
+}
+
+checkIfAscending 
+
+for (i = this.reading; i<= o.reading; i+= o.getNext()){
+	diff ++;
+}
+
+itertools to generate all subsequences of "123456789"
+
+list(combinations("12345"),2)
+" ".join(_) for _ in fp.combinations("12345",2)
+
+19. Folio numbers
+
+Create a Range object
+
+20. MasterMind game
+Think in terms of how computer can play
+
+21. UnitTesting with Armstron numbers
+
+Dont refactor the code and change the output at same time
+very prone to errors
+
+Dont write more than 3 lines of code at one time.
+
+Asokan Pichai
+-------------
+A programming language that does not change the way you think is not worth knowing
+
+22. List of books to read
+	
+	1. The practice of programming Kernighan & pike
+	2. Object Thinking David West
+	3. Clean Code Robert C martin
+	4. Becoming Functional Joshua Backfield
+	5. Functional Thinking Neal Ford
+	6. Working Effectively with Legacy code Michael Feathers
+	7. Pragmatic programmer
+
+
+------------------------------------------------------
+
+int largest(int a , int b , int c) {
+	if (a > b)
+	{
+		if (a > c)
+			return a;
+		else if (a < c)
+			return c;
+	}
+	else if (a < b) {
+		if (b > c) 
+			return b;
+		else if (b < c)
+			return c;
+	}
+}
+
+
+--------------------------------------------
+
+boolean function (boolean a, boolean b, boolean c) {
+	if (a == true){
+		if (b == true || c == true)
+			return true
+		else 
+			return false
+	}
+	else {
+		if (b == true && c == true)
+			return true;
+		else
+			return false;
+	}
+}
+--------------------------------------------
+int nearPalindrome(int number) {
+	String num = Integer.toString(number);
+
+	if (checkPalindrome(num)) {
+		return num;
+	}
+
+	
+}
+
+boolean checkPalindrome(String number) {
+	int length = number.length;
+	for (int i=0; i< length/2  ; i++) {
+		if (number[i] != number[length-i-1]) 
+			return false;
+	}
+	return true;
+}
+--------------------------------------------
+#define LEN 10000
+
+
+int sum(int a[LEN], int size) {
+	sort(a,a+size);
+	int sum=0;
+	for (int i = 0;i < size; i++) {
+		if (a[i] != a[i+1]) {
+			sum += a[i];
+		}	
+	}
+	return sum;
+}
+
+---------------------------------------------
+

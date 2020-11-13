@@ -1,0 +1,526 @@
+The <div> tag is nothing more than a container unit that encapsulates other page elements and divides the HTML document into sections. Web developers use <div> elements to group together HTML elements and apply CSS styles to many elements at once.
+
+The <div> tag is an empty container, which defines a division or a section. It has no effect on the content or layout, and is used to group HTML elements to be styled with CSS or manipulated with scripts
+
+The <div> tag defines a division or a section in an HTML document. The <div> element is often used as a container for other HTML elements to style them with CSS or to perform certain tasks with JavaScript.
+
+Any element can have a class or an id. A class is used to reference a certain type of display, for example you may have a css class for a div that represents the answer to this question. ... Class is for applying your style to a group of elements.
+
+The id attribute specifies a unique id for an HTML element (the value must be unique within the HTML document). The id attribute is most used to point to a style in a style sheet, and by JavaScript (via the HTML DOM) to manipulate the element with the specific id.
+
+The DOM is a W3C (World Wide Web Consortium) standard. The DOM defines a standard for accessing documents: "The W3C Document Object Model (DOM) is a platform and language-neutral interface that allows programs and scripts to dynamically access and update the content, structure, and style of a document."
+
+The Document Object Model (DOM) is an application programming interface (API) for valid HTML and well-formed XML documents. It defines the logical structure of documents and the way a document is accessed and manipulated.
+
+The benefit of this is that you can have the same HTML element, but present it differently depending on its class or ID. In the CSS, a class selector is a name preceded by a full stop (“.”) and an ID selector is a name preceded by a hash character (“#”).
+
+The <section> tag defines sections in a document, such as chapters, headers, footers, or any other sections of the document. whereas: The <div> tag defines a division or a section in an HTML document. The <div> tag is used to group block-elements to format them with CSS.
+
+The HTML <span> tag is used for grouping and applying styles to inline elements. There is a difference between the span tag and the div tag. The span tag is used with inline elements whilst the div tag is used with block-level content.
+
+The HTML <span> element is a generic inline container for phrasing content, which does not inherently represent anything. It can be used to group elements for styling purposes (using the class or id attributes), or because they share attribute values, such as lang
+
+Basically, an inline element does not cause a line break (start on a new line) and does not take up the full width of a page, only the space bounded by its opening and closing tag. It is usually used within other HTML elements. Other examples of inline elements are: anchor <a> tag
+
+The name attribute specifies the name of an <input> element. The name attribute is used to reference elements in a JavaScript, or to reference form data after a form is submitted. Note: Only form elements with a name attribute will have their values passed when submitting a form.
+
+Hyperlinks
+
+A hash - # within a hyperlink specifies an html element id to which the window should be scrolled.
+href="#some-id" would scroll to an element on the current page such as <div id="some-id">.
+href="//site.com/#some-id" would go to site.com and scroll to the id on that page.
+
+Scroll to top:
+href="#" doesn't specify an id name, but does have a corresponding location - the top of the page. Clicking an anchor with href="#" will move the scroll position to the top.
+
+
+
+Use the HTML style attribute for inline styling.
+Use the HTML <style> element to define internal CSS.
+Use the HTML <link> element to refer to an external CSS file.
+Use the HTML <head> element to store <style> and <link> elements.
+Use the CSS color property for text colors.
+
+
+<input type = "text" ng-model = "name" placeholder = "enter your name here"> 
+<h1> hello {{name}} </h1>
+
+Angular js extends HTML attributes with directives and binds data to HTML with expressions
+
+Angular js extends HTML with ng-directives
+
+The ng-app directive defines an AngularJS application.
+The ng-model directive binds the value of HTML controls (input, select, textarea) to application data.
+The ng-bind directive binds application data to the HTML view.
+The ng-init directive intializes angular js application varibles
+
+
+<div ng-app="">
+<p>Input something in the input box:</p>
+<p>Name: <input type="text" ng-model="name"></p>
+<p ng-bind="name"></p>
+</div>
+
+ng-app directive tells angular js that the <div> element is the owner of an angularjs application
+ng-model directive binds the value of the input field to the application variable name
+The ng-bind directive binds the content of the <p> element to the application variable name.
+
+<div ng-app="" ng-init="firstName='John'">
+<p>The name is <span ng-bind="firstName"></span></p>
+
+use data-ng instead of ng- if u want to make ur html page valid
+
+Expressions {{}}	/same way as ng-bind
+
+AngularJS modules define AngularJS applications.
+AngularJS controllers control AngularJS applications.
+The ng-app directive defines the application, the ng-controller directive defines the controller.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+<div ng-app="myApp" ng-controller="myCtrl">
+
+First Name: <input type="text" ng-model="firstName"><br>
+Last Name: <input type="text" ng-model="lastName"><br>
+<br>
+Full Name: {{firstName + " " + lastName}}
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);		/*angular module */
+app.controller('myCtrl', function($scope) {		/*controller */
+    $scope.firstName= "John";
+    $scope.lastName= "Doe";
+});
+</script>
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+<div ng-app="" ng-init="myCol='lightblue'">
+<input style="background-color:{{myCol}}" ng-model="myCol">
+</div>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+ng-init ="quantity=1;cost=5"
+
+using ng-init is not very common. 
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+An AngularJS module defines an application.
+The module is a container for the different parts of an application.
+The module is a container for the application controllers.
+Controllers always belong to a module.
+
+var app = angular.module("myApp",[])
+
+The [] parameter in the module definition can be used to define dependent modules.
+Without the [] parameter, you are not creating a new module, but retrieving an existing one.
+myApp parameter refers to the HTML element in which the application will run
+
+Global functions should be avoided in JavaScript. They can easily be overwritten or destroyed by other scripts.
+AngularJS modules reduces this problem, by keeping all functions local to the module.
+
+
+<div ng-app="" ng-init="names=['Jani','Hege','Kai']">
+  <p>Looping with ng-repeat:</p>
+  <ul>
+    <li ng-repeat="x in names">
+      {{ x }}
+    </li>
+  </ul>
+</div>
+
+The ng-repeat directive actually clones HTML elements once for each item in a collection.
+The ng-repeat directive used on an array of objects:
+
+
+<div ng-app="" ng-init="names=[
+{name:'Jani',country:'Norway'},
+{name:'Hege',country:'Sweden'},
+{name:'Kai',country:'Denmark'}]">
+
+<ul>
+  <li ng-repeat="x in names">
+    {{ x.name + ', ' + x.country }}
+  </li>
+</ul>
+</div>
+
+ng-model - two way binding
+
+<input type = "email" required>
+
+
+<form ng-app="" name="myForm" ng-init="myText = 'post@myweb.com'">
+
+Email:
+<input type="email" name="myAddress" ng-model="myText" required>
+<p>Edit the e-mail address, and try to change the status.</p>
+<h1>Status</h1>
+<p>Valid: {{myForm.myAddress.$valid}} (if true, the value meets all criteria).</p>
+<p>Dirty: {{myForm.myAddress.$dirty}} (if true, the value has been changed).</p>
+<p>Touched: {{myForm.myAddress.$touched}} (if true, the field has been in focus).</p>
+
+</form>
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+<style>
+input.ng-invalid {
+    background-color: lightblue;
+}
+</style>
+
+<form ng-app="" name="myForm">
+    Enter your name:
+    <input name="myName" ng-model="myText" required>
+</form>
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Angular js data binding
+Data binding in AngularJS is the synchronization between the model and the view.
+
+<div ng-app="myApp" ng-controller="myCtrl">
+    <h1 ng-click="changeName()">{{firstname}}</h1>
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
+    $scope.firstname = "John";
+    $scope.changeName = function() {
+        $scope.firstname = "Nelly";
+    }
+});
+</script>
+
+In AngularJS, $scope is the application object (the owner of application variables and functions).
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Angular js scopes
+
+The scope is the binding part between the HTML (view) and the JavaScript (controller)
+The scope is an object with the available properties and methods
+The scope is available for both the view and the controller.
+
+When you make a controller in AngularJS, you pass the $scope object as an argument:
+
+When adding properties to the $scope object in the controller, the view (HTML) gets access to these properties.
+In the view, you do not use the prefix $scope, you just refer to a propertyname, like {{carname}}.
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+<h1>{{carname}}</h1>
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
+    $scope.carname = "Volvo";
+});
+</script>
+
+Know your scope
+The variable "x" has a different value for each repetition, proving that each repetition has its own scope.
+
+
+<body ng-app="myApp">
+
+<p>The rootScope's favorite color:</p>
+<h1>{{color}}</h1>
+
+<div ng-controller="myCtrl">
+
+<p>The scope of the controller's favorite color:</p>
+<h1>{{color}}</h1>
+
+</div>
+
+<p>The rootScope's favorite color is still:</p>
+<h1>{{color}}</h1>
+
+<script>
+var app = angular.module('myApp', []);
+app.run(function($rootScope) {
+    $rootScope.color = 'blue';
+});
+app.controller('myCtrl', function($scope) {
+    $scope.color = "red";
+});
+</script>
+
+<p>Notice that controller's color variable does not overwrite the rootScope's color value.</p>
+
+</body>
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Adding filters to expressions
+
+Filters can be added to expressions by using the pipe character |, followed by a filter.
+firstname | uppercase
+
+<li ng-repeat="x in names | orderBy:'country'">
+    {{ x.name + ', ' + x.country }}
+</li>
+
+<li ng-repeat="x in names | filter : 'i'">
+    {{ x }}
+</li>
+
+displays only the names containing the letter 'i'
+
+<p>Type a letter in the input field:</p>
+<p><input type="text" ng-model="test"></p>
+<li ng-repeat="x in names | filter:test">
+    {{ x }}
+</li>
+--------------------------------------------------------------------------------------------------------------------------------------------
+<th ng-click="orderByMe('name')">Name</th>
+<th ng-click="orderByMe('country')">Country</th>
+
+<tr ng-repeat="x in names | orderBy:myOrderBy">
+ $scope.orderByMe = function(x) {
+        $scope.myOrderBy = x;
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+<li ng-repeat="x in names">
+    {{x | myFormat}}
+</li>
+app.filter('myFormat', function() {
+    return function(x) {
+        var i, c, txt = "";
+        for (i = 0; i < x.length; i++) {
+            c = x[i];
+            if (i % 2 == 0) {
+                c = c.toUpperCase();
+            }
+            txt += c;
+        }
+        return txt;
+    };
+});
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Angular js service
+
+In AngularJS, a service is a function, or object, that is available for, and limited to, your AngularJS application.
+AngularJS has about 30 built-in services. One of them is the $location service.
+The $location service has methods which return information about the location of the current web page:
+
+<h3>{{myUrl}}</h3>
+app.controller('myCtrl', function($scope, $location) {
+    $scope.myUrl = $location.absUrl();
+});
+
+
+$http service
+<h1>{{myWelcome}}</h1>
+app.controller('myCtrl', function($scope, $http) {
+  $http.get("welcome.htm").then(function (response) {
+      $scope.myWelcome = response.data;
+  });
+});
+
+
+$timeout service
+app.controller('myCtrl', function($scope, $timeout) {
+  $scope.myHeader = "Hello World!";
+  $timeout(function () {
+      $scope.myHeader = "How are you today?";
+  }, 2000);
+});
+
+
+app.controller('myCtrl', function($scope, $interval) {
+  $scope.theTime = new Date().toLocaleTimeString();
+  $interval(function () {
+      $scope.theTime = new Date().toLocaleTimeString();
+  }, 1000);
+});
+
+app.service('hexafy', function() {
+    this.myFunc = function (x) {
+        return x.toString(16);
+    }
+});
+app.controller('myCtrl', function($scope, hexafy) {
+  $scope.hex = hexafy.myFunc(255);
+});
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+use custom services inside filters
+
+<h1>{{255 | myFormat}}</h1>
+app.service('hexafy', function() {
+    this.myFunc = function (x) {
+        return x.toString(16);
+    }
+});
+app.filter('myFormat',['hexafy', function(hexafy) {
+    return function(x) {
+        return hexafy.myFunc(x);
+    };
+}]);
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+app.controller('myCtrl', function($scope, $http) {
+  $http({
+    method : "GET",
+    url : "welcome.htm"
+  }).then(function mySuccess(response) {
+      $scope.myWelcome = response.data;
+    }, function myError(response) {
+      $scope.myWelcome = response.statusText;
+  });
+});
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+To handle errors, add one more functions to the .then method:
+
+app.controller('myCtrl', function($scope, $http) {
+  $http.get("wrongfilename.htm")
+  .then(function(response) {
+      $scope.content = response.data;
+  }, function(response) {
+      $scope.content = "Something went wrong";
+  });
+});
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+<li ng-repeat="x in myData">
+    {{ x.Name + ', ' + x.Country }}
+  </li>
+
+app.controller('customersCtrl', function($scope, $http) {
+  $http.get("customers.php").then(function (response) {
+      $scope.myData = response.data.records;
+  });
+});
+
+JSON is a great way of transporting data, and it is easy to use within AngularJS, or any other JavaScript.
+
+{
+  "records": [
+    {
+      "Name": "Alfreds Futterkiste",
+      "City": "Berlin",
+      "Country": "Germany"
+    },
+    {
+      "Name": "Berglunds snabbköp",
+      "City": "Luleå",
+      "Country": "Sweden"
+    },
+    {
+      "Name": "Bólido Comidas preparadas",
+      "City": "Madrid",
+      "Country": "Spain"
+    },
+    {
+      "Name": "Comércio Mineiro",
+      "City": "São Paulo",
+      "Country": "Brazil"
+    }
+  ]
+}
+---------------------------------------------------------------------------------------------------------------------------------------------
+.ng-hide {
+  height: 0;
+  width: 0;
+  background-color: transparent;
+  top:-200px;
+  left: 200px;
+}
+
+<div ng-include="'myFile.htm'"></div>
+
+<body ng-app="ngAnimate">
+<h1>Hide the DIV: <input type="checkbox" ng-model="myCheck"></h1>
+<div ng-hide="myCheck"></div>
+
+you must refer to ngAnimate module in ur application
+
+var app = angular.module('myApp', ['ngAnimate']);
+Or if your application has a name, add ngAnimate as a dependency in your application module
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Angular JS Routing
+
+The ngRoute module helps your application to become a Single Page Application
+If you want to navigate to different pages in your application, but you also want the application to be a SPA (Single Page Application), with no page reloading, you can use the ngRoute module.
+The ngRoute module routes your application to different pages without reloading the entire application.
+
+var app = angular.module("myApp", ["ngRoute"]);
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "main.htm"
+    })
+    .when("/red", {
+        templateUrl : "red.htm"
+    })
+    .when("/green", {
+        templateUrl : "green.htm"
+    })
+    .when("/blue", {
+        templateUrl : "blue.htm"
+    });
+});
+
+
+Your application needs a container to put the content provided by the routing.
+
+This container is the ng-view directive.
+
+There are three different ways to include the ng-view directive in your application:
+
+<div ng-view> </div>
+<ng-view> </ng-view>
+<div class = "ng-view"></div>
+
+Applications can only have one ng-view directive, and this will be the placeholder for all views provided by the route.
+
+
+<p><a href="#/!">Main</a></p>
+<a href="#!london">City 1</a>
+<a href="#!paris">City 2</a>
+
+<div ng-view></div>
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "main.htm",
+        template : "<h1>click on the links to change the content</h1>"
+    })
+    .when("/london", {
+        templateUrl : "london.htm",
+        controller : "londonCtrl"
+    })
+    .when("/paris", {
+        templateUrl : "paris.htm",
+        controller : "parisCtrl"
+    })
+    .otherwise({
+        template : "<h1>None</h1><p>Nothing has been selected</p>"
+    });
+});
+app.controller("londonCtrl", function ($scope) {
+    $scope.msg = "I love London";
+});
+app.controller("parisCtrl", function ($scope) {
+    $scope.msg = "I love Paris";
+});
+
+
+
+
+

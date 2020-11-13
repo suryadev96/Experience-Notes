@@ -1,0 +1,212 @@
+top five age groups by growth between 2000 and 2008 
+
+calculating the difference 
+
+stmt = select([census.columns.age,(census.columns.pop2008 - census.columns.pop2000).label('pop_change')])
+stmt = stmt.group_by(census.columns.age)
+stmt = stmt.order_by(desc('pop_change'))
+stmt = stmt.limit(5)
+results = connection.execute(stmt).fetchall()
+print(results)
+
+[(61,52672),(85,51701)]
+
+
+case example
+
+from sqlalchemy import case 
+stmt = select([
+		func.sum(
+			case([
+				(census.columns.state == 'New York',census.columns.pop2008)
+				],else_=0)
+			)
+	])	
+
+converts data to another type 
+useful for converting 
+integers to float for division 
+strings to date and times 
+
+
+what percentage of total population lives in newyork
+
+stmt = select([
+		func.sum(
+			case([(census.columns.state == 'New York',census.columns.pop2008)],else_=0) /
+			cast(func.sum(census.columns.pop2008),Float)* 100
+			).label('ny_percent')
+	])
+
+
+
+# Import create_engine function
+from sqlalchemy import create_engine
+
+# Create an engine to the census database
+engine = create_engine('mysql+pymysql://student:datacamp@courses.csrrinzqubik.us-east-1.rds.amazonaws.com:3306/census')
+
+# Print the table names
+print(engine.table_names())
+
+
+----------------------
+
+stmt = select([census.columns.state, (census.columns.pop2008-census.columns.pop2000).label('pop_change')])
+stmt = stmt.group_by(census.columns.state)
+stmt = stmt.order_by(desc('pop_change'))
+stmt = stmt.limit(5)
+results = connection.execute(stmt).fetchall()
+for result in results:
+    print('{}:{}'.format(result.state, result.pop_change))
+
+
+
+from sqlalchemy import case, cast, Float
+female_pop2000 = func.sum(
+    case([
+        (census.columns.sex == 'F', census.columns.pop2000)
+    ], else_=0))
+
+total_pop2000 = cast(func.sum(census.columns.pop2000), Float)
+stmt = select([female_pop2000 / total_pop2000* 100])
+percent_female = connection.execute(stmt).scalar()
+print(percent_female)
+
+
+SQL relationships
+
+
+stmt = select([func.sum(census.columns.pop2000)])
+stmt = stmt.select_from(census.join(state_fact))
+stmt = stmt.where(state.columns.circuit_court == '10')
+result = connection.execute(stmt).scalar()
+
+
+Joining tables without pre-defined relationships
+
+This will only join rows from each table that can be related between the two columns 
+
+total population in 2008 that belongs to East south central division of the census 
+
+population and location lives in different tables 
+
+stmt = select([func.sum(census.columns.pop2000)])
+stmt = stmt.select_from(census.join(state_fact,census.columns.state = state_fact.columns.name))
+stmt = stmt.where(state_fact.columns.census_division_name == 'East South central')
+result = connection.execute(stmt).scalar()
+
+
+
+
+stmt = select([census.columns.pop2000, state_fact.columns.abbreviation])
+result = connection.execute(stmt).first()
+for key in result.keys():
+    print(key, getattr(result, key))
+
+
+pop2000 89600
+abbreviation IL
+
+
+-------------------------
+
+stmt = select([census, state_fact])
+stmt = stmt.select_from(
+    census.join(state_fact, census.columns.state == state_fact.columns.name))
+result = connection.execute(stmt).first()
+for key in result.keys():
+    print(key, getattr(result, key))
+
+----------------------
+stmt = select([
+    census.columns.state,
+    func.sum(census.columns.pop2008),
+    state_fact.columns.census_division_name
+])
+
+stmt = stmt.select_from(
+    census.join(state_fact, census.columns.state == state_fact.columns.name)
+)
+stmt = stmt.group_by(state_fact.columns.name)
+results = connection.execute(stmt).fetchall()
+for record in results:
+    print(record)
+
+-------------------
+
+Working with hierarchial tables 
+
+tables that join with themselves are called self-referential or hierarchial tables 
+
+contain a relationship with themselves 
+
+organizational 
+geographic
+network
+graph
+
+
+id 	name 	job 	manager
+1 johnson 	admin 	6
+
+alias method allows us to refer the same table with 2 unique names 
+
+
+managers = employees.alias()
+stmt = select([managers.columns.name.label('manager'),employees.columns.name.label('employee')])
+stmt = stmt.select_from(employees.join(managers,managers.columns.id == employees.columns.manager))
+stmt = stmt.order_by(managers.columns.name)
+
+
+salary to allocate for each manager employees 
+
+stmt = select([managers.columns.name, func.sum(employees.columns.sal)])
+stmt = stmt.select_from(employees.join(managers,managers.columns.id == employees.columns.manager))
+stmt = stmt.group_by(managers.columns.name)
+
+
+----------------------
+managers = employees.alias()
+stmt = select(
+    [managers.columns.name.label('manager'),
+     employees.columns.name.label('employee')]
+)
+stmt = stmt.where(managers.columns.id == employees.columns.mgr)
+stmt = stmt.order_by(managers.columns.name)
+results = connection.execute(stmt).fetchall()
+for record in results:
+    print(record)
+-----------------------
+
+managers = employees.alias()
+stmt = select([managers.columns.name, func.count(employees.columns.id)])
+stmt = stmt.where(managers.columns.id == employees.columns.mgr)
+stmt = stmt.group_by(managers.columns.name)
+results = connection.execute(stmt).fetchall()
+for record in results:
+    print(record)
+   ('FILLMORE', 3)
+    ('GARFIELD', 4)
+    ('HARDING', 2)
+    ('JACKSON', 4)
+
+---------------
+
+Dealing with large result sets 
+
+fetchmany() lets us specify how many rows we want to act upon 
+
+while more_results:
+	partial_results = results_proxy.fetchmany(50)
+	if partial_results == []:
+		more_results = False
+
+	for row in partial_results:
+		state_count[row.state]+=1
+
+results_proxy.close()
+
+
+
+

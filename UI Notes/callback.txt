@@ -1,0 +1,116 @@
+http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
+https://stackoverflow.com/questions/824234/what-is-a-callback-function
+
+functional programming
+
+JQuery
+
+$('').click(
+function(){
+	alert("Button clicked");
+});
+
+https://stackify.com/when-to-use-asynchronous-programming/
+
+https://www.toptal.com/javascript/asynchronous-javascript-async-await-tutorial
+
+const verifyUser = function(username, password, callback){
+   dataBase.verifyUser(username, password, (error, userInfo) => {
+       if (error) {
+           callback(error)
+       }else{
+           dataBase.getRoles(username, (error, roles) => {
+               if (error){
+                   callback(error)
+               }else {
+                   dataBase.logAccess(username, (error) => {
+                       if (error){
+                           callback(error);
+                       }else{
+                           callback(null, userInfo, roles);
+                       }
+                   })
+               }
+           })
+       }
+   })
+};
+
+
+https://www.geeksforgeeks.org/javascript-promises/
+
+var promise = new Promise( function(resolve,reject){
+	const x = "suryadev";
+	const y = "suryadev";
+
+	if (x==y){
+		resolve();
+	} else{
+		reject();
+	}
+});
+
+promise.then( function(){
+	console.log("you are gem of a geek");
+},function(err) {
+  console.log("Something broke");
+}
+).
+catch(function(){
+	console.log("heck of a gem");
+})
+
+
+
+class Promise(){
+
+	isResolve;
+	isReject;
+	Promise(subscriberfn){
+		this.subscriberfn = subsriberfn
+	}
+
+	then(resolve,reject){
+		subscriberfn(resolve,reject)
+	}
+
+  catch(reject){
+
+  }
+}
+
+
+const loadImage = url => {
+	return new Promise(function(resolve,reject){
+		var request = new XMLHttpRequest();
+		request.open('GET',url);
+
+		 request.onload = function() {
+      if (request.status === 200) {
+        // If successful, resolve the promise
+        resolve(request.response);
+      } else {
+        // Otherwise, reject the promise
+        reject(Error('An error occurred while loading image. error code:' + request.statusText));
+      }
+    };
+
+    request.send();
+
+	});
+};
+
+
+const embedImage = url => {
+  loadImage(url).then(function(result) {
+      const img = new Image();
+      var imageURL = window.URL.createObjectURL(result);
+      img.src = imageURL;
+      document.querySelector('body').appendChild(img);
+    },
+    function(err) {
+      console.log(err);
+    });
+}
+
+

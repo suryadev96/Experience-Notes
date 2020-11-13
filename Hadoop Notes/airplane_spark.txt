@@ -1,0 +1,151 @@
+a = load '/air.txt' using PigStorage('\n') as (row:chararray);
+b = FOREACH a GENERATE FLATTEN(REGEX_EXTRACT_ALL(row,'([\\sA-Za-z]+) - ([\\sA-Za-z]+)###[ \\s]+[ \\w,]+[0-9 \\w ]+###[ \\s]+[ \\w/:\\.?=&\\-]+[ \\s]+([ \\s \\w]+)###[:0-9\\- \\s]+###[ \\s]+[hm0-9 \\s]+,[ \\s0-9]+stop[s \\s]*,[ \\s]*[ \\w \\s]+###[ \\s]+Rs\\.[ \\s]+([0-9,]+)###'));
+f = foreach b generate $0,$1,$2,REPLACE($3,',',''); //source destination airline price
+filter_data = FILTER f BY $0!='' OR $1!='' OR $2!='' OR $3!='NULL';
+store filter_data into '/airdata4' using PigStorage(',');
+--------------------------------------------------
+merge the files into one file. Here all files are overwritten into air.txt file again.
+
+ubuntu@ip-172-31-27-203:~/hadoop-2.7.6$ bin/hadoop fs -cat /airdata4/p* > air.txt
+
+ubuntu@ip-172-31-27-203:~/hadoop-2.7.6$ mv air.txt air1.txt
+
+ubuntu@ip-172-31-27-203:~/hadoop-2.7.6$ bin/hadoop fs -put air1.txt /
+--------------------------------------------------
+task - 1
+val airdata = sc.textFile("hdfs:///air1.txt")
+val airdatat=airdata.flatMap(l => l.split("\n")).map(a => (a.split(","))).map(x=>(x(0),x(1),x(2),x(3)))
+                             .toDF("source","destination","airline","price")
+airdatat.registerTempTable("airtable")
+
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+--------------------------------------------------
+task - 2
+sqlContext.sql("select t1.source,(t1.c+t2.c) as c from 
+                                (select source,count(*) as c 
+								       from airtable group by source) as t1,
+									      ( select destination,count(*) as c from airtable 
+										           group by destination) as t2 
+												         where t1.source = t2.destination 
+														        order by c desc").show()
+output >
++----------+------+
+|    source|     c|
++----------+------+
+| Bangalore|142162|
+|   Chennai|134002|
+|   Kolkata|131419|
+|     Kochi|131345|
+|       Goa|130636|
+| Hyderabad|126999|
+|    Mumbai|121351|
+| Mangalore|115315|
+| New Delhi|115124|
+|Coimbatore|110104|
+|    Bhopal|109675|
+|   Lucknow|109600|
+| Ahmedabad|107470|
+|      Pune|103865|
+|    Raipur|101736|
+|    Indore|101204|
+|    Nagpur| 98789|
+|Trivandrum| 98726|
+|  Bagdogra| 97432|
+|Chandigarh| 96332|
++----------+------+
+--------------------------------------------------
+task - 3
+sqlContext.sql("select airline,count(*) as c from airtable 
+                       group by airline 
+					         order by c desc").show()
+output >
++-----------------+-------+
+|          airline|      c|
++-----------------+-------+
+|      Jet Airways|1320510|
+|        Air India|1139784|
+|           IndiGo|  33695|
+|            GoAir|  14061|
+|         SpiceJet|   9411|
+|        Air Costa|   1445|
+|          Vistara|   1053|
+|Air India Express|    409|
+|         Air Asia|    154|
+|     Thai Airways|      3|
+|    Qatar Airways|      1|
++-----------------+-------+
+--------------------------------------------------
+task - 4
+sqlContext.sql("select temp2.source,temp2.airline,temp2.c from 
+                       (select source,max(t1.c) as c1 from 
+					           (select source,airline,count(*) as c from airtable 
+							           group by source,airline) t1 group by source) as temp1, 
+									         (select source,airline,count(*) as c from airtable 
+											    group by source,airline) as temp2 
+												  where temp2.source=temp1.source AND temp2.c = temp1.c1").show()
+output >
++----------+-----------+-----+
+|    source|    airline|    c|
++----------+-----------+-----+
+|  Jamnagar|  Air India|37130|
+|      Pune|Jet Airways|36738|
+|  Guwahati|Jet Airways|26792|
+|       Goa|  Air India|34671|
+|    Mumbai|  Air India|30566|
+|Coimbatore|Jet Airways|41905|
+|   Dimapur|  Air India|13090|
+|    Ranchi|Jet Airways|26725|
+|Dharamsala|  Air India|24182|
+|    Jorhat|Jet Airways|16864|
+| Tuticorin|   SpiceJet|  173|
+|      Bhuj|Jet Airways|30206|
+|   Udaipur|Jet Airways|26597|
+|  Bodhgaya|  Air India|18290|
+|    Rajkot|Jet Airways|24615|
+|  Varanasi|  Air India|25828|
+|       Leh|  Air India|19176|
+| Mangalore|Jet Airways|46424|
+|   Madurai|Jet Airways|31002|
+|  Bagdogra|Jet Airways|30900|
++----------+-----------+-----+
+--------------------------------------------------
+task - 5
+sqlContext.sql("select distinct t2.source,t2.destination,t2.airline,t1.p from 
+                              (select source,destination,MIN(price) as p from airtable 
+							         group by source,destination) as t1,
+									       (select * from airtable) as t2 
+										       where t1.source = t2.source and t1.destination = t2.destination 
+											         and t1.p = t2.price").show()
+output >
++---------+-----------+-----------+-----+
+|   source|destination|    airline|    p|
++---------+-----------+-----------+-----+
+| Lilabari|  Bangalore|  Air India|11098|
+| Amritsar|        Leh|  Air India|10003|
+|Dibrugarh|   Varanasi|Jet Airways|11683|
+|   Ranchi|Rajahmundry|Jet Airways|11337|
+|      Diu|    Kolkata|Jet Airways|14296|
+|  Silchar|      Jammu|Jet Airways|13433|
+| Tirupati| Aurangabad|  Air India|11347|
+| Amritsar|  Mangalore|Jet Airways|10576|
+|      Leh| Chandigarh|  Air India|10007|
+|     Agra|  New Delhi|  Air India|10900|
+| Jamnagar|  New Delhi|  Air India|10910|
+| Varanasi|   Bagdogra|  Air India|10083|
+|Bangalore|     Mumbai|  Air India|10009|
+|    Surat|    Dimapur|  Air India|21056|
+|  Chennai|      Patna|  Air India|10275|
+| Shillong|    Udaipur|  Air India|14616|
+|Porbandar|     Bhopal|Jet Airways|11725|
+| Amritsar|        Goa|Jet Airways|10196|
+|Hyderabad|   Dehradun|Jet Airways|10038|
+|Kozhikode|     Indore|Jet Airways|10166|
++---------+-----------+-----------+-----+
+
+
+
+source destination airline price
+
+
+select source,destination,min(price) from airtable group by source,destination as t1 ,
+select * from airtable t2 where t2.source = t1.source and t2.destination = t1.destination and t2.price = t1.p

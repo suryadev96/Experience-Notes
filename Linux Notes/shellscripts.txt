@@ -1,0 +1,841 @@
+Shell scripts are just set of commands that you write in a file and run them together. For anyone who has worked with DOS’s bat files, it’s almost the same concept. You just put a series of commands into a text file and run them together. The difference comes from the fact that bash scripts can do a lot more than batch files.
+
+A shell script is a computer program designed to be run by the Unix shell, a command-line interpreter. The various dialects of shell scripts are considered to be scripting languages. Typical operations performed by shell scripts include file manipulation, program execution, and printing text.”
+
+Unix has more than one possible shell, and scripting any of them is a topic that can easily pack a complete book. In this post, I am going to cover the basic elements of a bash script.
+
+Agreed that anything you can do with a shell script, you can do that using some programming language such as Ruby, Python or Go but mostly for the small tasks, you will find yourself using Shell Scripts in one way or another.
+
+Shell scripts are used to automate administrative tasks, encapsulate complex configuration details and get at the full power of the operating system. The ability to combine commands allows you to create new commands, thereby adding value to your operating system. Furthermore, combining a shell with graphical desktop environment allows you to get the best of both worlds
+
+Automate your daily tasks
+Create your own commands with optionally accepting input from the user
+Portability, executing the same script in your mac and your Linux based systems.
+
+
+Writing shell scripts
+
+#!/bin/bash
+echo "hello world" //print to screen
+
+The first line called a hashbang or shebang. It tells Unix that this script should be run through the /bin/bash shell. Second line is just the echo statement, which prints the words after it to the terminal.
+
+After saving the above file, we need to give it execute permission to make it runnable. You can set the execute permission as follows
+
+chmod +x  my_script.sh //add execute permission
+
+Execute the script in one of the following ways
+$ bash my_script.sh
+$ ./my_script.sh
+
+Going deep
+Now that we have seen how to write a basic Hello World example, let’s look at some of the language constructs that you will find yourself using most of the time when writing shell scripts.
+
+Variables
+
+To process data, data must be kept in the computer’s memory. Memory is divided into small locations, and each location had a unique number called memory address, which is used to hold data.
+
+Programmers can give a unique name to this memory address called variables. Variables are a named storage location that may take different values, but only one at a time.
+
+In Linux Shell Scripting, there are two types of variable:
+
+System variables — Created and maintained by Linux itself. This type of variable defined in CAPITAL LETTERS.
+User-defined variables — Created and maintained by the user. This type of variable defined in lower letters.
+
+
+
+System variables can be used in the script to show any information these variables are holding. Like few important System variables are:
+
+BASH — Holds our shell name
+BASH_VERSION — Holds our shell version name
+HOME — Holds home directory path
+OSTYPE — Holds OS type
+USERNAME – Holds username who is currently logged in to the machine
+
+
+User-defined variables are as simple as we have in any other programming language but variables can store any type of data, as in the following example:
+
+# Syntax to define a variable
+name=abc
+
+To access user-defined variables use the following syntax:
+#Syntax to access a variable
+$name
+
+#Syntax to print a variable
+echo $name
+#output
+abc
+
+#Syntax to print a variable
+echo "My name is $name"
+#output 
+My name is abc
+
+Quotes
+
+Double Quotes (“) : Anything inside double quotes will be string except \ and $. See example
+
+#Syntax to define string variable double quotes
+str="Shell scripting article"
+echo $str
+#output
+Shell scripting article
+#Using \ to escape characters
+str="Shell scripting \"article\""
+echo $str
+#output
+Shell scripting "article"
+#using variable in a string
+user="ABC"
+str="Shell scripting \"article\" by $user"
+echo $str
+
+#output
+Shell scripting "article" by ABC
+
+Single quotes (‘) : Anything inside single quotes will be a string. See example:
+
+Left Quotes (`): Anything enclosed in left quotes will be treated as an executable command. See examples
+
+#Syntax to define a string variable
+str='Current date is `date`'
+echo $str
+#output
+Current date is Wed Apr 4 10:57:12 +04 2018
+---------------------------------------------------------------------------------------------------------------
+# Syntax of simple if then statement
+if [ 35 -gt 0 ]
+then
+    echo "Greater"
+else
+	echo "Lesser"
+fi
+# output
+Greater
+---------------------------------------------------------------------------------------------------------------
+
+# Syntax of simple if then else-if statement
+if [ 35 -gt 55 ]
+then
+ echo "Greater"
+elif [ 35 -gt 45 ]
+then
+ echo "Greater"
+else
+ echo "Lesser"
+fi
+# Output
+Lesser
+---------------------------------------------------------------------------------------------------------------
+String Comparisons
++------------------+-----------------------------------------------+
+|   Conditions     |                    Description                |
++------------------+-----------------------------------------------+
+| Str1 = Str2      | True if the strings are equal                 |                            
+| Str1 != Str2     | True if the strings are not equal             |
+| -n Str1          | True if the string is not null                | 
+| -z Str1          | True if the string is null                    |                             
++------------------+-----------------------------------------------+
+
+Numeric Comparisons
++------------------+-----------------------------------------------+
+|   Conditions     |                    Description                |
++------------------+-----------------------------------------------+
+| expr1 -eq expr2  | True if the expressions are equal             |
+| expr1 -ne expr2  | True if the expressions are not equal         |
+| expr1 -gt expr2  | True if expr1 is greater than expr2           |
+| expr1 -ge expr2  | True if expr1 is greater than equal to expr2  |
+| expr1 -lt expr2  | True if expr1 is less than expr2              | 
+| expr1 -le expr2  | True if expr1 is less than or equal to expr2  |
+| !expr1           | Negates the result of the expression          |            
++------------------+-----------------------------------------------+
+
+
+
+
+# Syntax for simple For loop
+for i in 1 2 3 4 5
+do
+echo "Hello world $i"
+done
+
+# Syntax for simple While loop
+i = 1
+while [ $i -le 5 ]
+do
+ echo "Hello world $i"
+ i=`expr $i + 1`
+done
+
+
+#Syntax to declare a simple function
+print_date()
+{
+echo "Today is `date +"%A %d %B %Y (%r)"`"
+return
+}
+#Calling the above function
+print_date
+#Output
+Today is Thursday 05 April 2018 (12:11:23 PM)
+
+
+The exit command terminates a script, just as in a C program. It can also return a value, which is available to the script’s parent process.
+
+Every command returns an exit status (sometimes referred to as a return status or exit code). A successful command returns a 0, while an unsuccessful one returns a non-zero value that usually can be interpreted as an error code. Well-behaved UNIX commands, programs, and utilities return a 0 exit code upon successful completion, though there are some exceptions.
+
+When a script ends with an exit that has no parameter, the exit status of the script is the exit status of the last command executed in the script (previous to the exit).
+
+#Syntax to exit
+LAST_COMMAND
+# Will exit with the status of the last command.
+exit
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Declare command
+
+Use the declare command to set variable and functions attributes.
+
+Create a constant variable
+
+declare -r var
+declare -r varName=value
+
+declare -r pwdfile=/etc/passwd
+
+Create a integer variable
+
+declare -i y=10
+[ $y -eq 0 ] && echo "Y is set to a zero number." || echo "Y is set to a nonzero number."
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+System variables
+
+PS1, PATH, LANG,HISTSIZE,and DISPLAY
+
+View all system varibles
+
+set
+env
+printenv
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+BASH_VERSION	Holds the version of this instance of bash.	echo $BASH_VERSION
+HOSTNAME	The name of the your computer.	echo $HOSTNAME
+CDPATH	The search path for the cd command.	echo $CDPATH
+HISTFILE	The name of the file in which command history is saved.	echo $HISTFILE
+HISTFILESIZE	The maximum number of lines contained in the history file.	echo $HISTFILESIZE
+HISTSIZE	The number of commands to remember in the command history. The default value is 500.	echo $HISTSIZE
+HOME	The home directory of the current user.	echo $HOME
+IFS	The Internal Field Separator that is used for word splitting after expansion and to split lines into words with the read builtin command. The default value is <space><tab><newline>.	echo $IFS
+LANG	Used to determine the locale category for any category not specifically selected with a variable starting with LC_.	echo $LANG
+PATH	The search path for commands. It is a colon-separated list of directories in which the shell looks for commands.	echo $PATH
+PS1	Your prompt settings.	echo $PS1
+TMOUT	The default timeout for the read builtin command. Also in an interactive shell, the value is interpreted as the number of seconds to wait for input after issuing the command. If not input provided it will logout user.	echo $TMOUT
+TERM	Your login terminal type.	echo $TERM
+export TERM=vt100
+SHELL	Set path to login shell.	echo $SHELL
+DISPLAY	Set X display name	echo $DISPLAY
+export DISPLAY=:0.1
+EDITOR	Set name of default text editor.	export EDITOR=/usr/bin/vim
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+echo "$HOME"
+echo "${HOME}work"
+
+printf "Floating Point Number %f" $VARIABLE_NAME
+printf "The path is set to %s\n" $PATH
+
+
+:= syntax
+
+if $grandslam unset, set name to default "Maria Sharapova":
+echo ${grandslam:=Maria Sharapova}
+
+:- syntax
+if $grandslam name is not set use default "Maria Sharapova":
+echo ${grandslam:-Maria Sharapova}
+
+Do not put spaces on either side of the equal sign when assigning value to variable. For example, the following is valid variable declaration:
+
+no=10
+
+NUll variable
+
+vech=
+vech=""
+
+
+echo $varName /* Not advisable unless you know what the variable contains
+echo "$varName"
+
+Printing the filenames with echo
+
+cd /etc
+echo *.conf
+
+Export variables
+
+The export builtin automatically exports to the environment of child processes
+
+To start a new shell instance
+bash
+
+export backup="/nas10/mysql"
+echo "Backup dir $backup"
+bash
+echo "Backup dir $backup"
+
+By default all user defined variables are local. They are not exported to new processes. Use export command to export variables and functions to child processes. If no variable names or function names are given, or if the -p option is given, a list of all names that are exported in this shell is printed. An argument of -n says to remove the export property from subsequent NAMEs.
+
+export -p
+
+Use unset command to delete the variables during program execution. It can remove both functions and shell variables.
+
+vech=Bus
+echo $vech
+unset vech
+echo $vech
+
+Read command syntax
+
+read -p "Prompt" variable1 variable2 variableN
+
+-p "Prompt" : Display prompt to user without a newline.
+variable1 : The first input (word) is assigned to the variable1.
+variable2 : The second input (word) is assigned to the variable2.
+
+#!/bin/bash
+read -p "Enter your name : " name
+echo "Hi, $name. Let us be friends!"
+
+chmod +x greet.sh
+./greet.sh
+
+
+Handling passwords
+#!/bin/bash
+read -s -p "Enter Password  : " my_password
+echo 
+echo "Your password - $my_password"
+
+Handling multiple values
+
+read -p "Enter directory to delete : " dirname
+echo "$dirname"
+
+Enter directory to delete : foo bar /tmp/data
+foo bar /tmp/data
+
+nameservers="ns1.nixcraft.net ns2.nixcraft.net ns3.nixcraft.net"
+read -r ns1 ns2 ns3 <<< "$nameservers"
+
+
+Arithmetic Expansion in Bash shell
+
+$((expression))
+$(( n1+n2 ))
+$(( n1/n2 ))
+$(( n1-n2 ))
+
+readonly DATA = /home/usr/surya
+
+unset DATA
+
+you cannot unset the readonly variable
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Bash variable existence check
+
+${varName?Error varName is not defined}
+${varName:?Error varName is not defined or is empty}
+
+path=${1:?Error command line argument not passed}
+
+echo "Backup path is $path."
+echo "I'm done if \$path is set."
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Strictly speaking there are two types of shell variables:
+Local variables (shell variable) - Used by shell and or user scripts. All user created variables are local unless exported using the export command.
+Environment variables - Used by shell or user but they are also passed onto other command. Environment variables are passed to subprocesses or subshells
+
+TO locate the command
+
+The which command displays the pathnames of the files which would be executed in the current environment. It does this by searching the PATH for executable files matching the names of the arguments.
+which fortune
+/usr/games/fortune
+
+PATH - Set your executable search path.
+
+where is command
+
+The whereis command is used to locate the binary, source, and manual page files for a command.
+
+whereis ls
+
+ls: /bin/ls /usr/share/man/man1/ls.1.gz
+
+Whatis
+The whatis command is used display a short description about command. whatis command searches the manual page names and displays the manual page descriptions for a command:
+
+whatis date
+whatis ifconfig
+whatis ping
+
+date (1)             - print or set the system date and time
+ifconfig (8)         - configure a network interface
+ping (8)             - send ICMP ECHO_REQUEST to network hosts
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+history
+
+  3  tail -f /var/log/maillog
+    4  cat /etc/resolv.conf 
+    5  vnstat
+    6  vnstat -m
+    7  rpm -qa | grep vnstat
+    8  yum update vnstat
+    9  cd /opt/
+   10  wget http://humdi.net/vnstat/vnstat-1.9.tar.gz
+
+Press [CTRL-r] from the shell prompt to search backwords through history buffer or file for a command:
+
+
+date
+!!
+
+history
+!13
+
+
+Path name expansion
+
+echo file{1,2,3}.txt
+
+file1.txt file2.txt file3.txt
+
+ls /etc/{resolv.conf,hosts,passwd}
+
+The filenames generated do not need to exist. You can also run a command for every pattern inside the braces. Usually, you can type the following to list three files:
+
+Sample outputs: To remove files called hello.sh, hello.py, hello.pl, and hello.c, enter:
+
+rm -v hello.{sh,py,pl,c}
+
+ls *.{c,h}
+ls /etc/*.conf
+
+To list all png file (image1.png, image2.png...image7.png, imageX.png), enter:
+ls image?.png
+
+To list all file configuration file start with either letter a or b, enter:
+
+ls /etc/[ab]*.conf
+
+----------------------------------------------------------------------------------------------------------------------------------
+Create and use aliases
+
+An alias is nothing but shortcut to commands.
+Use alias command to display list of all defined aliases.
+Add user defined aliases to ~/.bashrc file
+
+alias c='clear'
+
+To clear the terminal, enter:
+c
+
+unalias c
+
+unalias -a
+
+How do I permanently add aliases to my session?
+If you want to add aliases for every user, place them either in /etc/bashrc or /etc/profile.d/useralias.sh file. Please note that you need to create /etc/profile.d/useralias.sh file.
+User specific alias must be placed in ~/.bashrc ($HOME/.bashrc) file.
+----------------------------------------------------------------------------------------------------------------------------------
+
+StartUp scripts
+
+How to view .files
+
+ls -a
+
+ls -A | less
+
+vi ~/.bashrc
+
+alias c='clear'
+alias update='apt-get update && apt-get upgrade'
+alias ports='netstat -tulpn'
+alias vi='vim'
+
+alias 
+
+test 5 -eq 5 && echo Yes || echo No
+test -f /etc/resolv.conf && echo "File /etc/resolv.conf found." || echo "File /etc/resolv.conf not found."
+
+if condition
+	then
+		if condition
+		then
+			.....
+			..
+			do this
+		else
+			....
+			..
+			do this
+		fi
+	else
+		...
+		.....
+		do this
+fi
+
+date1
+echo $?
+ls /eeteec
+echo $?
+
+How Do I Store Exit Status Of The Command In a Shell Variable?
+ls -l /tmp
+status=$?
+echo "ls command exit stats - $status"
+
+#!/bin/bash
+# set var 
+PASSWD_FILE=/etc/passwd
+
+# get user name
+read -p "Enter a user name : " username
+
+# try to locate username in in /etc/passwd
+grep "^$username" $PASSWD_FILE > /dev/null
+
+# store exit status of grep
+# if found grep will return 0 exit stauts
+# if not found, grep will return a nonzero exit stauts
+status=$?
+
+if test $status -eq 0
+then
+	echo "User '$username' found in $PASSWD_FILE file."
+else
+	echo "User '$username' not found in $PASSWD_FILE file."
+fi
+------------------------------------------------------------------------------------------
+if grep "^$username:" /etc/passwd >/dev/null
+then
+	echo "User '$username' found in $PASSWD_FILE file."
+else
+	echo "User '$username' not found in $PASSWD_FILE file."
+fi
+------------------------------------------------------------------------------------------
+
+grep "^vivek" /etc/passwd && echo "Vivek found in /etc/passwd"
+test ! -d /tmp/foo && { read -p "Directory /tmp/foo not found. Hit [Enter] to exit..." enter; exit 1; }
+rm /tmp/filename && echo "File deleted."
+
+uid=$(id -u)
+ 
+## Check for it
+[ $uid -ne 0 ] && { echo "Only root may enable the nginx-chroot environment to the system."; exit 1; }
+
+cat /etc/shadow 2>/dev/null || echo "Failed to open file"
+
+test $(id -u) -eq 0  && echo "You are root" || echo "You are NOT root"
+
+
+------------------------------------------------------------------------------------------
+
+difference between >> and > in bash
+
+Yes, >> appends, > always overwrites/destroys the previous content.
+
+ps aux > log
+It will put the output of ps aux to log named file.
+
+ps aux >> log
+
+$(date)
+${variable}hello
+
+[ condition ] && true-command || false-command
+
+------------------------------------------------------------------------------------------
+
+-a file
+True if file exists
+
+[ -a /etc/resolv.conf ] && echo "File found" || echo "Not found"
+
+-d dir
+True if file exists and is directory
+
+sort -r -n /path/to/file
+date +"%d-%m-%Y"
+
+#!/bin/bash
+IFS=", "
+echo "* Displaying all pizza names using \$@"
+echo "$@"
+echo 
+
+echo "* Displaying all pizza names using \$*"
+echo "$*"
+
+chmod +x pizza.sh
+./pizza.sh Margherita Tomato Panner Gourmet
+
+Sample outputs
+
+* Displaying all pizza names using $@
+Margherita Tomato Panner Gourmet
+
+*Displaying all pizza names using $*
+Margherita,Tomato,Panner,Gourmet
+
+
+#!/bin/bash
+# A shell script to lookup usernames in /etc/passwd file
+# Written by: Vivek Gite 
+# Last updated on: Sep/10/2003
+# -------------------------------------------------------
+# Set vars
+user=$1   # first command line argument
+
+passwddb=/etc/passwd
+ 
+# Verify the type of input and number of values
+# Display an error message if the username (input) is not correct
+# Exit the shell script with a status of 1 using exit 1 command.
+[ $# -eq 0 ] && { echo "Usage: $0 username"; exit 1; }
+ 
+grep "^$user" $passwddb >/dev/null
+retval=$?    # store exit status of grep
+
+# If grep found username, it sets exit status to zero
+# Use exit status to make the decision 
+[ $retval -eq 0 ] && echo "$user found" || echo "$user not found"
+
+./userlookup.sh kate
+
+Kate not found
+
+
+rental.sh
+
+#!/bin/bash
+
+# if no command line arg given
+# set rental to Unknown
+if [ -z $1 ]
+then
+  rental="*** Unknown vehicle ***"
+elif [ -n $1 ]
+then
+# otherwise make first arg as a rental
+  rental=$1
+fi
+
+# use case statement to make decision for rental
+case $rental in
+   "car") echo "For $rental rental is Rs.20 per k/m.";;
+   "van") echo "For $rental rental is Rs.10 per k/m.";;
+   "jeep") echo "For $rental rental is Rs.5 per k/m.";;
+   "bicycle") echo "For $rental rental 20 paisa per k/m.";;
+   "enfield") echo "For $rental rental Rs.3  per k/m.";;
+   "thunderbird") echo "For $rental rental Rs.5 per k/m.";;
+   *) echo "Sorry, I can not get a $rental rental  for you!";;
+esac
+
+
+#!/bin/bash
+OPT=$1   # option
+FILE=$2  # filename
+
+# test -e and -E command line args matching
+case $OPT in
+  -e|-E) 
+  	echo "Editing $2 file..." 
+        # make sure filename is passed else an error displayed   
+  	[ -z $FILE ] && { echo "File name missing"; exit 1; } || vi $FILE	
+  	;;
+  -c|-C) 
+  	echo "Displaying $2 file..." 
+  	[ -z $FILE ] && { echo "File name missing"; exit 1; } || cat $FILE	
+  	;;
+  -d|-D) 
+  	echo "Today is $(date)" 
+  	;;
+   *) 
+    echo "Bad argument!" 
+    echo "Usage: $0 -ecd filename"
+    echo "	-e file : Edit file."
+    echo "	-c file : Display file."
+    echo "	-d      : Display current date and time."	
+    ;;
+esac
+
+chmod +x casecmdargs.sh
+./casecmdargs.sh
+./casecmdargs.sh -e /tmp/file
+./casecmdargs.sh -E /tmp/file
+./casecmdargs.sh -e 
+./casecmdargs.sh -D
+
+
+Creating a back up script
+
+#!/bin/bash
+# A shell script to backup mysql, webserver and files to tape
+opt=$1
+case $opt in
+        sql)
+                echo "Running mysql backup using mysqldump tool..."
+                ;;
+        sync)
+                echo "Running backup using rsync tool..."
+                ;;
+        tar)
+                echo "Running tape backup using tar tool..."
+                ;;
+        *)
+        	    echo "Backup shell script utility"
+                echo "Usage: $0 {sql|sync|tar}"
+                echo "	sql  : Run mySQL backup utility."
+                echo "	sync : Run web server backup utility."	
+                echo "	tar  : Run tape backup utility."	;;
+esac
+
+https://bash.cyberciti.biz/guide/The_case_statement
+
+
+However in bash, introducing a pipe means the individual commands are run in subshells. Consider this:
+
+echo "hello world" | read first second
+echo $second $first
+
+The output of the 2nd echo command prints a single space. Whaaaa? What happened to my variables? Because the read command is in a pipeline, it is run in a subshell. It correctly reads 2 words from its stdin and assigns to the variables. But then the command completes, the subshell exits and the variables are lost.
+
+read first second <<< "hello world"
+echo $second $first
+
+< passes the contents of a file to a command's standard input.
+< is for passing file (or directory), 
+
+
+for command in date pwd df 
+   do
+   echo
+   echo "*** The output of $command command >"
+   #run command 
+   $command
+   echo
+done
+
+
+files="/etc/passwd /etc/group /etc/shadow /etc/gshdow"
+for f in $files
+
+
+for f in $(ls /tmp/*)
+
+for i in {1..10}
+do
+	echo "$n * $i = $(( $i * $n))"
+done
+
+https://bash.cyberciti.biz/guide/While_loop
+
+for (( EXP1; EXP2; EXP3 ))
+do
+	command1
+	command2
+	command3
+done
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+ while IFS= read -r line
+           do
+                 command1 on $line
+                 command2 on $line
+                 ..
+                 ....
+                 commandN
+           done < "/path/to/filename"
+
+
+#!/bin/bash
+file=/etc/resolv.conf
+while IFS= read -r line
+do
+        # echo line is stored in $line
+	echo $line
+done < "$file"
+
+
+nameserver 127.0.0.1
+nameserver 192.168.1.254
+nameserver 4.2.2.1
+
+
+#!/bin/bash
+file=/etc/resolv.conf
+# set field separator to a single white space 
+while IFS=' ' read -r f1 f2
+do
+	echo "field # 1 : $f1 ==> field #2 : $f2"
+done < "$file"
+
+
+field # 1 : nameserver ==> field #2 : 127.0.0.1
+field # 1 : nameserver ==> field #2 : 192.168.1.254
+field # 1 : nameserver ==> field #2 : 4.2.2.1
+
+
+ The -r option to read command disables backslash escaping (e.g., \n, \t). This is failsafe while read loop for reading text files.
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+#!/bin/bash
+# The default value for PS3 is set to #?.
+# Change it i.e. Set PS3 prompt
+PS3="Enter the space shuttle to get quick information : "
+ 
+# set shuttle list
+select shuttle in columbia endeavour challenger discovery atlantis enterprise pathfinder
+do
+	case $shuttle in
+		columbia)
+			echo "--------------"
+			echo "Space Shuttle Columbia was the first spaceworthy space shuttle in NASA's orbital fleet."
+			echo "--------------"
+			;;
+		discovery) 
+			echo "--------------"		
+			echo "Discovery became the third operational orbiter, and is now the oldest one in service."
+			echo "--------------"							
+			;;		
+		pathfinder)
+			echo "--------------"		
+			echo "Space Shuttle Orbiter Pathfinder is a Space Shuttle simulator made of steel and wood."
+			echo "--------------"							
+			;;
+		*)		
+			echo "Error: Please try again (select 1..7)!"
+			;;		
+	esac
+done
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+

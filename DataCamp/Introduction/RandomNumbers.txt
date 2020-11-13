@@ -1,0 +1,109 @@
+You are walking u the empire state building. dice is 1,2 go one step down . dice is 3,4,5, go one step up. dice is 6, then go steps = number on dice
+0.1% chance of falling down -> again start from step 0
+what is the probability that you will go 60 steps high.
+
+simulate this process 1000 of times and see in what fraction of the simulations that u will reach 60 steps
+
+import numpy as np
+np.random.rand()
+
+Pseudo-random numbers using mathematical formula using some initial random seed
+
+np.random.seed(123)
+np.random.read()
+np.random.read()
+
+its random but consistent between the runs. very useful ensures reproducibility
+if u run different versions of the same algorithms, fair comparison between the versions
+
+import numpy as np
+np.random.seed(123)
+coin = np.random.randint(0,2)
+print(coin)
+
+-----------------
+
+dice = np.random.randint(1,7)
+if dice <= 2 :
+    step = step - 1
+elif dice < 6 :
+    step = step+1
+else:
+    step = step + np.random.randint(1,7)
+---------------------
+
+Random walk
+path traced by a molecule as it travels in  a liquid or gas can be modeled as random walk
+
+import numpy as np
+np.random.seed(123)
+outcomes=[]
+for x in range(10):
+	coin = np.random.randint(0,2)
+	if coin == 0:
+		outcomes.append("heads")
+	else:
+		outcomes.append("tails")
+print(outcomes)
+
+This list is random, but its not a random walk because the items in the list are not based on previous one
+
+tails = [0]
+for x in range(10):
+	coin = np.random.randint(0,2)
+	tails.append(tails[x] + coin)
+print(tails)
+
+-------------------------------
+all_walks=[]
+for i in range(10):
+	random_walk=[0]
+	for x in range(100):
+    	step = random_walk[-1]
+    	dice = np.random.randint(1,7)
+    	if dice <= 2:
+        	step = max(0,step - 1)
+    	elif dice <= 5:
+        	step = step + 1
+    	else:
+        	step = step + np.random.randint(1,7)
+    	random_walk.append(step)
+    	if np.random.rand() < 0.001:
+    		step=0
+	print(random_walk)
+	all_walks.append(random_walk)
+print(all_walks)
+import matplotlib.pyplot as plt
+plt.plot(random_walk)
+plt.show()
+
+[60, 73, 83, 68, 73, 106, 63, 76, 60, 87]
+
+-----------------
+
+Distribution of random walks
+
+Each random walk has an end point
+Simulate 10000 times : 10000 end points
+Distribution of final steps
+calculate the chances
+
+import numpy as np
+np.random.seed(123)
+final_tails=[]
+for x in range(100):
+	tails=[0]
+	for x in range(10):
+		coin = np.random.randint(0,2)
+		tails.append(tails[x] + coin)
+	final_tails.append(tails[-1])
+print(final_tails)
+plt.hist(final_tails,bins=10)
+plt.show()
+
+if u run it 10000 times
+plot becomes smooth
+distribution starts to converge to a bell shape
+
+-------------------------------
+

@@ -1,0 +1,295 @@
+we have seen pandas dateframes with numbers and strings . lets move onto datetimes 
+pandas store date and time information in date time objects
+
+read_csv function can read strings into datetime objects
+'parse_dates' = True option transforms date and time in ISO 8601 format from specified columns into datetime objects
+
+ISO 8601 format
+yyyy-mm-dd hh:mm:ss 
+
+Date company product units
+
+import pandas as pd 
+sales = pd.read_csv('sales-feb-2015.csv', parse_dates = True, index_col = 'Date')
+
+dateTime indexs are very useful for data exploration 
+
+sales.head()
+
+sales.info()
+DatetimeIndex : 19 entires feb1 to feb26
+
+sales.loc['2015-02-19 11:00:00',company]
+
+sales.loc['2015-02-05']
+
+partial string selection 
+
+Alternative formats:
+sales.loc['February 5,2015']
+sales.loc['2015-Feb-5']
+sales.loc['2015-2']
+
+slicing using date and times
+
+sales.loc['2015-2-16' : '2015-2-20']
+
+convert strings to datetime 
+
+evening_2_11 = pd.to_datetime(['2015-02-11 20:00','2015-2-11 23:00'])
+
+
+sometimes we need to reindex series or data frame
+sales.reindex(evening_2_11)
+
+new dataframe with four rows corresponding to the times in evening_2_11
+
+filling missing values 
+
+sales.reindex(evening_2_11, method='ffill') #forward fill
+sales.reindex(evening_2_11, method='bfill') #backward fill
+
+
+------------------------
+
+creating and building timeseries index 
+# Prepare a format string: time_format
+time_format = '%Y-%m-%d %H:%M'
+
+# Convert date_list into a datetime object: my_datetimes
+my_datetimes = pd.to_datetime(date_list, format=time_format)  
+
+# Construct a pandas Series using temperature_list and my_datetimes: time_series
+time_series = pd.Series(temperature_list, index=my_datetimes)
+
+--------
+
+ts1 = ts0.loc['2010-10-11 21:00:00':'2010-10-11 22:00:00']
+ts2 = ts0.loc['July 4, 2010']
+ts3 = ts0.loc['12/15/2010':'12/31/2010']
+
+ts3 = ts2.reindex(index=ts1.index)
+ts4 = ts2.reindex(index=ts1.index,method='ffill')
+sum12 = ts1+ts2
+sum13 = ts1+ts3
+sum14 = ts1+ts4
+
+
+Resampling timeseries data 
+
+sales data 
+
+import pandas as pd 
+sales = pd.read_csv('saled-feb-2015.csv',parse_dates=True,index_col='Date')
+sales.head()
+
+						company 	product 	units
+Date 
+2015-02-02 08:30:00		Microsoft 	Software 	10
+
+statistical methods over different time intervals 
+mean(), sum(), count() 
+
+Downsampling 
+reduce datetime rows to slower frequency 
+
+daily_mean = sales.resample('D').mean() #aggregates daily
+			units
+Date 
+2015-02-02 	6.0 
+company, product are non-numerical. Hence they are ignored 
+
+
+verifying 
+
+daily_mean.loc['2015-02-02']
+
+print(sales.loc['2015-02-02','Units'].mean())
+
+sales.resample('D').sum()
+
+sales.resample('D').sum().max()
+
+sales.resample('W').count()
+
+Resampling frequencies 
+'T'
+'H'
+'D'
+'B'
+'W'
+'M'
+'Q'
+'A'
+
+sales.loc[:,'Units'].resample('2W').sum()
+
+two_days = sales.loc['2015-2-4':'2015-2-5','Units']
+two_days.resample('4H').ffill()
+
+-----------------
+
+Resampling and frequency
+
+df1 = df['Temperature'].resample('6H').mean()
+df2 = df['Temperature'].resample('D').count()
+
+august = df.loc['August 2010','Temperature']
+august_highs = august.resample('D').max()
+february = df.loc['February 2010','Temperature']
+february_lows = february.resample('D').min()
+
+
+Rolling mean and frequency
+
+Rolling means (or moving averages) are generally used to smooth out short term fluctuations in time series data and highlight long term trends 
+
+# Extract data from 2010-Aug-01 to 2010-Aug-15: unsmoothed
+unsmoothed = df['Temperature']['2010-Aug-01':'2010-Aug-15']
+unsmoothed = df.loc['2010-Aug-01':'2010-Aug-15','Temperature']
+smoothed = unsmoothed.rolling(window=24).mean()
+august = pd.DataFrame({'smoothed':smoothed, 'unsmoothed':unsmoothed})
+august.plot()
+plt.show()
+
+--------------------
+
+Manipulating time series data 
+
+sales data 
+
+import pandas as pd
+sales = pd.read_csv('sales-feb-2015.csv',parse_dates=['Date'])
+
+we provided date column as list in the parse_dates parameter to inform read_csv to convert the column from string to datatime object
+u use default integer range as index 
+
+sales['Company'].str.upper()
+
+substring matching 
+
+sales['product'].str.contains('ware')
+0 True
+1 False
+2 True
+3 True
+
+sales['product'].str.contains('ware').sum() 
+14 rows where str contains ware 
+
+dateTime methods 
+
+sales['Date'].dt.hour 
+0 8
+1 21 
+
+set timezone 
+central = sales['Date'].dt.tz_localize('US/central')
+central.dt.tz_convert('US/Eastern')
+
+-----------
+
+world population 
+
+population = pd.read_csv('world_population.csv',parse_dates=True,index_col='Date')
+
+				population
+Date 
+1960-12-31		2.08e+10
+1970-12-31		2.08e+10
+
+sampled every 10 years 
+
+
+interpolate missing data 
+
+population.resample('A').first().interpolate('linear')
+
+dallas departure
+df.columns = df.columns.str.strip()
+dallas = df['Destination Airport'].str.contains('DAL')
+daily_departures = dallas.resample('D').sum()
+stats = daily_departures.describe()
+
+
+One common application of interpolation is to fill out missing data 
+
+in ts2, the values are missing for weekends ; in ts1 the values are present throughout 
+
+ts2_interp = ts2.reindex(ts1.index).interpolate(how='linear')
+differences = np.abs(ts1 - ts2_interp)
+print(differences.describe())
+
+ count    17.000000
+ mean      2.882353
+ std       1.585267
+ min       0.000000
+ 25%       2.000000
+ 50%       2.666667
+ 75%       4.000000
+ max       6.000000
+
+ Time zones and conversion 
+
+
+mask = df['Destination Airport'] == 'LAX'
+la = df[mask]
+
+# Combine two columns of data to create a datetime series: times_tz_none 
+times_tz_none = pd.to_datetime( la['Date (MM/DD/YYYY)'] + ' ' + la['Wheels-off Time'] )
+times_tz_central = times_tz_none.dt.tz_localize('US/Central')
+times_tz_pacific = times_tz_central.dt.tz_convert('US/Pacific')
+
+------------
+
+Time series visualization
+
+Line types
+plot types
+Subplots 
+
+import pandas as pd 
+import matplotlib.pyplot as plt 
+
+sp500 = pd.read_csv('sp500.csv',parse_dates=True, index_col='Date')
+sp500.head()
+
+sp500['close'].plot() #automatically formats year,month,date labels
+plt.show()
+sp500['Close'].plot(title='S&P 500')
+plt.ylabel('Closing price (US Dollars)')
+plt.show()
+sp500.loc['2012-4-1':'2012-4-7','Close'].plot()
+
+sp500.loc['2012-4','Close'].plot(style='k.-',title='S&P500')
+
+style format string 
+
+color (k:black)   b,g,r,c
+marker (.:dot)		o:circle, *:star, s:square , +:plus
+line type(-:solid)	: dotted
+
+sp500['Close'].plot(kind='area',title='S&P500')
+sp500.loc['2012',['close','volume']].plot()
+
+sp500.loc['2012',['close','volume']].plot(subplots=True)
+
+-----------------
+
+plotting timeseries and datetime indexing 
+
+# Plot the summer data
+df.Temperature['2010-Jun':'2010-Aug'].plot()
+plt.show()
+plt.clf()
+# Plot the one week data
+df.Temperature['2010-06-10':'2010-06-17'].plot()
+plt.show()
+plt.clf()
+
+
+
+
+
+
+

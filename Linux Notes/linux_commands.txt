@@ -1,0 +1,865 @@
+The ps (i.e., process status) command is used to provide information about the currently running processes, including their process identification numbers (PIDs).
+
+A process, also referred to as a task, is an executing (i.e., running) instance of a program. Every process is assigned a unique PID by the system.
+
+ps [options]
+
+When ps is used without any options, it sends to standard output, which is the display monitor by default,four items of information for at least two processes currently on the system: the shell and ps. A shell is a program that provides the traditional, text-only user interface in Unix-like operating systems for issuing commands and interacting with the system, and it is bash by default on Linux. ps itself is a process and it dies (i.e., is terminated) as soon as its output is displayed.
+
+The four items are labeled PID, TTY, TIME and CMD. TIME is the amount of CPU (central processing unit) time in minutes and seconds that the process has been running. CMD is the name of the command that launched the process.
+
+A common and convenient way of using ps to obtain much more complete information about the processes currently on the system is to use the following:
+
+ps -aux | less
+
+The -a option tells ps to list the processes of all users on the system rather than just those of the current user, with the exception of group leaders and processes not associated with a terminal. A group leader is the first member of a group of related processes.
+The -u option tells ps to provide detailed information about each process. The -x option adds to the list processes that have no controlling terminal, such as daemons, which are programs that are launched during booting (i.e., computer startup) and run unobtrusively in the background until they are activated by a particular event or condition.
+
+As the list of processes can be quite long and occupy more than a single screen, the output of ps -aux can be piped (i.e., transferred) to the less command, which lets it be viewed one screenful at a time. The output can be advanced one screen forward by pressing the SPACE bar and one screen backward by pressing the b key.
+
+The processes shown by ps can be limited to those belonging to any given user by piping the output through grep, a filter that is used for searching text. For example, processes belonging to a user with a username adam can be displayed with the following:
+
+ps -ef | grep adam
+
+The -l option generates a long listing, and when used together with the -e and -f options creates a table with 15 columns:
+
+ps -efl
+
+The additional columns of most interest are NI and SZ. The former shows the nice value of the process, which determines the priority of the process. The higher the value, the lower the priority. The default nice value is 0 on Linux systems.
+
+The latter displays the size of the process in memory. The value of the field is the number of pages the process is occupying. On Linux systems a page is 4,096 bytes.
+
+ps is most often used to obtain the PID of a malfunctioning process in order to terminate it with the kill command. For example, if the PID of a frozen or crashed program is found to be 1125, the following can usually terminate the process:
+
+kill 1125
+
+ps -ef or ps -efl can then be used to confirm that the process really has stopped. If it has not, then the more forceful -9 option should be used, i.e.,
+
+kill -9 1125
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+ps axl | grep tcollector
+
+
+You are not getting data to your hbase probably because your opentsdb config is set to the default of you requiring to create manually the metrics. If so, then you have to define the metrics yourself.
+
+Instead, to create an auto created metrics, try and go to your opentsdb server and check the config and set the metrics creation to automatic.
+
+Specifically, in /etc/opentsdb/opentsdb.conf, set the parameter "tsd.core.auto_create_metrics" to true, then restart the opentsdb service.
+
+Then check again your hbase to see if you can see data in 'tsdb-uid' for instance.
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+export command
+
+The export builtin automatically exports to the environment of child processes.
+
+vech = "Bus"
+echo "$vech"
+
+bash
+
+echo "$vech"
+
+You will get an empty line as the variable vech is not exported to new process. To make the variable known to child processes, use the export command. By default all user defined variables are local. They are not exported to new processes. Use export command to export variables and functions to child processes.
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+esc
+dd -> deletes the line in vim editor
+
+ps -ef | grep opera_monitoring.sh
+kill -9 id
+nohup sh opera_monitoring.sh > run.log > 2>&1 &
+
+ctr+alt_down -> to select colums in sublime text
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+mv command
+
+How to move a file
+
+mv source destination
+
+ls
+foo.txt
+mv foo.txt bar.txt
+ls 
+bar.txt
+
+
+Move file into a directory
+
+tree -F .
+.
+├── bar/
+└── foo.txt
+mv foo.txt bar
+tree -F 
+.
+└── bar/
+    └── foo.txt
+
+
+How to move multiple files into a directory
+
+mv file1.txt file.2.txt file3.txt folder
+mv *.txt folder
+
+How to move a directory
+
+ls -F 
+foo/
+mv foo bar
+ls -F
+bar/
+
+
+How to prompt before overwriting a file
+
+ls 
+foo.txt bar.txt
+mv -i foo.txt bar.txt
+mv: overwrite 'bar.txt'? n
+
+How to take a backup of an existing file
+
+ls 
+foo.txt bar.txt
+mv -b foo.txt bar.txt
+ls
+bar.txt  bar.txt~
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+cp command
+
+cp source destination
+
+ If the 2nd file doesn’t exist, then first it creates one and content is copied to it. But if it existed then it is simply overwritten without any warning. So be careful when you choose destination file name 
+
+$ ls
+a.txt
+
+$ cp a.txt b.txt
+
+$ ls
+a.txt  b.txt
+
+---------------------------
+$ ls
+a.txt  b.txt  new
+
+Initially new is empty
+$ ls new
+
+$ cp a.txt b.txt new
+
+$ ls new
+a.txt  b.txt
+
+----------------------------
+
+If the command contains two directory names, cp copies all files of the source directory to the destination directory, creating any files or directories needed. This mode of operation requires an additional option, typically R, to indicate the recursive copying of directories.
+cp -R Src_directory Dest_directory
+
+In the above command, cp behavior depend upon whether Dest_directory is exist or not. If the Dest_directory doesn’t exist, cp creates it and copies content of Src_directory recursively as it is. But if Dest_directory exists then copy of Src_directory becomes sub-directory under Dest_directory.
+
+-----------------------------
+
+
+$ ls geeksforgeeks
+a.txt  b.txt
+
+$ cat a.txt
+GFG
+
+$ cat b.txt
+GeeksforGeeks
+
+
+-i interactive
+
+$ cp -i a.txt b.txt
+cp: overwrite 'b.txt'? y
+
+$ cat b.txt
+GFG
+
+------------------------------
+
+$ cp -b a.txt b.txt
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+cat commands in linux
+
+Display contents of file
+
+cat /etc/passwd
+
+We can redirect standard output of a file into a new file else existing file with ‘>‘ (greater than) symbol. Careful, existing contents of test1 will be overwritten by contents of test file.
+
+cat test > test1
+
+Redirecting Multiple Files into a single file
+
+cat test test1 test2 > test3
+
+cat test test1 test2 test3 | sort > test4
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+sort command sorts the contents of the file line by line
+
+sort -n 	/*numerical sorting*/
+sort -M 	/*Month*/
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+/etc - Usually contain the configuration files for all the programs that run on your Linux/Unix system. ... A "conﬁguration ﬁle" is a local ﬁle used to control the operation of a program; it must be static and cannot be an executable binary
+
+
+Single user mode
+Single user mode is a mode in which a multiuser computer operating system boots into a single superuser. It is mainly used for maintenance of multi-user environments such as network servers. Some tasks may require exclusive access to shared resources, for example running fsck on a network share.
+
+Single User Mode Definition. Single user mode, also referred to as maintenance mode and runlevel 1, is a mode of operation of a computer running Linux or another Unix-like operating system that provides as few services as possible and only minimal functionality.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+/sbin Like /bin, this directory holds commands needed to boot the system, but which are usually not executed by normal users. /usr/bin This is the primary directory for executable programs. ... /usr/local/bin Binaries for programs local to the site. /usr/local/sbin Locally installed programs for system administration
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Difference between /usr/local and /opt
+
+While both are designed to contain files not belonging to the operating system, /opt and /usr/local are not intended to contain the same set of files.
+
+/usr/local is a place to install files built by the administrator, typically by using the make command (e.g., ./configure; make; make install). The idea is to avoid clashes with files that are part of the operating system, which would either be overwritten or overwrite the local ones otherwise (e.g., /usr/bin/foo is part of the OS while /usr/local/bin/foo is a local alternative).
+
+All files under /usr are shareable between OS instances, although this is rarely done with Linux. This is a part where the FHS is slightly self-contradictory, as /usr is defined to be read-only, but /usr/local/bin needs to be read-write for local installation of software to succeed. The SVR4 file system standard, which was the FHS' main source of inspiration, is recommending to avoid /usr/local and use /opt/local instead to overcome this issue.
+
+On the other hand, /opt is a directory for installing unbundled packages (i.e. packages not part of the Operating System distribution, but provided by an independent source), each one in its own subdirectory. They are already built whole packages provided by an independent third party software distributor.
+
+Difference between /bin and /usr/bin
+/bin
+contains commands that may be used by both the system administrator and by users, but which are required when no other filesystems are mounted (e.g. in single user mode). It may also contain commands which are used indirectly by scripts
+
+/usr/bin/
+
+This is the primary directory of executable commands on the system.
+
+essentially, /bin contains executables which are required by the system for emergency repairs, booting, and single user mode. /usr/bin contains any binaries that aren't required.
+-------------------------------------------------------------------------------------------------------------------------------------------------
+/sbin - Binaries needed for booting, low-level system repair, or maintenance (run level 1 or S)
+
+/bin - Binaries needed for normal/standard system functioning at any run level.
+
+/usr/bin - Application/distribution binaries meant to be accessed by locally logged in users
+
+/usr/sbin - Application/distribution binaries that support or configure stuff in /sbin.
+
+/usr/share/bin - Application/distribution binaries or scripts meant to be accesed via the web, i.e. Apache web applications
+
+*local* - Binaries not part of a distribution; locally compiled or manually installed. There's usually never a /local/bin but always a /usr/local/bin and /usr/local/share/bin.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+rm command 
+
+remove files or directories
+
+$ rm -i d.txt
+rm: remove regular empty file 'd.txt'? y
+
+$ ls
+e.txt
+
+rm -f (force deletion)
+
+$ ls
+A
+
+$ cd A
+
+$ ls
+B  C
+
+$ ls B
+a.txt  b.txt
+
+$ ls C
+c.txt  d.txt
+
+ls -ltr *svchdc87p*
+
+$ rm *
+rm: cannot remove 'B': Is a directory
+rm: cannot remove 'C': Is a directory
+
+$ rm -r * /recursive deletion
+$ rm -- -file.txt
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+How to use chmod and chown command  /changemode and changeowner
+
+Use the chown command to change file owner and group information. Use the chmod command to change file access permissions such as read, write, and access.
+
+chown owner-user file 
+chown owner-user:owner-group file
+chown owner-user:owner-group directory
+chown options owner-user:owner-group file
+
+ls -l demo.txt
+
+chown surya demo.txt
+chown surya:surya demo.txt
+chown -R root /u
+
+chmod options permissions file name
+
+permissions defines the permissions for the owner of the file (the "user"), members of the group who owns the file (the "group"), and anyone else ("others"). There are two ways to represent these permissions: with symbols (alphanumeric characters), or with octal numbers (the digits 0 through 7).
+
+Let's say you are the owner of a file named myfile, and you want to set its permissions so that:
+
+the user can read, write, ande xecute it;
+members of your group can read ande xecute it; and
+others may only read it
+
+ugoa
+
+users
+group 
+others 
+all 
+
+chmod u=rwx,g=rx,o=r myfile	/*a = all users
+
+chmod 754 myfile
+
+Here the digits 7, 5, and 4 each individually represent the permissions for the user, group, and others, in that order. Each digit is a combination of the numbers 4, 2, 1, and 0
+
+Here the digits 7, 5, and 4 each individually represent the permissions for the user, group, and others, in that order. Each digit is a combination of the numbers 4, 2, 1, and 0:
+
+4 stands for "read",
+2 stands for "write",
+1 stands for "execute", and
+0 stands for "no permission."
+
+rw 6
+rwx 7
+np 0
+
+640 -> users can read write , group can read, other has no permission
+700 -> users can read,write execute , group , others no permission
+
+So 7 is the combination of permissions 4+2+1 (read, write, and execute), 5 is 4+0+1 (read, no write, and execute), and 4 is 4+0+0 (read, no write, and no execute).
+
+Deny execute permission to everyone
+chmod a-x sample.txt
+
+Allow read permission to everyone
+chmod a+r sample.txt
+
+Set the "Set-User-ID" bit of comphope.txt, so that anyone who attempts to access that file does so as if they are the owner of the file.
+chmod u+s sample.txt
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+wget command : utility which retrieves files from WWW
+
+It’s designed in such way so that it works in slow or unstable network connections. Wget automatically start download where it was left off in case of network problem. Also downloads file recursively. It’ll keep trying until file has be retrieved completely.
+
+Difference between yum, apt-get , rpm, ./configure and make install
+
+yum install [program]
+apt-get install [program]
+rpm -i [program].rpm
+wget [program].tar.gz -> unpack -> ./configure -> make -> make install
+
+These tools all install software into your system, but are working on different levels.
+
+Running ./configure && make install builds and installs the libraries or executables directly from the source code.
+
+The make install step basically just copies the final files into your system.Also, this does not take care of required dependencies.
+
+rpm installs already configured and compiled software in your system.This person already decided on what features to include and how to best integrate the package into your system layout. It also comes with a list of dependencies.
+
+On Debian systems, the equivalent package format is .deb and the installation and database is handled by the dpkg tool.
+
+yum is an additional wrapper around rpm. It keeps its own database of rpm files available for your distribution, generally in online repositories. For the stable versions of most distributions all packages inside that database will play well with each other
+
+On Debian systems, the equivalent repository and dependency-resolution tools are provided by Apt (apt-get and aptitude).
+
+So to sum it up: if you just want some software try yum first. If it is not available there, you can try to find an existing rpm package. If there is none or you have some special requirements, build from source.
+
+Yum are RPM are the same thing except that yum gets the packages from the net automatically and installs them (using rpm -i) in one step. It should be used whenever possible to ease updating. Use rpm only when there is no package to be found by yum, and use the make method only when there is no .rpm package available or you need to change some compile-time options.
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+rpm command
+
+Listing all installed packages
+rpm -qa | more (query all)
+
+Display package info of bash pkg
+rpm -ql bash
+
+find the pacakge from a file
+rpm -qf /etc/hosts
+
+find the configuration files of a package
+rpm -qc bash
+
+Installing or upgrading packages
+rpm -Uvh rsync-3.0.9-18.el7.x86_64.rpm 		-h displays progress , -v verbose , -U upgrade
+
+rpm -e rsync /erases a package
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+rpm -qa wget
+
+yum -y install wget
+
+-y option for not prompting
+
+Download file to different name
+
+wget -O wget.zip http://ftp.gnu.org/gnu/wget/wget-1.5.3.tar.gz
+
+wget link1 link2 	/* download multiple files
+
+read urls from a file
+
+wget -i /wget/tmp.txt
+
+resume uncompleted download
+wget -c balabla.iso
+
+wget -o logfile url 	/*redirects all the messages to logfile*/
+wget -log
+
+ls -l centOS*	/*list all the files starts with centos
+
+wget -http-user=surya -http-password=password
+
+wget --version
+wget --help
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Package Manager
+
+A package manager or package management system is a collection of software tools that automate the process of installing, upgrading, configuring, and removing computer programs for a computer's operating system in a consistent manner. 
+
+A package manager deals with packages, distributions of software and data in archive files. Packages contain metadata, such as the software's name, description of its purpose, version number, vendor, checksum, and a list of dependencies necessary for the software to run properly. Upon installation, metadata is stored in a local package database. Package managers typically maintain a database of software dependencies and version information to prevent software mismatches and missing prerequisites.
+
+
+DPKG – Debian Package Management System. ...
+RPM (Red Hat Package Manager) ...
+Pacman Package Manager – Arch Linux. ...
+Zypper Package Manager – openSUSE. ...
+Portage Package Manager – Gentoo.
+NPM - Node Package Manager
+Bower - Front end Package Manager
+
+In Linux distributions, a “package” refers to a compressed file archive containing all of the files that come with a particular application. The files are usually stored in the package according to their relative installation paths on your system. ... Common types of Linux packages include .deb, .rpm, and .tgz.
+
+
+RPM build
+
+rpmbuild is used to build both binary and source software packages. A package consists of an archive of files and meta-data used to install and erase the archive files. The meta-data includes helper scripts, file attributes, and descriptive information about the package.
+
+SPEC FILE
+
+File used by rpmbuild, a program used for building .RPM (Red Hat Package Manager) packages, which are used for installing Linux programs; includes the package name, version, copyright information, a summary, references to program files, and instructions for creating and installing the package.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Recursive removal 
+
+Recursive deletion has purpose only if the target of deletion is a folder or multiple folders.
+
+To delete files recursively means to delete the contents of the folder before deleting the folder itself. If the folder has other folders in it, it will do the same with those folders. Basically it means delete whatever is inside the folder I am deleting, so that I can delete the folder itself.
+
+Trying to delete a folder without using recursive delete will fail, because you cannot remove a folder that has files inside it.
+By default only the first level of files will be deleted with out the -r command
+
+rm -rf <directory>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+cat command
+
+Cat(concatenate ) command is very frequently used in linux.It reads data from file and give their content as output.It helps us to create,view,concatenate files.So let us see some frequently used cat commands.
+
+cat filename
+
+To view multiple files
+cat file1 file2
+
+To view contents with line numbers
+cat -n filename
+
+Create a file
+cat >newfile
+
+Copy the contents of one file into another
+$cat [filename-whose-contents-is-to-be-copied] > [destination-filename]
+
+Cat command can append the contents of one file to the end of another file.
+$cat file1 >> file2
+
+
+ $tac filename
+
+
+
+tr "[A-Z]" "[a-z]" < $WP | tr -c "[a-z]" "\n" | grep -v "^ *$" | sort | uniq -c | sort -nr | less 
+
+converts captitals into lowercase
+replace everthing except alphabets into newline
+invert  match spaces as words 
+sort the words
+find out the count of each words
+sort it reverse order
+
+tr -s ' '
+squeezes repeat occurence of characters 
+
+echo convert this to uppercase | tr [a-z] [A-Z]
+CONVERT THIS TO UPPERCASE
+
+tr [a-z] [A-Z] < convert_to_uppercase.txt
+CONVERT THIS TO UPPERCASE
+
+https://bash.cyberciti.biz/guide/
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+grep command
+
+Linux grep command usage with examples. The grep command which stands for “global regular expression print,” processes text line by line and prints any lines which match a specified pattern. The grep command is used to search text or searches the given file for lines containing a match to the given strings or words.
+
+grep -E 'fatal|error|critical|failure|warning|' *.log
+grep -E 'fatal|error|critical|failure|warning' file1.log file2.log 
+grep “linux” file*.*
+grep ^root /etc/passwd
+grep bash$ /etc/passwd
+grep -r linux /etc/			/* search linux in the “/etc” directory recursively.*/
+grep -v linux /etc/passwd 	/* invert the match */
+
+ ps -C processName -o pid=,cmd,stat
+
+To view the current process
+
+ps
+ps aux | less
+ps aux | grep "process-name"
+ps aux | grep "httpd"
+ps alx | grep "mysqld"
+
+pstree
+
+pgrep -u vivek,krish
+
+pgrep -u vivek php-cgi
+
+
+tree -a GFG
+
+find ./GFG -name sample.txt
+
+search for sample.txt in GFG directory
+
+find ./GFG -name *.txt
+
+find ./GFG -empty
+
+find ./GFG -name sample.txt -exec rm -i {} \; 
+
+command > input.txt
+redirects the output to a new file
+
+>> append
+
+command < input.txt
+
+reads the input from a file
+
+<< EOF
+
+<<< $word
+
+grep "nor"  <<< $var > 
+echo $var | grep -q "nor"
+
+
+Use /dev/null to send any unwanted output from program/command and syntax is:
+
+redirecting both stdout and stderr
+
+command-name &>filename
+command-name >cmd.log 2>&1
+command-name >/dev/null 2>&1
+
+
+awk is an excellent tool for building unix scripts , designed for processing text-based data 
+
+sed command in shell script
+streamEditor (searching, find, replace , insertion and deletion)
+
+sed 's/unix/linux' geekfile.txt
+
+replaces the word unix with linux in the file
+
+sed 's/unix/linux/2' geek.txt 	/*replace 2 nd occurence */
+
+sed 's/unix/linux/g' geekfile.txt 	/*global replacement */
+
+sed 's/unix/linux/3g'
+
+echo "welcome to the geek stuff" | sed 's/\(\b[A-Z]\)/\(\1\)/g'
+(W)elcome (T)o
+
+/b is backspace character
+
+A carriage return, sometimes known as a cartridge return and often shortened to CR, <CR> or return, is a control character or mechanism used to reset a device's position to the beginning of a line of text.
+
+sed -e 's/\r//g'	 /* remove DOS line endings from text files */
+
+sed  -i "/${prop_name}/d" export.properties /* deletes the line where it finds propname {dq_rule_engine_jar_version}
+
+To replace the first occurrence of a pattern with a given string, use ${parameter/pattern/string}
+
+To replace all occurrences, use ${parameter//pattern/string}:
+
+
+&& || operators
+https://unix.stackexchange.com/questions/24684/confusing-use-of-and-operators
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+xargs command in linux
+
+The xargs command in UNIX is a command line utility for building an execution pipeline from standard input. Whilst tools like grep can accept standard input as a parameter, many other tools cannot. Using xargs allows tools like echo and rm and mkdir to accept standard input as arguments.
+
+echo 'one two three' | xargs mkdir
+ls
+one two three
+
+It is possible to run multiple commands with xargs by using the -I flag. This replaces occurrences of the argument with the argument passed to xargs. The following prints echos a string and creates a folder.
+
+
+sh -c 
+
+sh calls the program sh as interpreter and the -c flag means execute the following command as interpreted by this program. In Ubuntu, sh is usually symlinked to /bin/dash , meaning that if you execute a command with sh -c the dash shell will be used to execute the command instead of bash
+
+find . -name '*.c' | xargs grep 'stdlib.h'
+grep 'stdlib.h' '*.c'
+	
+kinit is used to obtain and cache Kerberos ticket-granting tickets. This tool is similar in functionality to the kinit tool that are commonly found in other Kerberos implementations, such as SEAM and MIT Reference implementations.
+
+
+Mount path 
+---------------------------------------------------------------------------------------------------------------------------------------
+nohup command
+
+When using the command shell, prefixing a command with nohup prevents the command from being aborted automatically when you log out or exit the shell.
+
+The name nohup stands for "no hangup." The hangup (HUP) signal, which is normally sent to a process to inform it that the user has logged off (or "hung up"), is intercepted by nohup, allowing the process to continue running.
+
+nohup mycommand &
+
+The "&" symbol at the end of the command instructs bash to run nohup mycommand in the background. 
+When using &, you'll see the bash job ID in brackets, and the process ID (PID) listed after. For example:
+[1] 25132
+
+kill -9 25132
+
+---------------------------------------------------------------------------------------------------------------------------------------
+declare -r /readonly
+mkdir -p  /it means "parents", meaning mkdir will create a directory and any parents that don't already exist.
+kinit is used to obtain and cache Kerberos ticket-granting tickets. This tool is similar in functionality to the kinit tool that are commonly found in other Kerberos implementations, such as SEAM and MIT Reference implementations.
+
+kinit -kt
+
+k- use keytab
+t - <keytab_filename>
+<principle>
+
+hive -S 	/*Operational messages are not typically passed back to the parent script and can be removed with the silent options -S. This will make things far less chatt */
+hive -e 	/*Another way to use Hive inside a script is to pass the HQL commands as a query string for the Hive shell to execute. This is accomplished with the -e option*/
+
+${} and $()
+${variable} and $variable are same
+$() is to execute the command 	echo $(date)
+
+
+xargs -I 
+Replace occurrences of replace-str in the initial-arguments with names read from standard input.  Also, unquoted blanks do
+              not terminate input items; instead the separator is the
+              newline character
+
+xargs [options] [command [initial-arguments]]
+build and execute command lines from standard input
+
+
+bash - Bash is an sh-compatible command language interpreter that executes commands read from the standard input or from a file.
+-c string
+If the -c option is present, then commands are read from string
+
+https://www.geeksforgeeks.org/date-command-linux-examples/
+Format specifiers used with Date command
+date +%[Format Option]
+date +%s -> displays time in seconds
+
+%Y -> gives four Digit year
+%m -> Displays the month of year (01 to 12)
+%d -> Display the day of the month (01 to 31)
+To replace all occurrences, use ${parameter//pattern/string}:
+
+Validate the date format
+
+=~ regex operator
+
+if [[ $1 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] then
+
+else
+
+fi
+
+if [[ $val == *-* ]]; 
+
+date -d="string"
+
+hadoop fs -ls /data/publish/osvmain/2018/09/*
+
+dt2=$(date -d "$dt2 -1 month") /* 1 month ago */
+
+let j=j+1
+
+wc -l
+calculates new line counts
+
+AWK SCRIPTING
+
+BEGIN BLOCK
+END BLOCK
+
+if [[ -f file]] /*checks if file exists
+if [[ -d directory]] /*checks if directory exists
+if [[-n "$abc"]]	/*checks string is not null
+if [[-z "$abc"]]	/*String is null, that is has zero length
+
+echo
+-n	do not append a newline
+-e	enable interpretation of the following backslash escapes
+
+show partitions hive
+
+Hive organizes tables into partitions. It is a way of dividing a table into related parts based on the values of partitioned columns such as date, city, and department. Using partition, it is easy to query a portion of the data.Suppose you need to retrieve the details of all employees who joined in 2012. A query searches the whole table for the required information. However, if you partition the employee data with the year and store it in a separate file, it reduces the query processing time. The following example shows how to partition a file and its data:
+
+/tab1/employeedata/file1
+
+id, name, dept, yoj
+1, gopal, TP, 2012
+2, kiran, HR, 2012
+3, kaleel,SC, 2013
+4, Prasanth, SC, 2013
+
+/tab1/employeedata/2012/file2
+1, gopal, TP, 2012
+2, kiran, HR, 2012
+
+/tab1/employeedata/2013/file3
+3, kaleel,SC, 2013
+4, Prasanth, SC, 2013
+
+hive> ALTER TABLE employee
+> ADD PARTITION (year=’2013’)
+> location '/2012/part2012';
+
+
+https://sl73caehmpc707.visa.com:8081/api/v6/clusters/cluster3/services
+
+pgrep looks through the currently running processes and lists the processes ID's which matches the selection criteria to stdout
+
+pgrep -u root sshd 
+
+will only list the processes called sshd AND owned by root. On the other hand, 
+
+pgrep -u root,daemon 
+
+will list the processes owned by root OR daemon.
+
+-f The pattern is normally only matched against the process name. When -f is set, the full command line is used. 
+
+There are two tasks with specially distinguished process IDs: swapper or sched has process ID 0 and is responsible for paging, and is actually part of the kernel rather than a normal user-mode process. Process ID 1 is usually the init process primarily responsible for starting and shutting down the system. Originally, process ID 1 was not specifically reserved for init by any technical measures: it simply had this ID as a natural consequence of being the first process invoked by the kernel. More recent Unix systems typically have additional kernel components visible as 'processes', in which case PID 1 is actively reserved for the init process to maintain consistency with older systems.
+
+------------------------------------------------------------------------IMPORTANT-----------------------------------------------------------------
+
+HOW TO print Literal string "$1" in bash script
+
+set -- "output"	# this sets $1 to be "output"
+echo $1	# ==> output
+
+But i want
+echo $1      # ==> $1
+
+echo '$1'	==> $1
+echo "\$1"	==> $1
+echo "$1"	==> output
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+"--"	Double Dash
+
+More precisely, a double dash (--) is used in bash built-in commands and many other commands to signify the end of command options, after which only positional parameters are accepted.
+
+Example use: lets say you want to grep a file for the string -v - normally -v will be considered the option to reverse the matching meaning (only show lines that do not match), but with -- you can grep for string -v like this:
+
+grep -- -v file
+
+Note that echo does not interpret -- to mean the end of options.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+How to include file in a bash shell script
+
+Is there a way to include another shell script in a shell script to be able to access its functions?
+
+source FILE
+. FILE
+
+. $(dirname "$0")/b.sh
+
+The dirname command strips the last part of a given filename, in effect outputting just the directory components of the pathname.
+
+dirname /usr/bin
+/usr
+
+
+#? returns the status of the last executed command
+returns 0 if it sucess
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+run bash commands from txt file
+
+$ cat file 
+date
+echo '12*12' | bc
+
+$ bash file
+Mon Nov 26 15:34:00 GMT 2012
+144
+
+----------------------------------------------------------------------------------------------------------------------------------------
+nohup some_cmd > some_file 2>&1 &
+
+delete the file content
+
+cat /dev/null > bigfile.log
+echo "" > bigfile.log
+----------------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,59 @@
+angular is modular structure
+
+modules
+
+admin
+balancing
+shared
+trending
+
+
+components
+
+app
+login
+help
+
+
+services (this is present in modules/shared/services)
+AuthenticationService
+ToastDialogService
+LoadingIndicatorService
+
+
+providers:-
+componentservice, sidepanelservice, VisaUIModule, Toastservice  (visamodules)
+AuthenticationService, ToastDialogService ,LoadingIndicatorService
+
+
+Exporting RouterModule makes router directives available for use in the AppModule components that will need them.
+The RouterOutlet is one of the router directives that became available to the AppComponent because AppModule imports AppRoutingModule which exported RouterModule.
+
+
+'admin' => modules/admin/admin.module#AdminModule
+'help' => HelpComponent
+
+-------------------
+
+AuthenticationService
+
+constructor(headers?: string | {
+        [name: string]: string | string[];
+    });
+
+login -> http://localhost:8080/rest/v1/admin/auth
+
+'currentUser' = '{"data":"suryaDev"}'
+
+loadingIndicatorService -> just tracks a variable if the request has started or completed
+
+ToastDialogService -> closes a toast and shows the toast using Toastservice of visaui
+
+import{TemplateRef} from '@angular/core';
+
+
+
+HTTP interceptors:
+
+https://alligator.io/angular/httpclient-interceptors/
+

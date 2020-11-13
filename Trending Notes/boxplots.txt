@@ -1,0 +1,65 @@
+https://towardsdatascience.com/understanding-boxplots-5e2df7bcbd51
+
+https://stattrek.com/statistics/dictionary.aspx?definition=random_variable
+
+when the value of a variable is the outcome of a statistical experiment, that varaible is a random variable
+
+An example will make this clear. Suppose you flip a coin two times. This simple statistical experiment can have four possible outcomes: HH, HT, TH, and TT. Now, let the variable X represent the number of Heads that result from this experiment. The variable X can take on the values 0, 1, or 2. In this example, X is a random variable; because its value is determined by the outcome of a statistical experiment.
+
+Probability Distribution
+https://stattrek.com/probability-distributions/probability-distribution.aspx
+
+https://math.stackexchange.com/questions/904343/what-is-the-difference-between-average-and-expected-value
+
+https://www.statlect.com/probability-distributions/normal-distribution
+https://www.statlect.com/fundamentals-of-probability/variance
+https://www.statlect.com/fundamentals-of-probability/expected-value
+https://www.analyticsvidhya.com/blog/2018/02/time-series-forecasting-methods/
+
+
+boxplots 
+
+median
+first quartile
+second quartile
+minimum
+maximum
+outliers
+
+
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc435.htm
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc436.htm
+
+
+https://www.statisticshowto.datasciencecentral.com/normalized/
+
+normalization and standardization of data 
+centering the data
+
+vanishing gradient problem
+
+http://userproxy.visa.com
+
+set http_proxy=http://username:password@internet.visa.com:8080
+
+SELECT * FROM OPDQ.TDQC_RUL_OUTP_TYP_CD a WHERE RUL_OUTP_TYP_ID IN (
+select distinct b.INTERNAL_ID from OPDQ.TDQF_USR_NOTIFICATION_REQ b where b.EXTERNAL_STATUS not in ('Resolved', 'Canceled') AND b.NOTIFICATION_TYPE in ('ASKNOW_CREATE' , 'ASKNOW_UPDATE_COMMENT') and NOTIFICATION_STATUS in ('WAITING')
+) AND RUL_TYP_ID = '16361'
+
+select distinct INTERNAL_ID from OPDQ.TDQF_USR_NOTIFICATION_REQ where EXTERNAL_STATUS not in ('Resolved', 'Canceled') AND NOTIFICATION_TYPE in ('ASKNOW_CREATE' , 'ASKNOW_UPDATE_COMMENT') and NOTIFICATION_STATUS in ('WAITING')
+
+SELECT * FROM OPDQ.TDQC_RUL_OUTP_TYP_CD WHERE RUL_OUTP_TYP_ID = '1338501';
+
+SELECT * FROM OPDQ.TDQC_RUL_OUTP_TYP_CD WHERE RUL_TYP_ID = '16361'
+
+
+select distinct INTERNAL_ID from OPDQ.TDQF_USR_NOTIFICATION_REQ where EXTERNAL_STATUS not in ('Resolved', 'Canceled') AND NOTIFICATION_TYPE in ('ASKNOW_CREATE' , 'ASKNOW_UPDATE_COMMENT') and NOTIFICATION_STATUS in ('WAITING')
+
+where EXTERNAL_STATUS not in ('Resolved', 'Canceled') and NOTIFICATION_TYPE in ('ASKNOW_CREATE' , 'ASKNOW_UPDATE_COMMENT') 
+and NOTIFICATION_STATUS in ('EXECUTING')
+
+select * from RuleOutput a where ruleOutId in "
+			+ "(select distinct b.internalId from UserNotificationRequest b where b.externalStatus not in ?1 and b.notificationType.requestType in ?2 and b.notificationStatus in ?3) "
+			+ "and ruleId = ?4 limit 1
+
+

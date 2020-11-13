@@ -1,0 +1,216 @@
+Features of angular 2
+Following are the key features of Angular 2 −
+
+Components − The earlier version of Angular had a focus of Controllers but now has changed the focus to having components over controllers. Components help to build the applications into many modules. This helps in better maintaining the application over a period of time.
+
+TypeScript − The newer version of Angular is based on TypeScript. This is a superset of JavaScript and is maintained by Microsoft.
+
+Services − Services are a set of code that can be shared by different components of an application. So for example if you had a data component that picked data from a database, you could have it as a shared service that could be used across multiple applications.
+
+Components of angular 2
+Angular 2 has the following components −
+
+Modules − This is used to break up the application into logical pieces of code. Each piece of code or module is designed to perform a single task.
+
+Component − This can be used to bring the modules together.
+
+Templates − This is used to define the views of an Angular JS application.
+
+Metadata − This can be used to add more data to an Angular JS class.
+
+Service − This is used to create components which can be shared across the entire application.
+
+
+app.module.ts
+
+import {NgModule} from '@angular/core'
+import {BrowserModule} from '@angular/platform-browser'
+import {AppComponent} from './app.component'
+
+@NgModule ({ 
+   imports:      [ BrowserModule ], 
+   declarations: [ AppComponent ], 
+   bootstrap:    [ AppComponent ] 
+}) 
+export class AppModule { } 
+
+Let’s go through each line of the code in detail.
+
+The import statement is used to import functionality from the existing modules. Thus, the first 3 statements are used to import the NgModule, BrowserModule and AppComponent modules into this module.
+
+The NgModule decorator is used to later on define the imports, declarations, and bootstrapping options.
+
+The BrowserModule is required by default for any web based angular application.
+
+The bootstrap option tells Angular which Component to bootstrap in the application.
+
+A module is made up of the following parts −
+
+Bootstrap array − This is used to tell Angular JS which components need to be loaded so that its functionality can be accessed in the application. Once you include the component in the bootstrap array, you need to declare them so that they can be used across other components in the Angular JS application.
+
+Export array − This is used to export components, directives, and pipes which can then be used in other modules.
+
+Import array − Just like the export array, the import array can be used to import the functionality from other Angular JS modules. 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+component component compoment
+
+-------- services ---------
+
+component consists of 
+Class − This is like a C++ or Java class which consists of properties and methods.
+
+Metadata − This is used to decorate the class and extend the functionality of the class.
+
+Template − This is used to define the HTML view which is displayed in the application.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Decorators
+Decorator pattern. ... In object-oriented programming, the decorator pattern is a design pattern that allows behavior to be added to an individual object, dynamically, without affecting the behavior of other objects from the same class.
+
+class decorator
+
+class classname {
+   Propertyname: PropertyType = Value
+}
+
+class AppComponent {
+	appTitle: string = 'welcome';
+}
+
+import { Component } from '@angular/core';
+
+@Component ({
+   selector: 'my-app',
+   template: ` <div>
+      <h1>{{appTitle}}</h1>
+      <div>To Tutorials Point</div>
+   </div> `,
+})
+
+export class AppComponent {
+   appTitle: string = 'Welcome';
+}
+
+In the above example, the following things need to be noted −
+
+We are using the import keyword to import the ‘Component’ decorator from the angular/core module.
+
+We are then using the decorator to define a component.
+
+The component has a selector called ‘my-app’. This is nothing but our custom html tag which can be used in our main html page.
+
+
+index.html
+
+<body>
+<my-app> </my-app>
+<div *ngIf = 'appStatus'>{{appTitle}} Tutorialspoint </div> 
+<div *ngFor = 'let lst of appList'> 
+   <ul> 
+      <li>{{lst.ID}}</li> 
+      <li>{{lst.Name}}</li> 
+   </ul> 
+</div> 
+</body>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+templateURL:
+viewname.component.html
+
+app.component.html
+
+app.component.ts
+
+import { Component } from '@angular/core';
+
+@Component ({
+   selector: 'my-app',
+   templateUrl: 'app/app.component.html'  
+})
+
+export class AppComponent {
+   appTitle: string = 'Welcome';
+   appStatus: boolean = true;
+   appList: any[] = [ {
+      "ID": "1",
+      "Name" : "One"
+   },
+
+   {
+      "ID": "2",
+      "Name" : "Two"
+   } ];
+}
+
+*ngFor = 'let variable of variablelist'
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+MetaData
+
+Metadata is used to decorate a class so that it can configure the expected behavior of the class. Following are the different parts for metadata.
+
+Annotations − These are decorators at the class level. This is an array and an example having both the @Component and @Routes decorator.
+
+export class AppComponent {
+   @Environment(‘test’)
+   appTitle: string = 'Welcome';
+}
+
+Here, the @Environment is the metadata applied to the property appTitle and the value given is ‘test’.
+
+export class AppComponent {
+   constructor(@Environment(‘test’ private appTitle:string) { }
+}
+
+In the above example, metadata is applied to the parameters of the constructor.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Data binding
+
+export class className {
+   property: propertytype = value;
+}
+
+<html tag htmlproperty = 'property'>
+You could then bind the property of an html tag to the property of the class.
+
+
+app.component.ts
+
+import { Component } from '@angular/core';
+
+@Component ({
+   selector: 'my-app',
+   templateUrl: 'app/app.component.html'
+})
+
+export class AppComponent {
+   appTitle: string = 'Welcome';
+   appList: any[] = [ {
+      "ID": "1",
+      "url": 'app/Images/One.jpg'
+   },
+
+   {
+      "ID": "2",
+      "url": 'app/Images/Two.jpg'
+   } ];
+}
+
+app.component.html
+
+<div *ngFor = 'let lst of appList'>
+   <ul>
+      <li>{{lst.ID}}</li>
+      <img [src] = 'lst.url'>
+   </ul>
+</div>
+
+
+

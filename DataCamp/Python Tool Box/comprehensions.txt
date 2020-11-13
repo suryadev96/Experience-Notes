@@ -1,0 +1,157 @@
+list comprehensions allows us to create lists from other lists , from columns of dataframes 
+
+dataframe with a column of timestamped data and we want to extract a year from it
+
+nums = [12,8,21,3,16]
+new_nums = [num+1 for num in nums]
+
+result = [num for num in range(11)]
+
+pairs_l = []
+
+for num1 in range(0,2):
+	for num2 in range(6,8):
+		pairs_l.append(num1,num2)
+
+pairs_2 = [(num1,num2) for num1 in range(0,2) for num2 in range(6,8)]
+
+
+# Create a 5 x 5 matrix using a list of lists: matrix
+matrix = [[col for col in range(0,5)] for row in range(0,5)]
+
+# Print the matrix
+for row in matrix:
+    print(row)
+[0, 1, 2, 3, 4]
+[0, 1, 2, 3, 4]
+[0, 1, 2, 3, 4]
+[0, 1, 2, 3, 4]
+[0, 1, 2, 3, 4]
+
+
+-----------------
+
+Advanced comprehensions
+
+[num**2 for num in range(10) if num%2 ==0]
+
+[num**2 if num%2==0 else 0 for num in range(10)]
+[0,0,4,0,16,0,36,0,64]
+
+
+
+dictionary comprehensions
+
+pos_neg = {num:-num for num in range(9)}
+{0:0,1:-1,2:-2}
+
+
+Excercises
+
+fellowship = ['frodo', 'samwise', 'merry', 'aragorn', 'legolas', 'boromir', 'gimli']
+new_fellowship = [member for member in fellowship if len(member)>=7]
+print(new_fellowship)
+
+
+
+fellowship = ['frodo', 'samwise', 'merry', 'aragorn', 'legolas', 'boromir', 'gimli']
+new_fellowship = [member if len(member)>=7 else "" for member in fellowship]
+print(new_fellowship)
+
+
+
+fellowship = ['frodo', 'samwise', 'merry', 'aragorn', 'legolas', 'boromir', 'gimli']
+new_fellowship = {key:len(key) for key in fellowship}
+print(new_fellowship)
+
+--------------------
+
+generator expressions 
+
+(2*num for num in range(10))
+
+<generator object >
+
+it is like a list comprehension except that it does not store the list in memory , but it is an object we can iterate over to produce the elements of the list 
+
+result = (num for num in range(6))
+
+for num in result:
+	print(num)
+
+print(list(result))
+
+print(next(result))
+
+lazy evaluation 
+u want to generate elements of the sequence on the fly 
+
+[num for num in range(10*100000)]
+
+(num for num in range(10*100000))
+
+
+generator functions when called produce generator objects 
+
+
+def num_sequence(n):
+	i=0
+	while i<n:
+		yield i
+		i+=1
+generator object that generates integers 0 through n
+
+result = num_sequence(5)
+print(type(result))
+<'class' 'generator'>
+
+
+
+
+result = (num for num in range(0,31))
+print(next(result))
+print(next(result))
+# Print the rest of the values
+for value in result:
+    print(value)
+
+
+
+lannister = ['cersei', 'jaime', 'tywin', 'tyrion', 'joffrey']
+
+lengths = (len(s) for s in lannister)
+for value in lengths:
+	print(value)
+
+
+def get_lengths(input_list):
+    for person in input_list:
+        yield len(person)
+for value in get_lengths(lannister):
+    print(value)
+
+
+real world dataset world bank world development indicators dataset 
+
+
+extract 12 to 19 character 
+
+tweet_time = df['created_at']
+tweet_clock_time = [entry[11:19] for entry in tweet_time]
+print(tweet_clock_time)
+
+
+# Extract the created_at column from df: tweet_time
+tweet_time = df['created_at']
+
+# Extract the clock time: tweet_clock_time
+tweet_clock_time = [entry[11:19] for entry in df['created_at'] if entry[17:19] == '19']
+
+# Print the extracted times
+print(tweet_clock_time)
+
+['23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', 
+'23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19', '23:40:19']
+
+
+

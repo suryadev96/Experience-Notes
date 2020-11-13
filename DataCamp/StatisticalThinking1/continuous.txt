@@ -1,0 +1,284 @@
+probability density functions
+
+die rolls, bus arrivals, 
+
+continuous variables 
+
+for example speed of train can be 45.6 km/hr 
+
+continuous variables also have probability distributions
+
+100 measurements of speed of light in air 
+michelson numbers 
+
+299 * 1000 kms/second
+
+i presume that this data follows the normal distribution function 
+
+pmf - discrete variables
+pdf - continuous variables
+
+pdf of normal curve 
+
+probability of finding a particular value does not make sense , because there are infinity range of numbers in any given range 
+instead areas under pdf gives probabilities 
+
+normal pdf 
+cdf will give the probability of the measured speed less than value on x-axis 
+
+probability for cdf is area under the curve 
+----------------------------
+Introduction to the normal distribution
+
+normal pdf is famous 
+
+it describes a continuous variable whose pdf is symmetric and has a single peak 
+parametrized by two parameters
+
+mean determines the centre of the peak 
+standard deviation is how wide the peak is or how spread the data is 
+
+
+parameter calculated data
+mean of a normal pdf != mean computed from data 
+std dev of a normal pdf != std computed from data 
+
+if we plot the histograms of michelson speed measurements, it looks to be normally distributed 
+
+better to compare ecdf of the data to the threoritical cdf of the normal distribution
+
+-------------------
+checking normality of michelson data 
+
+import numpy as np 
+mean = np.mean(michelson_speed_light)
+std = np.std(michelson_speed_light)
+samples = np.random.normal(mean,std,size=10000)
+x,y = ecdf(michelson_speed_light)
+x_theor , y_theor = ecdf(samples)
+
+
+import seaborn as sns 
+sns.set()
+plt.plot(x_theor,y_theor)
+plt.plot(x,y,marker='.',linestyle='none')
+plt.xlabel('speed of light (km/s)')
+plt.ylabel('CDF')
+plt.show()
+
+---------------
+
+# Draw 100000 samples from Normal distribution with stds of interest: samples_std1, samples_std3, samples_std10
+samples_std1 = np.random.normal(20,1,size=100000)
+samples_std3 = np.random.normal(20,3,size=100000)
+samples_std10 = np.random.normal(20,10,size=100000)
+
+# Make histograms
+plt.hist(samples_std1,bins=100, normed=True,histtype='step')
+plt.hist(samples_std3,bins=100, normed=True,histtype='step')
+plt.hist(samples_std10,bins=100, normed=True,histtype='step')
+
+
+# Make a legend, set limits and show plot
+_ = plt.legend(('std = 1', 'std = 3', 'std = 10'))
+plt.ylim(-0.01, 0.42)
+plt.show()
+
+creates normal curves 
+
+--------------
+
+# Generate CDFs
+x_std1,y_std1 = ecdf(samples_std1)
+x_std3,y_std3 = ecdf(samples_std3)
+x_std10,y_std10 = ecdf(samples_std10)
+
+
+# Plot CDFs
+plt.plot(x_std1,y_std1,marker='.',linestyle='none')
+plt.plot(x_std3,y_std3,marker='.',linestyle='none')
+plt.plot(x_std10,y_std10,marker='.',linestyle='none')
+
+
+# Make a legend and show the plot
+_ = plt.legend(('std = 1', 'std = 3', 'std = 10'), loc='lower right')
+plt.show()
+
+
+Great work! The CDFs all pass through the mean at the 50th percentile; the mean and median of a Normal distribution are equal. 
+The width of the CDF varies with the standard deviation.
+
+--------------------------
+
+Normal distribution: properties and warnings
+
+10 deutschmark bill 
+it was retired in 2002 with adoption of the euro from germany 
+
+gauss barrel full of accomplishments 
+
+Normal - Gaussian distribution 
+
+Indeed, it is a very powerful distribution that seems to be ubiquitous in nature , not just field of statistics 
+
+there are import caveats about distribution and should be careful while using it 
+
+large mouth bass in masachucetts lakes measured in 1994 and 1995 by department of environmental protection 
+
+x axis -> length(cm) 
+y axis -> count 
+
+if u look at a histogram of the lengths of 316 fish measured , they appear to be normally distributed
+
+when we overlay ecdf with the theoritical ecdf , measurements look close to normal 
+
+------------------
+
+Mass of the MA large mouth bass 
+
+one might think that since the lengths of these bass is close to normal distributed, the mass should also be 
+
+when we overlay ecdf , it is not even close 
+
+important issue to keep in mind when using normal distribution is lightness of its tails 
+
+probability of being more than 4 std deviations from the mean is very small 
+
+This means that when u are modelling data as normally distributed, outliers are extremely unlikely 
+
+sigma : stddev 
+mu : mean 
+
+f(x) = 1/stddev*sqrt(2*pi) * e ^ - (x-mean)^2/2*variance 
+
+https://www.youtube.com/watch?v=cTyPuZ9-JZ0 (normal)
+https://www.youtube.com/watch?v=hAxlK8W80Mg ( pi integral)
+http://www.mathcentre.ac.uk/resources/uploaded/mc-ty-parts-2009-1.pdf (Integration by parts)
+
+
+-----------------------------
+
+are the belmount stakes normally distributed
+belmont is a 1.5 mile long race run by 3 year old horses  Secretariat ran the fastest Belmont Stakes in history in 1973. 
+While that was the fastest year, 1970 was the slowest because of unusually wet and sloppy conditions.
+With these two outliers removed from the data set, compute the mean and standard deviation of the Belmont winners times.
+Sample out of a Normal distribution with this mean and standard deviation using the np.random.normal() function and plot a CDF. 
+Overlay the ECDF from the winning Belmont times. Are these close to Normally distributed?
+
+x axis -> belmont winning time 
+y axis -> cdf 
+
+# Compute mean and standard deviation: mu, sigma
+mu = np.mean(belmont_no_outliers)
+sigma = np.std(belmont_no_outliers)
+
+# Sample out of a normal distribution with this mu and sigma: samples
+samples = np.random.normal(mu,sigma,10000)
+
+# Get the CDF of the samples and of the data
+x_theor, y_theor = ecdf(samples)
+x,y = ecdf(belmont_no_outliers)
+
+
+# Plot the CDFs and show the plot
+_ = plt.plot(x_theor, y_theor)
+_ = plt.plot(x, y, marker='.', linestyle='none')
+_ = plt.xlabel('Belmont winning time (sec.)')
+_ = plt.ylabel('CDF')
+plt.show()
+
+
+The theoretical CDF and the ECDF of the data suggest that the winning Belmont times are, indeed, Normally distributed. 
+This also suggests that in the last 100 years or so, there have not been major technological or 
+training advances that have significantly affected the speed at which horses can run this race.
+
+ustin scraped the data concerning the Belmont Stakes from the wikepedia page 
+----------------------------
+
+# Take a million samples out of the Normal distribution: samples
+samples = np.random.normal(mu,sigma,1000000)
+
+# Compute the fraction that are faster than 144 seconds: prob
+prob = np.sum(samples<=144)/1000000
+
+# Print the result
+print('Probability of besting Secretariat:', prob)
+
+Probability of besting Secretariat: 0.000635
+Great work! We had to take a million samples because the probability of a fast time is very low and we had to be sure to sample enough. 
+We get that there is only a 0.06% chance of a horse running the Belmont as fast as Secretariat.
+
+------------------------------
+
+
+Exponential distribution
+
+number of buses that will arrive per hour are poisson distributed 
+the amount of time between the arrival of buses is Exponentially distributed
+
+the waiting time between the arrivals of a poisson process are Exponentially distributed
+
+parameter: mean waiting time 
+
+time between all the incidents involving nuclear power since 1974
+
+exponential inter incident times 
+
+mean = np.mean(inter_times)
+samples = np.random.exponential(mean,size=10000)
+x,y = ecdf(inter_times)
+x_theor,y_theor = ecdf(samples)
+plt.plot(x_thoer,y_theor)
+plt.plot(x,y,marker='.',linestyle='none')
+plt.xlabel('time (days)')
+plt.ylabel('cdf')
+
+
+
+Mathcing a story and distribution 
+
+How might we expect the time between Major League no-hitters to be distributed? 
+Be careful here: a few exercises ago, we considered the probability distribution for the number of no-hitters in a season. 
+Now, we are looking at the probability distribution of the time between no hitters
+
+
+def successive_poisson(tau1, tau2, size=1):
+    """Compute time for arrival of 2 successive Poisson processes."""
+    # Draw samples out of first exponential distribution: t1
+    t1 = np.random.exponential(tau1, size)
+
+    # Draw samples out of second exponential distribution: t2
+    t2 = np.random.exponential(tau2, size)
+
+    return t1 + t2
+
+# Draw samples of waiting times: waiting_times
+waiting_times = successive_poisson(764,715,100000)
+
+# Make the histogram
+plt.hist(waiting_times,bins=100,normed=True,histtype='step')
+
+
+# Label axes
+plt.xlabel('waiting times (sec)')
+plt.ylabel('pdf')
+
+# Show the plot
+plt.show()
+
+
+Great work! Notice that the PDF is peaked, unlike the waiting time for a single Poisson process. 
+For fun (and enlightenment), I encourage you to also plot the CDF.
+
+
+-----summary------
+python to construct instructive plots and informative summary statistics to explore your data 
+intellectual and computational infrastructure to think probabilistically
+knowledge really shines if u apply directly to statistical inference problems 
+
+
+real datasets in python to infer parameter values by variety of methods using linear regression 
+hackers statistics to compute confidence intervals to help u couch the conclusions u draw 
+u will perform hypothesis tests such as A/B tests to help u discern differences between datasets 
+
+

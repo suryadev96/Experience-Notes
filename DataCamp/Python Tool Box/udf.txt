@@ -1,0 +1,438 @@
+x = str(5)
+def square():
+	new_value = 4 ** 2
+	print(new_value)
+
+Doc strings
+
+def square(value):
+	"""return the square of value"""
+
+# Define shout with the parameter, word
+def shout(word):
+    """Return a string with three exclamation marks"""
+    # Concatenate the strings: shout_word
+    shout_word = word + '!!!'
+
+    # Replace print with return
+    return(shout_word)
+
+# Pass 'congratulations' to shout: yell
+yell  = shout('congratulations')
+
+# Print yell
+print(yell)
+
+
+quick jump into tuples
+
+Tuples:
+	like a list: contain multiple values 
+	immutable: cant modify values 
+
+unpacking tuples
+
+even_nums = (2,4,6)
+a,b,c = even_nums
+print(a)
+
+
+def raise_both(value1, value2):
+	new_value1 = value1**value2
+	new_value2 = value2**value1
+	new_tuple=(new_value1,new_value2)
+	return new_tuple
+
+
+# Import pandas
+import pandas as pd
+
+# Import Twitter data as DataFrame: df
+df = pd.read_csv('tweets.csv')
+
+# Initialize an empty dictionary: langs_count
+langs_count = {}
+
+# Extract column from DataFrame: col
+col = df['lang']
+
+# Iterate over lang column in DataFrame
+for entry in col:
+
+    # If the language is in langs_count, add 1
+    if entry in langs_count.keys():
+        langs_count[entry] = langs_count[entry]+1
+    # Else add the language to langs_count, set the value to 1
+    else:
+        langs_count[entry]=1
+
+# Print the populated dictionary
+print(langs_count)
+
+
+-----------------
+# Define count_entries()
+def count_entries(df, col_name):
+    """Return a dictionary with counts of 
+    occurrences as value for each key."""
+
+    # Initialize an empty dictionary: langs_count
+    langs_count = {}
+    
+    # Extract column from DataFrame: col
+    col = df[col_name]
+    
+    # Iterate over lang column in DataFrame
+    for entry in col:
+
+        # If the language is in langs_count, add 1
+        if entry in langs_count.keys():
+            langs_count[entry] += 1
+        # Else add the language to langs_count, set the value to 1
+        else:
+            langs_count[entry] = 1
+
+    # Return the langs_count dictionary
+    return langs_count
+
+# Call count_entries(): result
+result = count_entries(tweets_df,'lang')
+
+# Print the result
+print(result)
+
+-----------------------
+
+function with default arguments
+arbitrary number of parameters
+
+scope and udf
+
+
+Nested functions 
+
+there are number of good reasons to nest functions 
+
+
+def mod2plus5(x1,x2,x3):
+	def inner(x):
+		return x%2+5
+	return(inner(x1),inner(x2),inner(x3))
+
+
+def raise_val(n):
+	def inner(x):
+		raised = x**n
+		return raised
+	return inner
+
+square = raise_val(2)
+cube = raise_val(3)
+print(square(5),cube(8))
+
+nonlocal 
+
+-------------------
+
+def three_shouts(word1, word2, word3):
+    def inner(word):
+        return word + '!!!'
+    return (inner(word1), inner(word2), inner(word3))
+print(three_shouts('a', 'b', 'c'))
+
+def echo(n):
+    def inner_echo(word1):
+        echo_word = word1 * n
+        return echo_word
+    return inner_echo
+twice = echo(2)
+thrice = echo(3)
+print(twice('hello'), thrice('hello'))
+
+
+def echo_shout(word):
+    echo_word = word + word
+    print(echo_word)
+    def shout():
+        nonlocal echo_word
+        echo_word = echo_word + '!!!'
+    shout()
+    print(echo_word)
+echo_shout('hello')
+
+------------------------
+
+def power(number,pow=1):
+	new_value = number**pow
+	return new_value
+power(9)
+power(9,2)
+
+
+def add_all(*args):
+	sum_all=0
+	for num in args:
+		sum_all+=num
+	return sum_all
+
+*args turns all the arguments passed to a function into a tuple called args in the funcion body 
+
+def print_all(**kwargs):
+	for key,value in kwargs.items():
+		print(key+': '+value)
+
+this turns the identifier-keyword pairs into a dictionary
+print_all(name='dumbeldore',job="headmaster")
+
+ d = {1: "a", 2: "b"}
+ [*d.values()]
+ ['a', 'b']
+
+d = {1: "a", 2: "b"}
+list(d.values())
+['a', 'b']
+
+
+def shout_echo(word1, echo=1):
+    echo_word = word1*echo
+    shout_word = echo_word + '!!!'
+    return shout_word
+no_echo = shout_echo("Hey")
+with_echo = shout_echo("Hey",5)
+print(no_echo)
+print(with_echo) 
+
+
+
+def shout_echo(word1, echo=1, intense=False):
+    echo_word = word1 * echo
+    if intense is True:
+        echo_word_new = echo_word.upper() + '!!!'
+    else:
+        echo_word_new = echo_word + '!!!'
+    return echo_word_new
+with_big_echo = shout_echo("Hey",echo=5,intense=True)
+big_no_echo = shout_echo("Hey",intense=True)
+print(with_big_echo)
+print(big_no_echo)
+
+
+
+def gibberish(*args):
+    hodgepodge=""
+    for word in args:
+        hodgepodge += word
+    return hodgepodge
+one_word = gibberish("luke")
+many_words = gibberish("luke", "leia", "han", "obi", "darth")
+print(one_word)
+print(many_words)
+
+luke
+lukeleiahanobidarth
+
+
+def report_status(**kwargs):
+    print("\nBEGIN: REPORT\n")
+    for key, value in kwargs.items():
+        print(key + ": " + value)
+    print("\nEND REPORT")
+report_status(name="luke", affiliation="jedi", status="missing")
+report_status(name="anakin", affiliation="sith lord", status="deceased")
+
+
+count occurrences of any column,default = lang
+
+
+def count_entries(df, col_name='lang'):
+    cols_count = {}
+    col = df[col_name]
+    for entry in col:
+        if entry in cols_count.keys():
+            cols_count[entry] += 1
+        else:
+            cols_count[entry] = 1
+    return cols_count
+result1 = count_entries(tweets_df)
+result2 = count_entries(tweets_df,col_name='source')
+print(result1)
+print(result2)
+
+    {'et': 1, 'und': 2, 'en': 97}
+    {'<a href="http://www.myplume.com/" rel="nofollow">Plume\xa0for\xa0Android</a>': 1, 
+    '<a href="http://www.facebook.com/twitter" rel="nofollow">Facebook</a>': 1, 
+    '<a href="http://www.twitter.com" rel="nofollow">Twitter for BlackBerry</a>': 2, 
+    '<a href="http://ifttt.com" rel="nofollow">IFTTT</a>': 1, 
+    '<a href="http://linkis.com" rel="nofollow">Linkis.com</a>': 2, 
+    '<a href="http://www.google.com/" rel="nofollow">Google</a>': 2, 
+    '<a href="http://twitter.com" rel="nofollow">Twitter Web Client</a>': 24, 
+    '<a href="http://rutracker.org/forum/viewforum.php?f=93" rel="nofollow">newzlasz</a>': 2, 
+    '<a href="http://twitter.com/#!/download/ipad" rel="nofollow">Twitter for iPad</a>': 6, 
+    '<a href="http://twitter.com/download/iphone" rel="nofollow">Twitter for iPhone</a>': 33, 
+    '<a href="http://twitter.com/download/android" rel="nofollow">Twitter for Android</a>': 26}
+
+
+
+def count_entries(df, *args):
+    cols_count = {}
+    for col_name in args:
+        col = df[col_name]
+        for entry in col:
+            if entry in cols_count.keys():
+                cols_count[entry] += 1
+            else:
+                cols_count[entry] = 1
+    return cols_count
+
+
+result1 = count_entries(tweets_df, 'lang')
+result2 = count_entries(tweets_df, 'lang', 'source')
+print(result1)
+print(result2)
+
+
+--------------------------
+
+lamda functions
+
+raise_to_power = lambda x,y : x**y 
+raise_to_power(2,3)
+
+
+Anonymous functions
+Function map takes two arguments map(func,seq)
+map() function applies the funcion over all elements of the sequence
+
+
+nums = [48,6,9,21,1]
+square_all = map(lambda num:num**2,nums)
+print(square_all)
+<map object at >
+print(list(square_all))
+
+
+
+echo_word = lambda word1,echo : word1*echo
+result = echo_word("hey",5)
+print(result)
+
+
+
+spells = ["protego", "accio", "expecto patronum", "legilimens"]
+shout_spells = map(lambda x: x+'!!!', spells)
+shout_spells_list = list(shout_spells)
+print(shout_spells_list)
+
+
+
+fellowship = ['frodo', 'samwise', 'merry', 'pippin', 'aragorn', 'boromir', 'legolas', 'gimli', 'gandalf']
+result = filter(lambda x:len(x) > 6, fellowship)
+result_list = list(result)
+print(result_list)
+
+
+
+from functools import reduce
+stark = ['robb', 'sansa', 'arya', 'brandon', 'rickon']
+result = reduce(lambda item1,item2:item1+item2, stark)
+print(result)
+
+
+--------------------------
+
+error handling 
+
+float('hello')
+
+ValueError
+
+
+try-except clause
+
+def sqrt(x):
+	try:
+		return x**0.5
+	except TypeError:
+		print('x must be int or float')
+
+
+sqrt(-9)
+
+def sqrt(x):
+	if x < 0:
+		raise ValueError(' x must be non-negative')
+	try:
+		return x**0.5
+	except TypeError:
+		print('x must be int or float')
+
+
+
+def shout_echo(word1, echo=1):
+    echo_word=""
+    shout_words=""
+    try:
+        echo_word = word1*echo
+        shout_words = echo_word+'!!!'
+    except:
+        print("word1 must be a string and echo must be an integer.")
+    return shout_words
+shout_echo("particle", echo="accelerator")
+
+
+
+def shout_echo(word1, echo=1):
+    if echo < 0:
+        raise ValueError('echo must be greater than 0')
+    echo_word = word1 * echo
+    shout_word = echo_word + '!!!'
+    return shout_word
+shout_echo("particle", echo=5)
+
+
+
+result = filter(lambda x:x[0:2] == 'RT', tweets_df['text'])
+res_list = list(result)
+for tweet in res_list:
+    print(tweet)
+
+
+
+def count_entries(df, col_name='lang'):
+    cols_count = {}
+    try:
+        col = df[col_name]
+        for entry in col:
+            if entry in cols_count.keys():
+                cols_count[entry] += 1
+            else:
+                cols_count[entry] = 1
+        return cols_count
+    except:
+        print('The DataFrame does not have a ' + col_name + ' column.')
+
+result1 = count_entries(tweets_df, 'lang')
+print(result1)
+
+
+
+def count_entries(df, col_name='lang'):
+    if col_name not in df.columns:
+        raise ValueError('The DataFrame does not have a ' + col_name + ' column.')
+    cols_count = {}
+    col = df[col_name]
+    for entry in col:
+        if entry in cols_count.keys():
+            cols_count[entry] += 1
+            # Else add the entry to cols_count, set the value to 1
+        else:
+            cols_count[entry] = 1
+    return cols_count
+
+# Call count_entries(): result1
+result1 = count_entries(tweets_df,'lang')
+
+# Print result1
+print(result1)
+
+

@@ -1,0 +1,130 @@
+Introduction to databases 
+
+Connecting to database 
+
+several great tools we can use when working with databases 
+SQLAlchemy will allows us to generate SQL queries by writing python code 
+
+Two main pieces:
+core (realtional model focused )
+ORM ( user datamodel focused)
+
+SQLite
+PostgreSQL
+MySQL
+MS SQL
+Oracle
+
+To connect to a database, we need a way to talk to it , engine that provides commmon interface 
+
+To create an engine , we import create_engine function from SQLAlchemy 
+
+from sqlalchemy import create_engine
+
+supply it a connection string that provides the details needed to connect to database
+
+engine = create_engine('sqlite:///census_nyc.sqlite')
+connection = engine.connect()
+
+SQLAlchemy wont make the connection until we give work to execute 
+
+Engine: common interface to the database from SQLAlchemy
+
+connectio string : sqlite database driver + filename 
+
+print(engine.table_names())
+
+['census','state_fact']
+
+accessing table with python, handy process called reflection which reads the database and build a table object 
+
+from sqlalchemy import MetaData, Table 
+
+MetaData object is a catalog that stores databsase infomration such as tables 
+
+To reflect the table, we use 
+
+metaData = MetaData()
+
+census = Table('census',metaData,autoload=True,autoload_with=engine)
+
+print(repr(census))
+
+this allows us to see the names of the columns such as state, sex along with their types 
+
+understanding databases and extracting information from them far easier downstream 
+
+--------------------
+# Import Table
+from sqlalchemy import Table
+
+# Reflect census table from the engine: census
+census = Table('census', metadata, autoload=True, autoload_with=engine)
+
+# Print census table metadata
+print(repr(census))
+
+Table('census', MetaData(bind=None), Column('state', VARCHAR(length=30), table=<census>), 
+	Column('sex', VARCHAR(length=1), table=<census>), Column('age', INTEGER(), table=<census>), 
+	Column('pop2000', INTEGER(), table=<census>), Column('pop2008', INTEGER(), table=<census>), schema=None)
+
+-------------------------
+
+# Reflect the census table from the engine: census
+census = Table('census', metadata, autoload=True, autoload_with=engine)
+
+# Print the column names
+print(census.columns.keys())
+
+# Print full table metadata
+print(repr(metadata.tables['census']))
+
+['state', 'sex', 'age', 'pop2000', 'pop2008']
+Table('census', MetaData(bind=None), Column('state', VARCHAR(length=30), table=<census>),
+ Column('sex', VARCHAR(length=1), table=<census>), Column('age', INTEGER(), table=<census>), 
+ Column('pop2000', INTEGER(), table=<census>), Column('pop2008', INTEGER(), table=<census>), schema=None)
+
+-------------------------
+
+Introduction to SQL queries
+
+engine = create_engine('sqlite:///census_nyc.sqlite')
+connection = engine.connect()
+stmt = 'select * from people'
+result_proxy = connection.execute(stmt)
+results = result_proxy.fetchall()
+
+ResultProxy 
+ResultSet 
+
+first_row = results[0]
+print(first_row.keys())
+print(first_row.state)
+
+
+SQLAlchemy to build queries 
+
+provides a pythonic way to build SQL statements 
+
+pythonic refers to the code that adheres to the idioms of python common guidelines and express its intent in highly readable way 
+hides difference between backend datatypes 
+
+----------------------
+SQLAlchemy querying 
+
+from sqlalchemy import Table, MetaData 
+metadata = MetaData()
+census = Table('census',metadata,autoload=True,autoload_with=engine)
+stmt = select([census])
+results = connection.execute(stmt).fetchall()
+print(stmt) #select * from census 
+
+
+first_row = results[0]
+print(first_row)
+print(first_row[0])
+print(first_row['state']
+
+
+
+

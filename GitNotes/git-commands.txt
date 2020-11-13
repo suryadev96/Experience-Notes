@@ -1,0 +1,551 @@
+﻿https://www.pluralsight.com/courses/code-school-git-real
+https://www.atlassian.com/git/tutorials/rewriting-history
+git branch --set-upstream-to=origin/<branch> asknow/Rulepriorityfeature
+
+Torvalds has quipped about the name git, which is British English slang for a stupid or unpleasant person. Torvalds said: "I'm an egotistical bastard, and I name all my projects after myself. First 'Linux', now 'git'.The man page describes git as "the stupid content tracker".
+
+1. INTRODUCTION
+
+git help config		/pass in any git command
+git config --global user.name "SuryaDev"
+git config --global user.email 
+git config --global color.ui true
+
+
+Git work FLow
+
+1. creation - untracked files
+2. Add file to staging area - ready to take a picture
+3. Commit changes - snapshot of all those on the stage
+
+
+git status - To check what is changed since last commit
+git add Readme.txt
+git commit -m "create a readme"
+
+git add file1,file2
+git add --all
+git add *.txt
+git add docs/*.txt
+git add docs/
+git add "*.txt" 	/ add all txt files in whole project
+
+
+2.STAGING & REMOTES
+
+git log 	/* git timeline history */
+
+git diff 	/* show unstaged differences since last commit */
+git add LICENSE
+git diff --staged 	/* view staged differences */
+git reset HEAD LICENSE 	/* unstaging files */
+git status 		/* modified LICENSE */
+git checkout -- LICENSE		/* Blow away all change since last commit */
+
+SKIP staging and commit
+
+git commit -a -m "Modify README"	/*add changes from all tracked files; Doesnt add new (untracked) files */
+
+UNDOING a commit
+
+git reset --soft HEAD^	/*Reset into staging; Move to commit before head */
+git status	/*Modified readme.txt; make changes and recommit*/
+
+Adding to a commit:
+
+git add todo.txt
+git commit --amend -m "Modify readme and todo"		/* whatever has been staged is added to last commit */
+
+git commit --amend --no-edit
+
+git reset --hard HEAD^ 		/*Undo the last commit and all changes */
+git reset --hard 		/* if u get stuck during a merge/rebase to restore your working to the state of last commit.  
+This will lose your changes from the working tree so if you had local modifications before the merge they will be gone after this—
+which is why it’s advisable to not start a merge when you have local modifications*/
+
+https://stackoverflow.com/questions/4327708/git-reset-hard-head-leaves-untracked-files-behind
+
+Git doesn't take care of access control (Github, Bitbucket)
+
+https://www.atlassian.com/git/tutorials/undoing-changes/git-reset
+
+git diff 7eb2..e03 812...a3f35
+git diff HEAD helloworld.txt /* compares the local repo with working directory */
+git diff HEAD /*shows the list of changes after your last commit*/
+
+
+ADDING a REMOTE:
+
+git remote add origin https://github.com/Surya/real.git 	/* name and address for the remote */
+git remote -v 		/* remote repos that our local repo knows about */
+git remote rm <name>	/removes the remote repo */
+
+PUSHING TO REMOTE:
+
+git push -u origin master 	/* remote repo name : local branch to push */
+
+
+PULLING FROM REMOTE:
+
+git pull
+
+
+3. CLONING & BRANCHING
+
+git clone <url>		/*url of remote repo*/
+
+1. Downloads the entire repo into a new directory
+2. Adds the origin remote pointing to clone url
+3. checks out initial branch master 
+
+
+BRANCHING OUT
+
+git branch cat 	/* branch created from master */
+
+git branch 		/* lists out all branches */
+
+git checkout cat 	/* switching to a branch: HEAD is now on cat */
+
+git add cat.txt
+git commit -m "create quantum cat"
+
+MERGING 
+
+git merge cat 	/* merge brings one branch's changes into another: FAST FORWARDS */
+
+nothing new in the master: something new in the branch -> fastforward condition
+
+git branch -d cat 		/* Branch clean up */
+
+
+git checkout -b admin	/* creates and checksout branch admin */
+
+git add admin/dashboard.html
+git add admin/users.html
+git commit -m 
+
+git checkout master 
+git pull
+git add 
+git push
+
+git merge admin		 /* Dont panic : :wq : Recursive merge happens*/
+
+
+COLLABORATION BASICS
+
+gregg pushed the code to remote repo
+Jane cloned the repo and edited two files and pushed the code to remote repo
+
+gregg in local repo updates the readme file
+
+git push 	/*REJECTED because the tip of ur current branch is behind*/
+
+git pull
+git push 	/*SUCCESS*/
+
+
+UNDERSTANDING PULL
+
+1. Fetch (or sync) our local repo with the remote one (git fetch)
+2. doesnot replace but create a branch called origin/master
+3. merges the origin/master with master		(git merge orgin/master)
+
+git push 	/* updates the origin/master be at the same state as our local repo */
+
+MERGE CONFLICTS 
+
+gregg -- commited
+Jane -- commited and pushed
+
+git pull 	/* merge conflict in readme.txt */
+
+
+REMOTE BRANCHING 
+
+git checkout -b shopping_cart
+
+git push origin shopping_cart	/* links local branch to the remote branch */
+
+git add cart.rb
+git commit -a -m "add basic cart ability"
+git push 	/* pushed changes from branch*/
+
+
+PULLING NEW BRANCHES
+
+git pull /* shows new remote branch */
+
+git branch -r 	/* lists all remote branches */
+
+git checkout shopping_cart
+
+git remote show origin  	/*determine the URL that a local git repository was orginally cloned from*/
+
+git remote update /* Your colleagues, can pull all remote branches (including new ones) with this command:*/
+
+-----------------------------------------
+git checkout -b <local-branch-name> <remote-name>/<remote-branch-name>\ 	/* to check out a remote git branch */
+
+git fetch origin
+git branch -v -a
+git checkout -b test origin/test  /* With the remote branches in hand, you now need to check out the branch you are interested in, giving you a local working copy:*/
+
+ A 'tracking branch' in Git is a local branch that is connected to a remote branch. When you push and pull on that branch, it automatically pushes and pulls to the remote branch that it is connected with.
+
+ git branch -u origin/test 	/* if u have already local branch which u want to make a tracking upstream branch */
+
+----------------------------------------
+
+git push -u origin HEAD 
+
+This is a shortcut to push the current branch to a branch of the same name on origin and track it so that you don't need to specify origin HEAD in the future.
+
+
+REMOVING A BRANCH
+https://git-scm.com/book/id/v2/Git-Branching-Remote-Branches
+
+git push origin:shopping_cart	/*deltes remote branch */
+git push origin -d shopping_cart
+git push origin --delete shopping_cart
+
+git branch -d shopping_cart /*deltes local branch*/
+
+git branch -D shopping_cart 	/* deltes branch whose changes are not merged */
+
+---------------------------------------------------------------------
+git push <remote-name> <local-branch-name>:<remote-branch-name>
+git push origin shopping_cart	/* links local branch to the remote branch */
+git push origin:shopping_cart	/*deltes remote branch */
+------------------------------------------------------------------------
+You can continue working in the branch and pushing whenever you want without passing arguments to git push (argumentless git push will push the master to remote master, your_branch local to remote your_branch, etc...)
+
+git push
+
+git revert -> to undo a single commit 
+https://www.atlassian.com/git/tutorials/undoing-changes/git-revert
+
+
+
+HEAD is a ref (reference) to the currently checked out commit. In normal states, it's actually a symbolic ref to the branch you have checked out - if you look at the contents of .git/HEAD you'll see something like "ref: refs/heads/master". The branch itself is a reference to the commit at the tip of the branch.
+
+You can think of the HEAD as the "current branch". When you switch branches with git checkout, the HEAD revision changes to point to the tip of the new branch.
+
+cat .git/HEAD
+$ cat .git/HEAD
+ref: refs/heads/master
+
+$ cat .git/refs/heads/master
+35ede5c916f88d8ba5a9dd6afd69fcaf773f70ed
+
+HEAD is actually a file whose contents determines where the HEAD variable refers:
+
+It is possible for HEAD to refer to a specific revision that is not associated with a branch name. This situation is called a detached HEAD.
+https://git-scm.com/docs/git-checkout
+	
+A “detached HEAD” message in git just means that HEAD (the part of git that tracks what your current working directory should match) is pointing directly to a commit rather than a branch. 
+Any changes that are committed in this state are only remembered as long as you don’t switch to a different branch. 
+As soon as you checkout a new branch or tag, the detached commits will be “lost” (because HEAD has moved).
+If you want to save commits done in a detached state, you need to create a branch to remember the commits.
+
+A head is simply a reference to a commit object. Each head has a name (branch name or tag name, etc). By default, there is a head in every repository called master. A repository can contain any number of heads. At any given time, one head is selected as the “current head.” This head is aliased to HEAD, always in capitals".
+
+Note this difference: a “head” (lowercase) refers to any one of the named heads in the repository; “HEAD” (uppercase) refers exclusively to the currently active head. This distinction is used frequently in Git documentation.
+
+Head is your current branch. It is a symbolic reference. It is a reference to a branch. You always have HEAD, but HEAD will be pointing to one of these other pointers, to one of the branches that you're on. It is the parent of your next commit. It is what should be what was last checked-out into your working directory... This is the last known state of what your working directory was.
+
+What happens if you create a new branch? Well, doing so creates a new pointer for you to move around. Let’s say you create a new branch called testing. You do this with the git branch command:
+https://stackoverflow.com/questions/2304087/what-is-head-in-git/2304106
+
+git branch testing 
+
+THis creates a new pointer testing at the same commit you are currently on
+
+How does Git know what branch you’re currently on? It keeps a special pointer called HEAD
+
+ In Git, this is a pointer to the local branch you’re currently on. In this case, you’re still on master. The git branch command only created a new branch — it didn’t switch to that branch.
+
+
+When you fetch, Git gathers any commits from the target branch that do not exist in your current branch and stores them in your local repository. However, it does not merge them with your current branch. This is particularly useful if you need to keep your repository up to date, but are working on something that might break if you update your files. To integrate the commits into your master branch, you use merge.
+
+The git fetch command downloads commits, files, and refs from a remote repository into your local repo. Fetching is what you do when you want to see what everybody else has been working on. It’s similar to svn update in that it lets you see how the central history has progressed, but it doesn’t force you to actually merge the changes into your repository
+
+https://www.atlassian.com/git/tutorials/syncing/git-fetch
+
+
+Git stores all commits, local and remote. Git keeps remote and local branch commits distinctly separate through the use of branch refs. The refs for local branches are stored in the ./.git/refs/heads/. Executing the git branch command will output a list of the local branch refs.
+
+Remote branches are just like local branches, except they map to commits from somebody else’s repository.Like local branches, Git also has refs for remote branches. Remote branch refs live in the ./.git/refs/remotes/ directory.
+
+
+git fetch <remote>
+Fetch all of the branches from the repository. This also downloads all of the required commits and files from the other repository.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Get into the .git
+
+When you create a git repo, using git init, git creates this wonderful directory: the .git. This folder contains all the informations needed for git to work.
+
+├── HEAD
+├── branches
+├── config
+├── description
+├── hooks
+│ ├── pre-commit.sample
+│ ├── pre-push.sample
+│ └── ...
+├── info
+│ └── exclude
+├── objects
+│ ├── info
+│ └── pack
+└── refs
+ ├── heads
+ └── tags
+
+
+ config
+
+ This file contains the settings for your repository, here will be written the url of the remote for example, your mail, username, … . Every-time you use ‘git config …’ in the console it ends here.
+
+ description
+
+ Used by gitweb (kind of an ancestor of github) to display the description of the repo.
+
+ hooks
+
+info
+ So you can put the files you don’t want git to deal with in your .gitignore file. Well the exclude file is the same except that it won’t be shared. If you don’t want to track your custom IDE related config files for example, even though most of the time .gitignore is enough
+
+Whats inside a commit
+
+Every-time you create a file, and track it, git compresses it and stores it into its own data structure. The compressed object will have a unique name, a hash, and will be stored under the object directory.
+
+Before exploring the object directory we’ll have to ask ourselves what is a commit. So a commit is kind of a snapshot of your working directory, but it is a little bit more than that.
+
+In fact when you commit git does only two things in order to create the snapshot of your working directory:
+1. If the file didn’t change, git just adds the name of the compressed file (the hash) into the snapshot.
+2. If the file has changed, git compresses it, stores the compressed file in the object folder. Finally it adds the name (the hash) of this compressed file into the snapshot.
+
+And once that snapshot is created, it will also be compressed and be name with an hash, and where all those compressed objects end up ? In the object folder.
+
+
+├── 4c
+│ └── f44f1e3fe4fb7f8aa42138c324f63f5ac85828 // hash
+├── 86
+│ └── 550c31847e518e1927f95991c949fc14efc711 // hash
+├── e6
+│ └── 9de29bb2d1d6434b8b29ae775ad8c2e48c5391 // hash
+├── info // let's ignore that
+└── pack // let's ignore that too
+
+You see 3 hash right. So one would be for my file_1.txt, the other would be for the snapshot created when I commited. What is the third one ? Well because a commit is an object in itself, it is also compressed and stored in the object folder.
+
+What you need to remember is that a commit is made of 4 things :
+
+The name (a hash) of the working directory’s snapshot
+A comment
+Commiter information
+Hash of the parent commit
+
+git cat-file -p 4cf44f1e3fe4fb7f8aa42138c324f63f5ac85828
+
+tree 86550c31847e518e1927f95991c949fc14efc711
+author Pierre De Wulf <test@gmail.com> 1455775173 -0500
+committer Pierre De Wulf <test@gmail.com> 1455775173 -0500
+commit A
+
+the snapshot hash, the author, and my commit message. Two things are important here :
+
+As expected, the snapshot hash “86550…” is also an object and can be found in the object folder.
+Because it was my first commit, there is no parent.
+
+Whats in my snapshot for real
+
+git cat-file -p 86550c31847e518e1927f95991c949fc14efc711
+
+100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 file_1.txt
+
+And here we find the last object that was previously in our object store, the only object that was in our snapshot. 
+
+cat HEAD
+ref: refs/heads/master
+
+cat refs/heads/master
+4cf44f1e3fe4fb7f8aa42138c324f63f5ac85828
+
+Yes this is the exact same hash of our first commit. This shows you that branches and tags are nothing more than a pointer to a commit.
+
+
+All git does when you commit is “zipping” your current working directory and store into the objects folder with a bunch of other informations. 
+
+I mean a commit isn’t really a snapshot of your working directory, it is a snapshot of the files you want to commit. And where does git store those file you want to commit before making the actual ? Well it stores them into the index file. 
+
+
+
+Getting a git repository
+1. you can take a local directory that is currently not under version control and turn it into a Git repository
+2. or you can clone an existing repository from elsewhere
+
+
+1. cd /usr/myproject
+
+git init /* creates a subdirectory named .git that contains all of your necessary repository files. At this point nothing in your project is tracked yet
+
+git add *.c
+git commit -m 'initial project version'
+
+
+git clone <url> <name>intializes a .git repository inside it , pulls down all the data for repository and checks out a working copy of the latest version
+
+
+check the status of files
+
+git status
+
+git diff /*to see what you have changed but not yet staged */
+
+git diff --staged /*compares your staged changes to your last commit */
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+.gitignore
+
+Create a local .gitignore. If you create a file in your repository named .gitignore, Git uses it to determine which files and directories to ignore, before you make a commit. A .gitignore file should be committed into your repository, in order to share the ignore rules with any other users that clone the repository.
+
+The purpose of the .gitignore file is to allow you to ignore files, such as editor backup files, build products or local configuration overrides that you never want to commit into a repository. Without matching .gitignore rules, these files will appear in the "untracked files" section of git status output
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Untrack files already added to git repository based on .gitignore
+
+Commit all your changes
+git rm -r --cached .
+
+rm is the remove command
+-r will allow recursive removal
+–cached will only remove files from the index. Your files will still be there.
+The . indicates that all files will be untracked. You can untrack a specific file with git rm --cached foo.txt (thanks @amadeann)
+
+git add .
+git commit -m ".gitignore fix"
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+git push origin HEAD
+
+
+Do i need to commit my branch before checking out another branch 
+
+mkdir testgitstash # create directory
+cd testgitstash # change to that directory
+git init # init git repo
+echo test1 > file1.txt # create 2 files
+echo test2 > file2.txt
+git add . # add both files
+git commit -m "Initial commit" # commit both files
+git checkout -b new-branch # create a new branch and switch to that branch
+
+On top of that you have some pending changes on new-branch
+
+echo change > file1.txt # change file1
+git commit -am "update" # commit change
+echo change2 > file1.txt # change file1 again
+
+https://backlog.com/git-tutorial/using-branches/git-switch-branches/
+PROBLEM:
+
+$ git checkout master
+error: Your local changes to the following files would be overwritten by checkout: 
+    file1.txt
+Please, commit your changes or stash them before you can switch branches.
+Aborting
+
+SOLUTION
+
+Instead of committing your changes or reverting, you can stash them with:
+git stash save "changes on new-branch"
+
+
+git checkout master
+Do whatever changes you want on master, and when ready, go back to new-branch.
+
+git checkout new-branch
+Unstash the changes
+$ git stash pop
+Your changes will be put back and you can continue what you were doing initially.
+
+
+You can stack several changes and check the current stash stack using:
+ git stash list
+
+You can also unstash a specific stash by using
+ git stash pop "stash@{1}"
+
+
+
+Useful Links:
+https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+
+----------------------------------------------------------------------------
+
+How to create a remote branch
+
+git checkout -b stage1
+git push origin stage1
+git push origin stage1:development
+
+
+If you already have a local branch and want to set it to a remote branch you just pulled down, or want to change the upstream branch you’re tracking, you can use the -u or --set-upstream-to option to git branch to explicitly set it at any time.
+
+$ git branch -u origin/serverfix
+Branch serverfix set up to track remote branch serverfix from origin.
+
+
+git branch
+git branch -v /*to see last commit*/
+git branch --merged
+git branch --no-merged
+git branch -d testing 
+git branch -D testing 
+
+https://git-scm.com/book/id/v2/Git-Branching-Branching-Workflows
+
+-------------------------------------------------------------------------
+Renaming remote branch
+
+git branch -m old_branch new_branch         # Rename branch locally    
+
+git push origin :old_branch                 # Delete the old branch    
+
+git push --set-upstream origin new_branch   # Push the new branch, set local branch to track the new remote
+git push origin -u new_branch
+-------------------------------------------------------------------------
+
+Branch from a previous commit using git
+
+If I have n commits, how can I branch from the n-3 commit?
+
+I can see the hash of every commit
+
+ou can create the branch via a hash:
+git branch branchname <sha1-of-commit>
+
+Or by using a symbolic reference:
+git branch branchname HEAD~3
+
+To checkout the branch when creating it, use
+git checkout -b branchname <sha1-of-commit or HEAD~3>
+-------------------------------------------------------------------
+
+git conflicts
+https://imagej.net/Git_Conflicts
+
+https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase
+
+git rebase helps in linear history
+
+
+
+
+

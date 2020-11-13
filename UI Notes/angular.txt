@@ -1,0 +1,33 @@
+Java -> Javascript
+Node js -> JVM (cross platform js runtime environment that executes js code outside of browser)
+express -> Tomcat ()
+npm -> Maven (package manager)
+
+
+The main difference between local and global packages is this: local packages are installed in the directory where you run npm install <package-name> , and they are put in the node_modules folder under this directory
+
+Installing it local, means the module will be available only for a project you installed it (the directory you were in, when ran npm install ). Global install, instead puts the module into your Node.js path (OS dependent), and will be accessible from any project, without the need to install it separately for each.
+
+Global libraries. You can run npm list -g to see where global libraries are installed. On Unix systems they are normally placed in /usr/local/lib/node or /usr/local/lib/node_modules when installed globally. If you set the NODE_PATH environment variable to this path, the modules can be found by node.
+
+
+Lazy loading Feature Modules 
+https://angular.io/guide/lazy-loading-ngmodules
+
+app.module.ts
+Difference between declarations, providers and import in NgModule 
+https://code.i-harness.com/en/q/2540d92
+
+
+directives
+AngularJS directives are extended HTML attributes with the prefix ng- . The ng-app directive initializes an AngularJS application. The ng-init directive initializes application data. The ng-model directive binds the value of HTML controls (input, select, textarea) to application data.
+
+Difference between component and directive:
+A component is not the only UI building block in Angular 2. There are also directives which allow you to attach behavior to elements in the DOM.
+
+The difference between a component and a directive in Angular 2 is that a component is a directive with a view whereas a directive is a decorator with no view.
+
+Routing strategies in angular 4
+https://www.oodlestechnologies.com/blogs/Routing-strategies-in-angular-4
+
+----------------------------------------------

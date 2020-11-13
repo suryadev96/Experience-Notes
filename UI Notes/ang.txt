@@ -1,0 +1,506 @@
+import { Component, OnInit } from @angular/core
+
+hero.ts
+
+export class Hero {
+	id : number;
+	name : string;	
+}
+
+import {Hero} from ../hero
+
+-------------------------------------------------
+ng generate component heroes
+src/app/heroes
+app/heroes/heroes.component.ts
+export class HeroesComponent
+
+
+ng generate component hero-detail
+src/app/hero-detail
+app/hero-detail/hero-detail.component.ts
+export class HeroDetailComponent
+
+
+ng generate service hero
+src/app/hero.service.ts
+
+
+ng generate module app-routing --flat --module=app
+--flat puts the file in src/app instead of its own folder.
+--module=app tells the CLI to register it in the imports array of the AppModule.
+
+src/app/app-routing.module.ts
+export class AppRoutingModule
+
+
+
+selector : app-root for AppComponent
+---------------------------------------------------
+
+ 
+ <input [(ngModel)]="hero.name" placeholder="name"/>
+
+app.module.ts
+
+import {FormsModule} from @angular/forms ; // NgModel lives here
+import {NgModule} from @angular/core;
+import {CommonModule} from @angular/common; // ngIf lives here
+
+@NgModule({
+	declarations: [
+	AppComponent,
+	HeroesComponent
+	],
+	imports : [
+	BrowserModule,
+	FormsModule,
+	CommonModule
+	]
+})
+
+Angular event binding syntax
+<li *ngFor="let hero of heroes" (click)="onSelect(hero)">
+binding from UI to backend
+
+<app-hero-detail [hero]="selectedHero"></app-hero-detail>
+binding from backend to UI
+
+
+Input decorator in herodetailcomponent
+@Input() hero: Hero;
+
+import {Input} from @angular/core
+
+
+
+hero.service.ts
+
+import {Injectable} from '@angular/core';
+
+@Injectable({
+	providedIn:'root',
+})
+
+
+registering a provider.A provider is something that can create or deliver a service ; in this case it instantiates heroservice class
+
+registers a provider with root injector
+When you provide the service at the root level, Angular creates a single, shared instance of HeroService and injects into any class that asks for it
+
+
+
+import {Observable,of} from 'rxjs';
+
+getHeroes() : Observable<Hero[]> {
+	return of(HEROES)
+}
+
+getHeroes(): void {
+  this.heroService.getHeroes()
+      .subscribe(heroes => this.heroes = heroes);
+}
+
+The new version waits for the Observable to emit the array of heroes— which could happen now or several minutes from now. Then subscribe passes the emitted array to the callback, which sets the component's heroes property.
+
+
+
+Routing
+
+In Angular, the best practice is to load and configure the router in a separate, top-level module that is dedicated to routing and imported by the root AppModule.
+
+
+ng generate module app-routing --flat --module=app
+
+--flat puts the file in src/app instead of its own folder.
+--module=app tells the CLI to register it in the imports array of the AppModule.
+
+
+import {NgModule} from @angular/core;
+import {RouterModule, Routes} from @angular/router;
+
+
+const routes: Routes = [
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'detail/:id', component: HeroDetailComponent },
+  { path: 'heroes', component: HeroesComponent }
+];
+
+
+@NgModule({
+	exports : [RouterModule],
+	imports: [ RouterModule.forRoot(routes) ]
+})
+export class AppRoutingModule{
+}
+
+The method is called forRoot() because you configure the router at the application's root level. The forRoot() method supplies the service providers and directives needed for routing, and performs the initial navigation based on the current browser URL.
+
+
+-----------------
+
+<h1>{{title}}</h1>
+<router-outlet></router-outlet>
+<app-messages></app-messages>
+
+The <router-outlet> tells the router where to display routed views.
+The RouterOutlet is one of the router directives that became available to the AppComponent because AppModule imports AppRoutingModule which exported RouterModule.
+
+
+<nav>
+  <a routerLink="/heroes">Heroes</a>
+</nav>
+
+
+routerLink is selector for routerLink directive
+
+
+Routable HeroDetailComponent
+Previously, the parent HeroesComponent set the HeroDetailComponent.hero property and the HeroDetailComponent displayed the hero.
+
+HeroesComponent doesn't do that anymore. Now the router creates the HeroDetailComponent in response to a URL such as ~/detail/11.
+
+The HeroDetailComponent needs a new way to obtain the hero-to-display.
+
+Get the route that created it,
+Extract the id from the route
+Acquire the hero with that id from the server via the HeroService
+
+import {ActivatedRoute} from  '@angular/router;
+import {Location} from '@angular/common';
+import {HeroService} from '../hero.service'
+
+constructor(
+  private route: ActivatedRoute,
+  private heroService: HeroService,
+  private location: Location
+) {}
+
+
+The ActivatedRoute holds information about the route to this instance of the HeroDetailComponent. This component is interested in the route's bag of parameters extracted from the URL. The "id" parameter is the id of the hero to display.
+
+The location is an Angular service for interacting with the browser. You'll use it later to navigate back to the view that navigated here.
+
+ngOnInit(): void {
+  this.getHero();
+}
+
+getHero(): void {
+  const id = +this.route.snapshot.paramMap.get('id');
+  this.heroService.getHero(id)
+    .subscribe(hero => this.hero = hero);
+}
+
+The JavaScript (+) operator converts the string to a number, which is what a hero id should be.
+
+
+getHero(id: number): Observable<Hero> {
+  // TODO: send the message _after_ fetching the hero
+  this.messageService.add(`HeroService: fetched hero id=${id}`);
+  return of(HEROES.find(hero => hero.id === id));
+}
+
+
+<button (click)="goBack()">go back</button>
+
+goBack(): void {
+  this.location.back();
+}
+
+
+
+------------------------
+
+HTTP
+
+app.module.ts
+import {HTTPClientModule} from '@angular/common/http';
+
+hero.service.ts
+
+import {HttpClient, HttpHeaders} from '@angular/common/http'
+
+getHeroes (): Observable<Hero[]> {
+  return this.http.get<Hero[]>(this.heroesUrl)
+}
+
+All HttpClient methods return an RxJS Observable of something.
+
+In general, an observable can return multiple values over time. An observable from HttpClient always emits a single value and then completes, never to emit again.
+
+This particular HttpClient.get call returns an Observable<Hero[]>, literally "an observable of hero arrays". In practice, it will only return a single hero array.
+
+
+
+------------------
+
+(event)="statement"
+
+<button (click)="onSave($event)">Save</button>
+<button *ngFor="let hero of heroes" (click)="deleteHero(hero)">{{hero.name}}</button>
+<form #heroForm (ngSubmit)="onSubmit(heroForm)"> ... </form>
+
+template $event object
+template reference variable
+
+HTML attribute vs DOM property
+
+<button disabled="false">
+
+presence of disable attribute makes it true ; so the button is disabled. you cannot enable it by setting it to false
+
+
+Binding targets
+
+important set
+
+------------------------------------------------------------------------------------------
+
+Element property: 	<img [src]="heroImageUrl">
+Component Property:	<app-hero-detail [hero]="currentHero"></app-hero-detail>
+Directive property:	<div [ngClass]="{'special': isSpecial}"></div>
+
+Element event:	<button (click)="onSave()">Save</button>
+Component event:<app-hero-detail (deleteRequest)="deleteHero()"></app-hero-detail>
+Directive event:<div (myClick)="clicked=$event" clickable>click me</div>
+
+
+--------------------------------------------------------------------------------------
+<input [(ngModel)]="name">
+
+
+
+property binding:- binding components data with the dom target element property
+
+ you cannot use property binding to call a method on the target element.
+ You cannot use property binding to pull values out of the target element. You can't bind to a property of the target element to read it. You can only set it.
+ If the element raises events, you can listen to them with an event binding.
+
+If you must read a target element property or call one of its methods, you'll need a different technique. See the API reference for ViewChild and ContentChild.
+
+
+<app-hero-detail [hero]="currentHero"></app-hero-detail>
+
+[] tells angular to evaluate the template expression "currentHero"
+
+<app-hero-detail hero="currentHero"></app-hero-detail>
+
+<!-- ERROR: HeroDetailComponent.hero expects a
+     Hero object, not the string "currentHero" -->
+
+<p><img src="{{heroImageUrl}}"> is the <i>interpolated</i> image.</p>
+<p><img [src]="heroImageUrl"> is the <i>property bound</i> image.</p>
+
+property binding or interpolation -> alternatives
+
+
+<button (click) = "onsave($event)">save</button>
+<h4>myClick is an event on the custom ClickDirective:</h4>
+<button (myClick)="clickMessage=$event" clickable>click with myClick</button>
+{{clickMessage}}
+
+
+ In an event binding, Angular sets up an event handler for the target event.
+ The target event determines the shape of the $event object. If the target event is a native DOM element event, then $event is a DOM event object, with properties such as target and target.value.
+
+
+ <input [value]="currentItem.name"
+       (input)="currentItem.name=$event.target.value" >
+without NgModel
+
+
+Directives typically raise custom events with an Angular EventEmitter. The directive creates an EventEmitter and exposes it as a property. The directive calls EventEmitter.emit(payload) to fire an event, passing in a message payload, which can be anything. Parent directives listen for the event by binding to this property and accessing the payload through the $event object.
+
+
+
+
+---------------------------------
+
+
+item-detail.component.ts (template)
+
+<img src="{{itemImageUrl}}" [style.display]="displayNone">
+<span [style.text-decoration]="lineThrough">{{ item.name }}
+</span>
+<button (click)="delete()">Delete</button>
+
+
+item-detail.component.ts 
+
+@Output() deleteRequest = new EventEmitter<Item>();
+
+delete() {
+  this.deleteRequest.emit(this.item.name);
+  this.displayNone = this.displayNone ? '' : 'none';
+  this.lineThrough = this.lineThrough ? '' : 'line-through';
+}
+
+
+app-component.html
+<app-item-detail (deleteRequest)="deleteItem($event)" [item]="currentItem"></app-item-detail>
+
+
+syntactical sugar
+<app-sizer [size]="fontSizePx" (sizeChange)="fontSizePx=$event"></app-sizer>
+
+<app-sizer [(size)]="fontSizePx"></app-sizer>
+
+
+Fortunately, the Angular NgModel directive is a bridge that enables two-way binding to form elements
+
+
+Attribute directives
+
+NgClass - add and remove a set of CSS classes
+NgStyle - add and remove a set of HTML styles
+NgModel - two-way data binding to an HTML form element
+
+
+class binding
+
+<!-- toggle the "special" class on/off with a property -->
+<div [class.special]="isSpecial">The class binding is special</div>
+
+currentClasses:{};
+
+<input
+  [ngModel]="currentHero.name"
+  (ngModelChange)="setUppercaseName($event)">
+
+--------------------------------------
+
+Aliasing input/output properties
+
+<div (myClick)="clickMessage=$event" clickable>click with myClick</div>
+
+src/app/click.directive.ts
+@Output('myClick') clicks = new EventEmitter<string>();
+
+@Directive({
+  outputs: ['clicks:myClick']  // propertyName:alias
+})
+
+
+<p>The item's undeclared best by date is: {{$any(item).bestByDate}}</p>
+
+
+<input (keyup) = "onkey($event)"
+
+-------------------------------------------
+
+lifecycle hooks
+
+
+
+---------------------------
+
+component interaction
+
+import {AfterViewInit, ViewChild} from '@angular/core'
+
+import {Directive} from '@angular/core'
+
+
+ng generate directive highlight
+
+import { Directive, ElementRef , Hostlistener} from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+    constructor(el: ElementRef) {
+       el.nativeElement.style.backgroundColor = 'yellow';
+    }
+
+   @HostListener('mouseenter') onMouseEnter() {
+  this.highlight('yellow');
+}
+
+@HostListener('mouseleave') onMouseLeave() {
+  this.highlight(null);
+}
+
+private highlight(color: string) {
+  this.el.nativeElement.style.backgroundColor = color;
+}
+}
+
+<p appHighlight>Highlight me ! </p>
+
+
+
+
+https://angular.io/guide/attribute-directives
+
+@Input() highlightColor: string;
+<p appHighlight [highlightColor]="color">Highlighted with parent component's color</p>
+
+@Input() appHighlight: string;
+<p [appHighlight]="color">Highlight me!</p>
+
+@Input('appHighlight') highlightColor: string;
+
+----------------------------
+
+forms
+
+reactive and form-driven
+
+FormControl tracks the value and validation status of an individual form control
+FormGroup tracks the same values and status for a collection of form controls
+controlvalueaccessor creates a bridge between angular formcontrol instances and native DOM instances
+
+
+import {FormControl} from '@angular/forms'
+
+
+app.module.ts
+
+import{ReactiveFormsModule} from '@angular/forms';
+
+
+<input type="text" [formControl] = "name">
+
+After you create the control in the component class, you must associate it with a form control element in the template. Update the template with the form control using the formControl binding provided by FormControlDirective included in ReactiveFormsModule.
+
+
+Through the valueChanges observable where you can listen for changes in the form's value in the template using AsyncPipe or in the component class using the subscribe() method.
+With the value property. which gives you a snapshot of the current value.
+
+
+The FormGroup directive listens for the submit event emitted by the form element and emits an ngSubmit event that you can bind to a callback function.
+
+Add an ngSubmit event listener to the form tag with the onSubmit() callback method. 
+
+<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+
+The submit event is emitted by the form tag using the native DOM event. You trigger the event by clicking a button with submit type. 
+
+<button type="submit" [disabled]="!profileForm.valid">Submit</button>
+
+<div formGroupName="address">
+<input type="text" formControlName="city">
+</div>
+
+
+patching the model value
+
+this.profileForm.patchValue({
+	firstName:'Nancy',
+	address:{
+		street : '123 street'
+	}
+})
+
+
+import {FormBuilder} from '@angular/forms'
+
+import {Validators} from '@angular/forms'
+
+
+<form #heroForm="ngForm">
+
+The variable heroForm is now a reference to the NgForm directive that governs the form as a whole.
+

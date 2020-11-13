@@ -1,0 +1,164 @@
+comparing the observed weather data from two sources
+
+climate normals of austin , texas state from 1981-2010 from national oceanic and atmospheric administration 
+
+Temperature		DewPoint 		Pressure 		Date
+46.2			37.5 			1.0 			20100101 00:00
+
+This dataset contains the climate data for each hour of the day averaged over 30 years 
+
+second is austin weather data from 2011
+
+hourly readings of many climate related measurements 
+
+names: assigning column labels
+index_col : assigning index 
+parse_dates: parsing data times
+na_values: parsing Nans
+
+get those dataframes in usable form for analysis
+
+# Import pandas
+import pandas as pd
+df = pd.read_csv(data_file)
+print(df.head())
+
+df_headers = pd.read_csv(data_file, header=None)
+print(df_headers.head())
+
+----------------
+column_labels_list = column_labels.split(',')
+# Assign the new column labels to the DataFrame: df.columns
+df.columns = column_labels_list
+# Remove the appropriate columns: df_dropped
+df_dropped = df.drop(list_to_drop, axis='columns') #goes paralley across the columns 
+print(df_dropped.head())
+
+Wban      date  Time  StationType sky_condition  ... relative_humidity wind_speed wind_direction station_pressure sea_level_pressure
+    0  13904  20110101    53           12        OVC045  ...                24         15            360            29.42              29.95
+
+
+# Convert the date column to string: df_dropped['date']
+df_dropped['date'] = df_dropped['date'].astype(str)
+
+# Pad leading zeros to the Time column: df_dropped['Time']
+df_dropped['Time'] = df_dropped['Time'].apply(lambda x:'{:0>4}'.format(x))
+
+# Concatenate the new date and Time columns: date_string
+date_string = df_dropped['date'] + df_dropped['Time']
+
+# Convert the date_string Series to datetime: date_times
+date_times = pd.to_datetime(date_string, format='%Y%m%d%H%M')
+
+# Set the index to be the new date_times container: df_clean
+df_clean = df_dropped.set_index(date_times)
+
+# Print the output of df_clean.head()
+print(df_clean.head())
+
+---------------------------	
+
+# Print the dry_bulb_faren temperature between 8 AM and 9 AM on June 20, 2011
+print(df_clean.loc['June 20, 2011 8:00:00':'June 20, 2011 8:00:00', 'dry_bulb_faren'])
+
+# Convert the dry_bulb_faren column to numeric values: df_clean['dry_bulb_faren']
+df_clean['dry_bulb_faren'] = pd.to_numeric(df_clean['dry_bulb_faren'], errors='coerce')
+
+# Print the transformed dry_bulb_faren temperature between 8 AM and 9 AM on June 20, 2011
+print(df_clean.loc['2011-06-20 08:00:00' : '2011-06-20 09:00:00', 'dry_bulb_faren'])
+
+# Convert the wind_speed and dew_point_faren columns to numeric values
+df_clean['wind_speed'] = pd.to_numeric(df_clean['wind_speed'], errors='coerce')
+df_clean['dew_point_faren'] = pd.to_numeric(df_clean['dew_point_faren'], errors='coerce')
+
+
+-------------------------
+
+statistical exploratory data analysis
+
+Both of these DataFrames have datetimeindexes , so their columns are timeseries 
+
+# Print the median of the dry_bulb_faren column
+print(df_clean['dry_bulb_faren'].median())
+print(df_clean.loc['2011-Apr':'2011-Jun', 'dry_bulb_faren'].median())
+print(df_clean.loc['2011-Jan', 'dry_bulb_faren'].median())
+
+--------------------------
+daily_mean_2011 = df_clean.resample('D').mean()
+daily_temp_2011 = daily_mean_2011['dry_bulb_faren'].values
+daily_climate = df_climate.resample('D').mean()
+daily_temp_climate = daily_climate.reset_index()['Temperature']
+difference = daily_temp_2011 - daily_temp_climate
+print(difference.mean())
+
+
+sunny = df_clean.loc[df_clean['sky_condition'] == 'CLR']
+overcast = df_clean.loc[df_clean['sky_condition'].str.contains('OVC')]
+sunny_daily_max = sunny.resample('D').max()
+overcast_daily_max = overcast.resample('D').max()
+print(sunny_daily_max.mean() - overcast_daily_max.mean())
+
+
+line plots in pandas
+
+import matplotlib.pyplot as plt 
+climate2010.Temperature['2010-07'].plot()
+plt.title('Temperature (July 2010)')
+
+
+https://github.com/upalr/Python-camp/wiki/4.-Case-Study---Sunlight-in-Austin
+
+climate2010['Dewpoint'].plot(kind='hist',bins=30)
+
+
+# From previous step
+is_sky_clear = df_clean['sky_condition'] == 'CLR'
+resampled = is_sky_clear.resample('D')
+
+# Calculate the number of sunny hours per day
+sunny_hours = resampled.sum()
+
+# Calculate the number of measured hours per day
+total_hours = resampled.count()
+
+# Calculate the fraction of hours per day that were sunny
+sunny_fraction = sunny_hours / total_hours
+
+
+---------------
+
+# Resample dew_point_faren and dry_bulb_faren by Month, aggregating the maximum values: monthly_max
+monthly_max = df_clean.loc[:,['dew_point_faren','dry_bulb_faren']].resample('M').max()
+
+# Generate a histogram with bins=8, alpha=0.5, subplots=True
+monthly_max.plot(kind='hist',bins=8,alpha=0.5,subplots=True)
+
+# Show the plot
+plt.show()
+
+-----------------------------
+
+# Extract the maximum temperature in August 2010 from df_climate: august_max
+august_max = df_climate.loc['2010-08', 'Temperature'].max()
+print(august_max)
+
+# Resample August 2011 temps in df_clean by day & aggregate the max value: august_2011
+august_2011 =  df_clean.loc['2011-Aug', 'dry_bulb_faren'].resample('D').max()
+
+
+# Filter for days in august_2011 where the value exceeds august_max: august_2011_high
+
+august_2011_high = august_2011.loc[august_2011 > august_max]
+
+# Construct a CDF of august_2011_high
+august_2011_high.plot(kind='hist', normed=True,cumulative=True, bins=25)
+
+# Display the plot
+plt.show()
+
+----------------------
+
+
+
+
+

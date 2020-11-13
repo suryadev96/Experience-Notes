@@ -1,0 +1,341 @@
+pandas to import and inspect a variety of datasets ranging from population data obtained from world bank to monthly stock data obtained via yahoo
+build dataframes from scratch and become familiar with pandas intrinsic data visualization capabilities
+
+dataframe : tabular data structure with labeled rows and columns
+
+Data frame for apple stock data
+
+Date Open High Low Close Volume Adj Close
+
+rows are labeled by special data structure called index. 
+tailored list of labels that permit fast look up and some powerful relationships 
+
+import pandas as pd 
+type(AAPL)
+pandas.core.frame.DataFrame 
+
+AAPL.shape
+(8514,6) rows ,columns
+
+AAPL.columns
+Index(['Open','High','Low','Close','Volume','AdjClose'],dtype='object')
+
+type(AAPL.columns)
+pandas.indexes.base.index
+
+AAPL.index
+DatetimeIndex(['2014-09-16',],dtype='datetime64[ns]',name='Date',length='8514')
+
+type(AAPL.index)
+pandas.tseries.index.DatetimeIndex
+
+slicing
+
+AAPL.iloc[:5,:] 'first five rows'
+AAPL.iloc[-5:,:] 'last five rows'
+
+AAPL.head(5) 'returns first five rows'
+
+AAPL.tail(2) 'returns last 2 rows'
+
+AAPL.info()
+
+index
+column labels
+no of rows and columns 
+
+pandas data frame slices also supports braodcasting 
+
+import numpy as np
+AAPL.iloc[::3,-1] = np.nan
+AAPL.head(6)
+
+
+The columns of a DataFrame are themselves a special pandas structure called series
+Extracting single column from dataframe returns a series
+
+low = AAPL['low']
+
+type(low)
+pandas.core.series.series
+
+low.head()
+
+lows = low.values
+
+The data in the series actually form a numpy array which is what value attribute yields
+
+type(lows)
+numpy.ndarray
+
+pandas series is 1D labelled numpy array
+
+inspect the data using head, tail
+
+---------------
+
+pandas depends upon and interoperates with numpy , python library for fast numeric array computations
+
+you can also pass pandas data structures to numpy methods
+
+# Import numpy
+import numpy as np
+np_vals = df.values
+np_vals_log10 = np.log10(np_vals)
+df_log10 = np.log10(df)
+[print(x, 'has type', type(eval(x))) for x in ['np_vals', 'np_vals_log10', 'df', 'df_log10']]
+
+np_vals has type <clas 'numpy.ndarray'>
+np_vals_log10 has type <clas 'numpy.ndarray'>
+df has type <clas 'pandas.core.frame.DataFrame'>
+df_log10 has type <clas 'pandas.core.frame.DataFrame'>
+
+
+Building dataframes from scratch
+
+import pandas as pd
+
+users = pd.read_csv('datasets/users.csv',index_col=0)
+print(users)
+
+weekday city visitors signup 
+sun 	austin 139    	7
+sun     Dallas  237     12
+
+
+data = {
+	'weekday' : ['sun', 'sun' ,'mon' , 'mon']
+	'city'	  : ['austin', 'Dallas']
+	'visitors' : [138,237]
+	'signup'  : [7,12]
+}
+
+users = pd.DataFrame(data)
+print(users)
+
+
+import pandas as pd 
+
+cities = ['Austin' , 'Dallas' , 'Austin' , 'Dallas']
+signups = [7, 12, 3 , 5]
+visitors = [139, 237, 326, 456]
+weekdays = ['sun','sun','mon','mon']
+list_labels = ['city','signup','visitors','weekday']
+list_cols = [cities, signups, visitors, weekdays]
+zipped = list(zip(list_labels,list_cols))
+
+list of zipped tuples 
+
+print(zipped)
+
+[('city',['Austin' , 'Dallas' , 'Austin' , 'Dallas']), ('signups', [7, 12, 3 , 5])]
+
+data =dict(zipped)
+users = pd.DataFrame(data)
+print(users)
+
+users['fees'] = 0 #broadcasts to entire column
+
+
+Broadcasting with dict
+heights = [59.0, 65.2, 62.9]
+data = {'height': heights, 'sex':'M'}
+results = pd.DataFrame(data)
+
+#change the column label
+results.columns = ['height (in)', 'sex']
+results.index = ['A','B','C']
+
+------------------
+
+# Zip the 2 lists together into one list of (key,value) tuples: zipped
+zipped = list(zip(list_keys,list_values))
+# Inspect the list using print()
+print(zipped)
+# Build a dictionary with the zipped list: data
+data = dict(zipped)
+# Build and inspect a DataFrame from the dictionary: df
+df = pd.DataFrame(data)
+print(df)
+
+--------------
+list_labels = ['year','artist','song','chart weeks']
+df.columns = list_labels
+
+-------------
+state = 'PA'
+data = {'state':state, 'city':cities}
+df = pd.DataFrame(data)
+print(df)
+
+---------------
+
+Importing and exporting data
+
+gregorian date (year, month, day)
+date as fraction as year
+total sunspot number
+definite provisional indicator
+
+sunspots = pd.read_csv(filepath, headers = None)
+
+sunspot observations collected from SILSO
+
+1818,01,01,1818.004,-1,1
+1818,01,02,1818.007,-1,1
+1818,01,02,1818.010,-1,1
+
+sunspots.iloc[10:20,:]
+
+CSV file has no column headers
+
+first line of column is column labels by default
+
+sunspots = pd.read_csv(filepath,header=None)
+
+column labels -> 0,1,2,3,4
+
+col_names = ['year', 'month', 'day', 'dec_date', 'sunspots' , 'definite']
+sunspots = pd.read_csv(filepath, headers = None, names = col_names)
+
+sunspots = pd.read_csv(filepath, headers = None, names = col_names, na_values = ' -1')
+
+sunspots = pd.read_csv(filepath, headers = None, names = col_names, na_values = {'sunspots':[' -1']})
+
+list of lists of column positions to inform read_Csv which column holds the dates 
+
+[[0,1,2]]
+
+sunspots = pd.read_csv(filepath, headers = None, names = col_names, na_values = {'sunspots':[' -1']} , parse_dates = [[0,1,2]])
+
+It amalgamates the three columns
+
+sunspots.index = sunspots['year_month_day']
+sunspots.index.name = 'date'
+
+
+Extract the meaningful data 
+
+cols = ['sunspots', 'definite']
+sunspots = sunspots[cols]
+sunspots.iloc[10:20,:]
+	
+		sunspots 	definite
+date 
+1818-01-11	NAN 	1
+
+sunspots.to_csv('sunspots.csv')
+sunspots.to_csv('sunspots.csv',sep ='\t')
+sunspots.to_excel('sunspots.xlsx')
+
+-------------------------
+df1 = pd.read_csv(data_file,)
+new_labels = ['year','population']
+df2 = pd.read_csv(data_file, header=0, names=new_labels)
+print(df1)
+print(df2)
+
+-------------------
+
+monthly stock data for four companies 
+each column is end of the month closing price 
+
+The following stock data was collect on 2016-AUG-25 from an unknown source
+    These kind of comments are not very useful                                                  are they?                        
+    Probably should just throw this line away too          but not the next since those are column labels                        
+    name Jan Feb Mar Apr May Jun Jul Aug Sep Oct No...                                                NaN                        
+    # So that line you just read has all the column...                                                NaN                        
+    IBM 156.08 160.01 159.81 165.22 172.25 167.15 1...                                                NaN                        
+         name     Jan     Feb     Mar     Apr  ...     Aug     Sep     Oct     Nov     Dec
+    0     IBM  156.08  160.01  159.81  165.22  ...  152.77  145.36  146.11  137.21  137.96
+    1    MSFT   45.51   43.08   42.13   43.47  ...   45.51   43.56   48.70   53.88   55.40
+    2  GOOGLE  512.42  537.99  559.72  540.50  ...  636.84  617.93  663.59  735.39  755.35
+    3   APPLE  110.64  125.43  125.97  127.29  ...  113.39  112.80  113.36  118.16  111.73
+
+
+df1 = pd.read_csv(file_messy)
+print(df1.head())
+df2 = pd.read_csv(file_messy, delimiter=' ', header=3, comment="#")
+print(df2.head())
+df2.to_csv(file_clean, index=False)
+df2.to_excel('file_clean.xlsx', index=False)
+
+----------------
+
+plotting with pandas
+
+data visualization is primary tool in data scientists tool box
+
+import pandas as pd 
+import matplotlib.pyplot as plt 
+aapl = pd.read_csv('aapl.csv', index_col = 'date' , parse_dates = True)
+
+to force datetime64 index 
+			adj_close 	close 	high 	low 	open 	volume 
+date
+2003-03-01 31.68
+
+
+close_arr = appl['close'].values
+
+type(close_arr)
+numpy.ndarray
+
+plt.plot(close_arr)
+plt.show()
+
+close_series = appl['close']
+type(close_series)
+pandas.core.series.series
+plt.plot(close_series)
+
+It automatically uses data time index to label the horizontal axis
+
+close_series.plot()
+
+infact pandas dataframe has plot methods like series 
+
+aapl.plot()
+plt.plot(aapl)
+
+#volume column dominates other five curves and they cannot be seen
+plt.yscale('log') #sets a logarithmic scale on vertical axis
+
+Any matplotlib options can be used to customize a series or dataframe figure
+
+aapl['open'].plot(color='b',style='.-',legend=True)
+aapl['close'].plot(color='r',style='.',legend=True)
+
+plt.axis('2001','2002',0,100)
+
+aapl.loc[['2001':'2004'],['open','close','high','low']].plot()
+plt.savefig('aapl.png')
+plt.savefig('aapl.jpg')
+
+The pandas .plot() method makes calls to matplotlib to construct the plots.
+df.plot(color='red')
+plt.title('Temperature in Austin')
+plt.xlabel('Hours since midnight August 1, 2010')
+plt.ylabel('Temperature (degrees F)')
+plt.show()
+
+df.plot(subplots=True)
+
+---------------
+
+comparing multiple columns of data present in dataframe
+df.plot()
+plt.show()
+df.plot(subplots=True)
+plt.show()
+column_list1 = ['Dew Point (deg F)']
+df[column_list1].plot()
+plt.show()
+column_list2 = ['Temperature (deg F)','Dew Point (deg F)']
+df[column_list2].plot()
+plt.show()
+
+---------------------
+
+
+
